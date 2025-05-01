@@ -16,7 +16,6 @@ import usePatientData from '../../hooks/usePatientData';
 import useTeethLayout from '../../hooks/useTeethLayout';
 import { cloneDeep } from 'lodash';
 
-
 const Dashboard = () => {
     const [selectedPatientKey, setSelectedPatientKey] = useState(null);
     const [selectedNote, setSelectedNote] = useState('');
@@ -142,7 +141,7 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="dashboard-container mx-auto p-5 h-screen w-4/5 box-border flex flex-col gap-4">
+        <div className="dashboard-container mx-auto p-5 h-screen w-5/6 box-border flex flex-col gap-4">
             <NavBar
                 selectedPatient={selectedPatient}
                 onSelectPatient={(key, patient) => {

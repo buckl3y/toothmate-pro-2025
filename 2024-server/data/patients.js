@@ -24,6 +24,99 @@ const patients = {
     },
     "patientHistory": [
       {
+        "date": "2025-05-01",
+        "notes": "",
+        "teethLayout": [
+          [
+            "/assets/3DModels/AdultTeeth/28_Right_Upper_Wisdom.glb",
+            "/assets/3DModels/AdultTeeth/27_Right_Upper_Second_Molar.glb",
+            "/assets/3DModels/AdultTeeth/26_Right_Upper_First_Molar.glb",
+            "/assets/3DModels/AdultTeeth/25_Right_Upper_Second_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/24_Right_Upper_First_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/23_Right_Upper_Canine.glb",
+            "/assets/3DModels/AdultTeeth/22_Right_Upper_Lateral_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/21_Right_Upper_Central_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/11_Left_Upper_Central_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/12_Left_Upper_Lateral_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/13_Left_Upper_Canine.glb",
+            "/assets/3DModels/AdultTeeth/14_Left_Upper_First_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/15_Left_Upper_Second_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/16_Left_Upper_First_Molar.glb",
+            "/assets/3DModels/AdultTeeth/17_Left_Upper_Second_Molar.glb",
+            "/assets/3DModels/AdultTeeth/18_Left_Upper_Wisdom.glb"
+          ],
+          [
+            "/assets/3DModels/DeciduousTeeth/55_Right_Upper_Second_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/54_Right_Upper_First_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/53_Right_Upper_Canine.glb",
+            "/assets/3DModels/DeciduousTeeth/52_Right_Upper_Lateral_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/51_Right_Upper_Central_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/61_Left_Upper_Central_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/62_Left_Upper_Lateral_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/63_Left_Upper_Canine.glb",
+            "/assets/3DModels/DeciduousTeeth/64_Left_Upper_First_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/65_Left_Upper_Second_Molar.glb"
+          ],
+          [
+            "/assets/3DModels/DeciduousTeeth/85_Right_Lower_Second_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/84_Right_Lower_First_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/83_Right_Lower_Canine.glb",
+            "/assets/3DModels/DeciduousTeeth/82_Right_Lower_Lateral_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/81_Right_Lower_Central_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/71_Left_Lower_Central_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/72_Left_Lower_Lateral_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/73_Left_Lower_Canine.glb",
+            "/assets/3DModels/DeciduousTeeth/74_Left_Lower_First_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/75_Left_Lower_Second_Molar.glb"
+          ],
+          [
+            "/assets/3DModels/AdultTeeth/38_Right_Lower_Wisdom.glb",
+            "/assets/3DModels/AdultTeeth/37_Right_Lower_Second_Molar.glb",
+            "/assets/3DModels/AdultTeeth/36_Right_Lower_First_Molar.glb",
+            "/assets/3DModels/AdultTeeth/35_Right_Lower_Second_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/34_Right_Lower_First_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/33_Right_Lower_Canine.glb",
+            "/assets/3DModels/AdultTeeth/32_Right_Lower_Lateral_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/31_Right_Lower_Central_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/41_Left_Lower_Central_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/42_Left_Lower_Lateral_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/43_Left_Lower_Canine.glb",
+            "/assets/3DModels/AdultTeeth/44_Left_Lower_First_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/45_Left_Lower_Second_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/46_Left_Lower_First_Molar.glb",
+            "/assets/3DModels/AdultTeeth/47_Left_Lower_Second_Molar.glb",
+            "/assets/3DModels/AdultTeeth/48_Left_Lower_Wisdom.glb"
+          ]
+        ],
+        "procedure": "filling",
+        "toothTreatments": {
+          "/assets/3DModels/AdultTeeth/18_Left_Upper_Wisdom.glb": [
+            {
+              "id": 1,
+              "treatmentOption": "Extraction",
+              "toothSurface": "I",
+              "date": "2025-05-01"
+            }
+          ],
+          "/assets/3DModels/AdultTeeth/13_Left_Upper_Canine.glb": [
+            {
+              "id": 1,
+              "treatmentOption": "Filling",
+              "toothSurface": "I",
+              "date": "2025-05-01"
+            }
+          ],
+          "/assets/3DModels/AdultTeeth/17_Left_Upper_Second_Molar.glb": [
+            {
+              "id": 1,
+              "treatmentOption": "Crown",
+              "toothSurface": "B",
+              "date": "2025-05-01"
+            }
+          ]
+        }
+      },
+      {
         "date": "2024-09-24",
         "notes": "Patient presents with concerns about 10-year-old veneers on right upper second premolars showing marginal discoloration.",
         "teethLayout": [
@@ -520,6 +613,90 @@ const patients = {
       }
     ],
     "xrayHistory": {}
+  },
+  "NH2014": {
+    "nhiNumber": "NH2014",
+    "name": "skye",
+    "dateOfBirth": "2002-12-12",
+    "address": "1 haycock ave",
+    "phone": "021123456",
+    "caution": {},
+    "patientHistory": [
+      {
+        "date": "2025-03-12",
+        "notes": "",
+        "teethLayout": [
+          [
+            "/assets/3DModels/AdultTeeth/28_Right_Upper_Wisdom.glb",
+            "/assets/3DModels/AdultTeeth/27_Right_Upper_Second_Molar.glb",
+            "/assets/3DModels/AdultTeeth/26_Right_Upper_First_Molar.glb",
+            "/assets/3DModels/AdultTeeth/25_Right_Upper_Second_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/24_Right_Upper_First_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/23_Right_Upper_Canine.glb",
+            "/assets/3DModels/AdultTeeth/22_Right_Upper_Lateral_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/21_Right_Upper_Central_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/11_Left_Upper_Central_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/12_Left_Upper_Lateral_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/13_Left_Upper_Canine.glb",
+            "/assets/3DModels/AdultTeeth/14_Left_Upper_First_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/15_Left_Upper_Second_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/16_Left_Upper_First_Molar.glb",
+            "/assets/3DModels/AdultTeeth/17_Left_Upper_Second_Molar.glb",
+            "/assets/3DModels/AdultTeeth/18_Left_Upper_Wisdom.glb"
+          ],
+          [
+            "/assets/3DModels/DeciduousTeeth/55_Right_Upper_Second_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/54_Right_Upper_First_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/53_Right_Upper_Canine.glb",
+            "/assets/3DModels/DeciduousTeeth/52_Right_Upper_Lateral_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/51_Right_Upper_Central_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/61_Left_Upper_Central_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/62_Left_Upper_Lateral_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/63_Left_Upper_Canine.glb",
+            "/assets/3DModels/DeciduousTeeth/64_Left_Upper_First_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/65_Left_Upper_Second_Molar.glb"
+          ],
+          [
+            "/assets/3DModels/DeciduousTeeth/85_Right_Lower_Second_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/84_Right_Lower_First_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/83_Right_Lower_Canine.glb",
+            "/assets/3DModels/DeciduousTeeth/82_Right_Lower_Lateral_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/81_Right_Lower_Central_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/71_Left_Lower_Central_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/72_Left_Lower_Lateral_Incisor.glb",
+            "/assets/3DModels/DeciduousTeeth/73_Left_Lower_Canine.glb",
+            "/assets/3DModels/DeciduousTeeth/74_Left_Lower_First_Molar.glb",
+            "/assets/3DModels/DeciduousTeeth/75_Left_Lower_Second_Molar.glb"
+          ],
+          [
+            "/assets/3DModels/AdultTeeth/38_Right_Lower_Wisdom.glb",
+            "/assets/3DModels/AdultTeeth/37_Right_Lower_Second_Molar.glb",
+            "/assets/3DModels/AdultTeeth/36_Right_Lower_First_Molar.glb",
+            "/assets/3DModels/AdultTeeth/35_Right_Lower_Second_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/34_Right_Lower_First_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/33_Right_Lower_Canine.glb",
+            "/assets/3DModels/AdultTeeth/32_Right_Lower_Lateral_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/31_Right_Lower_Central_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/41_Left_Lower_Central_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/42_Left_Lower_Lateral_Incisor.glb",
+            "/assets/3DModels/AdultTeeth/43_Left_Lower_Canine.glb",
+            "/assets/3DModels/AdultTeeth/44_Left_Lower_First_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/45_Left_Lower_Second_Premolar.glb",
+            "/assets/3DModels/AdultTeeth/46_Left_Lower_First_Molar.glb",
+            "/assets/3DModels/AdultTeeth/47_Left_Lower_Second_Molar.glb",
+            "/assets/3DModels/AdultTeeth/48_Left_Lower_Wisdom.glb"
+          ]
+        ],
+        "procedure": "filling",
+        "toothTreatments": {}
+      }
+    ],
+    "xrayHistory": {
+      "powers": {
+        "filepath": "http://localhost:5050/uploads/xray/julie powers.png",
+        "date": "2025-03-12"
+      }
+    }
   }
 };
 
