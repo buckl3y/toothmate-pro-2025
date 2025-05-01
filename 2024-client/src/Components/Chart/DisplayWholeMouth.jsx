@@ -10,9 +10,9 @@ function Model() {
 
 function DisplayWholeMouth() {
   return (
-    <Canvas style={{ height: '500px', width: '100%' }}> {/* Adjust size as needed */}
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[10, 10, 5]} intensity={1} />
+    <Canvas style={{ height: '800px', width: '100%' }}> {/* Adjust size as needed */}
+      <ambientLight intensity={2.5} />
+      <directionalLight position={[0, 10, 5]} intensity={1} />
       <Suspense fallback={null}>
         <Model />
       </Suspense>

@@ -5,7 +5,7 @@ import PatientInformation from '../PatientInformation/PatientInformation';
 import Notes from '../Notes/Notes';
 import PatientHistory from '../PatientHistory/PatientHistory';
 import XrayHistory from '../XrayHistory/XrayHistory';
-import TeethView from '../Chart/scene';
+import TeethView from '../Chart/DisplayWholeMouth';
 import NavBar from '../NavBar/NavBar';
 import AddToothButton from '../Chart/addToothButton';
 import RemoveToothButton from '../Chart/removeToothButton';
