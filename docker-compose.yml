@@ -1,0 +1,14 @@
+services:
+    client: 
+    #Dockerfile-Client
+    # on dev_net
+    # depends on server
+    server: 
+    #Dockerfile-Server
+    # cd to ./2024-server
+    # run npm install
+    # run node server.js
+    # on dev_net
+network:
+    dev_net:
+        driver: bridge
