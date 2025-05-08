@@ -1,0 +1,35 @@
+services:
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile-client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./2024-client:/app
+      - /app/node_modules
+    networks:
+      - dev_net
+    depends_on:
+      - server
+    environment:
+      - NODE_ENV=development
+      - VITE_SERVER_URL=http://localhost:5000
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile-server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./2024-server:/app
+      - /app/node_modules
+    networks:
+      - dev_net
+    environment:
+      - NODE_ENV=development
+
+networks:
+  dev_net:
+    driver: bridge

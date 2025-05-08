@@ -11,10 +11,14 @@ const PORT = process.env.PORT || 5000;
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://two024-toothmate-client.onrender.com'],
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: true
 }));
 
 app.use(express.json());
+app.get('/', (req, res) => {
+  res.send('Server is running correctly');
+});
 
 // Import routers
 const xrayRouter = require('./routes/xray');

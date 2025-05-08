@@ -1,0 +1,13 @@
+FROM node:18
+
+WORKDIR /app
+
+COPY ./2024-server/package*.json ./
+
+RUN npm install
+
+COPY ./2024-server ./
+
+EXPOSE 5000
+
+CMD ["node", "server.js"]
