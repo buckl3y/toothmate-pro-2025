@@ -10,7 +10,7 @@ function App() {
     <Router>
 
       <Routes>
-        <Route path="/" element={<DisplayWholeMouth />} />
+        <Route path="/" element={<Dashboard />} />
       </Routes>
 
     </Router>
