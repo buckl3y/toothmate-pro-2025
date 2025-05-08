@@ -14,7 +14,7 @@ services:
       - server
     environment:
       - NODE_ENV=development
-      - VITE_SERVER_URL=http://server:5000
+      - VITE_SERVER_URL=http://localhost:5000
 
   server:
     build:
