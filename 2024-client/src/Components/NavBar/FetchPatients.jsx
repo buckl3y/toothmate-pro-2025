@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 
 const useFetchPatients = (serverUrl, refreshTrigger) => {
     const [patients, setPatients] = useState([]);
+    const serverUrl = import.meta.env.VITE_SERVER_URL;
 
     useEffect(() => {
         const fetchPatients = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/patients`, {
+                const response = await fetch(`${serverUrl}/api/patients`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

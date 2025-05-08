@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
+console.log('API Server URL:', import.meta.env.VITE_SERVER_URL);
 
 // Patient APIs
 export const getPatientById = async (patientId) => {

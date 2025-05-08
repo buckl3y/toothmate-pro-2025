@@ -9,7 +9,12 @@ export default defineConfig({
     environment: 'jsdom', 
   },
   server: {
-    port: 3000
+    watch: {
+      usePolling: true,
+      interva: 1000,
+    },
+    port: 3000,
+     host: '0.0.0.0',
   },
   plugins: [react()],
   resolve: {

@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   client:
     build:
@@ -16,6 +14,7 @@ services:
       - server
     environment:
       - NODE_ENV=development
+      - VITE_SERVER_URL=http://server:5000
 
   server:
     build:
