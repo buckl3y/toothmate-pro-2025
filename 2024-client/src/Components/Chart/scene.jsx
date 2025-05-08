@@ -24,7 +24,7 @@ function TeethView({ view, onToothSelect, toothTreatments }) {
         3.9,
         2.65
     ];
-
+    
     const handleResetView = () => {
         setResetTrigger(true);
         setTimeout(() => {
@@ -55,7 +55,7 @@ function TeethView({ view, onToothSelect, toothTreatments }) {
             {/* Canvas should take full space and not be affected by AddToothButton */}
             <Canvas className="w-full h-full  pl-10" camera={{ position: [0, 3, 25], fov: 80 }}>
                 <Environment preset="city" />
-                <ambientLight intensity={1} />
+                <ambientLight intensity={1.5} />
 
                 {view.map((row, rowIndex) => {
                     if (row.every(item => item === null)) {
