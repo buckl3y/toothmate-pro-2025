@@ -1,5 +1,12 @@
 // src/components/Dashboard/Dashboard.jsx
 
+// ===================
+// OBSELETE COMPONENTS 
+// import AddToothButton from '../Chart/addToothButton';
+// import RemoveToothButton from '../Chart/removeToothButton';
+// ===================
+
+
 import { useState, useEffect } from 'react';
 import PatientInformation from '../PatientInformation/PatientInformation';
 import Notes from '../Notes/Notes';
@@ -7,8 +14,6 @@ import PatientHistory from '../PatientHistory/PatientHistory';
 import XrayHistory from '../XrayHistory/XrayHistory';
 import TeethView from '../Chart/DisplayWholeMouth';
 import NavBar from '../NavBar/NavBar';
-import AddToothButton from '../Chart/addToothButton';
-import RemoveToothButton from '../Chart/removeToothButton';
 import templates from '../data/templates';
 import TreatmentPlan from '../TreatmentPlan/TreatmentPlan';
 import AdminView from '../AdminView/AdminView';
@@ -215,6 +220,9 @@ const Dashboard = () => {
                             </div>
                         </div>
                     ) : (
+                        // ===================
+                        // RECEPTION VIEW HERE
+                        // ===================
                         <div className="flex flex-col items-center justify-center w-full h-full">
                             <h2 className="text-4xl font-semibold mb-4">No Patient Selected</h2>
                             <p className="text-white text-2xl">
