@@ -169,7 +169,8 @@ const Dashboard = () => {
                                         />
                                     ) : (
                                         <>
-                                            <div className="absolute top-5 left-5 z-50 flex flex-row gap-2">
+                                        {/* OBSOLETE BUTTONS */}
+                                            {/* <div className="absolute top-5 left-5 z-50 flex flex-row gap-2">
                                                 <AddToothButton
                                                     onToothSelect={handleToothAdd}
                                                     currentLayout={teethLayout}
@@ -179,7 +180,7 @@ const Dashboard = () => {
                                                     currentLayout={teethLayout}
                                                 />
                                                 {message && <div className="mt-2 text-red-500">{message}</div>}
-                                            </div>
+                                            </div> */}
                                             <TeethView
                                                 view={teethLayout}
                                                 toothTreatments={toothTreatments}
