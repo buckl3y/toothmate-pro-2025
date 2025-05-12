@@ -177,6 +177,7 @@ function DisplayWholeMouth() {
         }
     };
 
+    
     return (
         <div style={{ position: 'relative', height: '800px', width: '100%' }}>
             {/* Dropdown Menu */}
@@ -197,17 +198,26 @@ function DisplayWholeMouth() {
                         {availableTeeth.length > 0 ? (
                             availableTeeth.map((meshName) => (
                                 // Use handleMeshClick to toggle selection from dropdown
-                                <DropdownMenuItem key={meshName} onSelect={() => handleMeshClick(meshName)}>
-                                    {/* Indicate if tooth is currently selected */}
-                                    {meshName} {selectedTeeth.includes(meshName) ? '✓' : ''}
-                                </DropdownMenuItem>
+                            <DropdownMenuItem
+                                key={meshName}
+                                onSelect={(event) => {
+                                    event.preventDefault(); // Prevents the dropdown from closing
+                                    handleMeshClick(meshName);
+                                }}>
+                            {/* This is an indicator if tooth is selected */}
+                            {meshName} {selectedTeeth.includes(meshName) ? '✓' : ''}
+                        </DropdownMenuItem>
                             ))
                         ) : (
                             <DropdownMenuItem disabled>No meshes found in model</DropdownMenuItem>
                         )}
                         <DropdownMenuSeparator />
                         {/* Update clear selection to use the new state setter */}
-                        <DropdownMenuItem onSelect={() => setSelectedTeeth([])} disabled={selectedTeeth.length === 0}>
+                        <DropdownMenuItem
+                            onSelect={(event) => {
+                                event.preventDefault();
+                                setSelectedTeeth([])}}
+                                 disabled={selectedTeeth.length === 0}>
                             Clear All Selections
                         </DropdownMenuItem>
                     </DropdownMenuContent>
