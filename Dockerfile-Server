@@ -6,8 +6,8 @@ COPY ./server/package*.json ./
 
 RUN npm install
 
-COPY ./2024-server ./
+COPY ./server ./
 
-EXPOSE 5000
+EXPOSE 5005
 
 CMD ["node", "server.js"]
