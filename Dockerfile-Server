@@ -2,7 +2,7 @@ FROM node:18
 
 WORKDIR /app
 
-COPY ./2024-server/package*.json ./
+COPY ./server/package*.json ./
 
 RUN npm install
 
