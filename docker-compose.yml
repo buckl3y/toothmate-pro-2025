@@ -2,11 +2,11 @@ services:
   client:
     build:
       context: .
-      dockerfile: Dockerfile-client
+      dockerfile: Dockerfile-Client
     ports:
       - "3000:3000"
     volumes:
-      - ./2024-client:/app
+      - ./client:/app
       - /app/node_modules
     networks:
       - dev_net
@@ -14,16 +14,16 @@ services:
       - server
     environment:
       - NODE_ENV=development
-      - VITE_SERVER_URL=http://localhost:5000
+      - VITE_SERVER_URL=http://localhost:5005
 
   server:
     build:
       context: .
-      dockerfile: Dockerfile-server
+      dockerfile: Dockerfile-Server
     ports:
-      - "5000:5000"
+      - "5005:5005"
     volumes:
-      - ./2024-server:/app
+      - ./server:/app
       - /app/node_modules
     networks:
       - dev_net
