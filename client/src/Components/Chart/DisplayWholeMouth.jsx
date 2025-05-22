@@ -14,10 +14,11 @@ import {
 import { Button } from "../ui/button"; // Assuming a Button component exists
 
 
-function Model({ selectedTeeth, onTeethLoaded, onMeshClick }) { // Accept selectedTeeth, onTeethLoaded, and onMeshClick props
-    const { scene } = useGLTF('/assets/3DModels/PatientTeeth/NH123/adult_whole_mouth_client1.glb');
+function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Accept selectedTeeth, onTeethLoaded, and onMeshClick props
+    const { scene } = useGLTF('/assets/3DModels/NewAdultTeeth/ISO_adult_whole_mouth.glb');
     const originalMaterials = useRef({});
     const blueMaterial = useRef(new THREE.MeshStandardMaterial({ color: 'blue', side: THREE.DoubleSide })); // Use DoubleSide if needed
+    const fillingMaterial = useRef(new THREE.MeshStandardMaterial({color: 'red', side: THREE.DoubleSide }));
 
     // Effect to extract mesh names and call onTeethLoaded
     // By default, effects run on every render pass. 
@@ -115,6 +116,36 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick }) { // Accept select
         // Depend on the array of selected teeth
     }, [scene, selectedTeeth]);
 
+    // Effect to change color based on treatment and condition data
+    useEffect(() => {
+        if (!scene) return;
+
+        scene.traverse((tooth) => {
+            if (tooth.isMesh) {
+                const originalMat = originalMaterials.current[tooth.uuid];
+
+                if (originalMat) {
+                    if (!(tooth.name in mouthData)) {
+                        console.log(tooth.name + " has no mouth data! Skipping...");
+                        return;
+                    }
+
+                    if (mouthData[tooth.name].treatments.fillings.length > 0) {
+                        if (tooth.material !== fillingMaterial.current) {
+                            tooth.material = fillingMaterial.current;
+                        }
+                    } else {
+                        // Restore original material if not selected and not already original
+                        if (tooth.material !== originalMat) {
+                            tooth.material = originalMat;
+                        }
+                    }
+                }
+            }
+        });
+        // Depend on the array of selected teeth
+    }, [scene, mouthData, selectedTeeth]);
+
     // Handle pointer down events on the model
     const handleModelPointerDown = (event) => {
         event.stopPropagation(); // Prevent Canvas click handler from firing
@@ -139,7 +170,28 @@ Model.propTypes = {
 
 };
 
+var wholeMouth = {
+    't_11': {
+        index: "11",
+        treatments: {
+            fillings: [
+                {
+                    faces: ['mesial', 'occlusal'],
+                    dateAdded: ['11-10-2012'],
+                    material: "composite"
+                }
+            ],
+            crowns: []
+        },
+        conditions: {
+            cavities: []
+        }
+    }
+}
+
 function DisplayWholeMouth() {
+
+
     // Change state to hold an array of selected teeth
     const [selectedTeeth, setSelectedTeeth] = useState([]);
     const [availableTeeth, setAvailableTeeth] = useState([]); // State for teeth names from model
@@ -234,6 +286,7 @@ function DisplayWholeMouth() {
                         selectedTeeth={selectedTeeth} // Pass the array
                         onTeethLoaded={handleTeethLoaded}
                         onMeshClick={handleMeshClick}
+                        mouthData={wholeMouth}
                     />
                 </Suspense>
                 <OrbitControls />
