@@ -31,7 +31,19 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick }) { // Accept select
 
         console.log('Model Effect: Traversing scene to find all mesh names...');
         const extractedMeshNames = [];
+
+        // iterates over the children of the adult_whole_mouth.glb and extracts the child meshes.
         scene.traverse((child) => {
+            /**
+             * scene = {
+             *  child1 = {
+             *  name: "left_tooth"
+             *  isMesh: "true"
+             * },
+             *  child2,
+             *  child3,
+             * }
+             */
             console.log('Traversing child:', child.name, 'Is Mesh:', child.isMesh);
             // Collect names of all mesh objects
             if (child.isMesh && child.name) { // Ensure it's a mesh and has a name
@@ -54,8 +66,9 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick }) { // Accept select
     // Effect to store original materials on mount and restore on unmount
     useEffect(() => {
         if (!scene) return;
+        console.log("PAGE WAS REFRESHED!");
         const materialsToStore = {};
-        scene.traverse((child) => {
+        scene.traverse((child) => { 
             if (child.isMesh && !materialsToStore[child.uuid]) {
                 // Clone material to avoid modifying the original shared material instance
                 materialsToStore[child.uuid] = child.material.clone();

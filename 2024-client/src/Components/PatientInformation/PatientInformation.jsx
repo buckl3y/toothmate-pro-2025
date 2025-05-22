@@ -16,13 +16,25 @@ const PatientInformation = ({ patient, onUpdate }) => {
     const [statusMessage, setStatusMessage] = useState('');
     const [statusColor, setStatusColor] = useState('');
 
+    // ================================
+    // ===== EVENT HANDLERS START =====
+    // ================================
+
+    // FLIPS THE `isEditing` state. (true / false)
     const handleEditToggle = () => {
+        // updates the flag
         setIsEditing(!isEditing);
+
+        // updates the patient information, incase there's been changes made
         setEditedPatient({ name, dateOfBirth, address, phone });
+
+        // clears any status messages that may have occured - e.g. 'Name is required'
         setStatusMessage('');
     };
 
+    // called everytime there is a change detected `onChange` variable for <input/>
     const handleChange = (e) => {
+
         const { name, value } = e.target;
         setEditedPatient((prev) => ({ ...prev, [name]: value }));
     };
@@ -64,18 +76,26 @@ const PatientInformation = ({ patient, onUpdate }) => {
         }
     };
 
+    // ================================
+    // ====== EVENT HANDLERS END ======
+    // ================================
+
+    // ===== RETURN STATEMENT HERE =====
     return (
         <div className="bg-white p-6 rounded-2xl shadow-md w-1/2 h-full">
             <h2 className="text-lg font-semibold mb-4">Patient Information</h2>
             {statusMessage && <p className={`mb-4 ${statusColor}`}>{statusMessage}</p>}
             {!isEditing ? (
+                // THIS IS DISPLAYED, IF PATIENT INFORMATION IS NOT BEING EDITIED
                 <ul className="space-y-2">
                     <li className="border-b border-gray-300 pb-2">Name: {name}</li>
                     <li className="border-b border-gray-300 pb-2">Date of Birth: {dateOfBirth}</li>
                     <li className="border-b border-gray-300 pb-2">Address: {address}</li>
                     <li className="border-b border-gray-300 pb-2">Phone: {phone}</li>
                 </ul>
-            ) : (
+            )
+            // THIS IS DISPLAYED IF THE PATIENT DETAILS ARE BEING EDITED.
+            : (
                 <div className="">
                     <div className="flex flex-row justify-center items-center gap-2">
                         <label className="text-gray-700">Name</label>
@@ -122,7 +142,11 @@ const PatientInformation = ({ patient, onUpdate }) => {
                     </div>
                 </div>
             )}
+
+            {/* =======BUTTONS ARE HERE======= */}
             <div className="mt-4 flex justify-end space-x-2">
+
+                {/* BUTTON TO ENABLE EDITING */}
                 {!isEditing ? (
                     <button
                         onClick={handleEditToggle}
@@ -130,7 +154,9 @@ const PatientInformation = ({ patient, onUpdate }) => {
                     >
                         Edit
                     </button>
-                ) : (
+                ) 
+                // BUTTON TO SAVE OR CANCEL THE EDITS
+                : (
                     <>
                         <button
                             onClick={handleSave}
