@@ -12,8 +12,9 @@ import {
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu"; // Assuming dropdown components are here
 import { Button } from "../ui/button"; // Assuming a Button component exists
+import { getPatientMouthData } from '../../api/MouthApi';
 
-
+// Host and modify the mouth 3D model
 function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Accept selectedTeeth, onTeethLoaded, and onMeshClick props
     const { scene } = useGLTF('/assets/3DModels/NewAdultTeeth/ISO_adult_whole_mouth.glb');
     const originalMaterials = useRef({});
@@ -26,17 +27,17 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
     useEffect(() => {
         // Skip until the teeth are loaded
         if (!scene || !onTeethLoaded) {
-            console.log('Model Effect: Scene or onTeethLoaded not ready.');
+            console.log('Trying to extract mesh names but scene or onTeethLoaded not ready.');
             return;
         }
 
         console.log('Model Effect: Traversing scene to find all mesh names...');
         const extractedMeshNames = [];
         scene.traverse((child) => {
-            console.log('Traversing child:', child.name, 'Is Mesh:', child.isMesh);
+            // console.log('Traversing child:', child.name, 'Is Mesh:', child.isMesh);
             // Collect names of all mesh objects
             if (child.isMesh && child.name) { // Ensure it's a mesh and has a name
-                console.log('Found mesh:', child.name, typeof child.material);
+                // console.log('Found mesh:', child.name, typeof child.material);
                 extractedMeshNames.push(child.name);
             }
         });
@@ -47,12 +48,14 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
         // Sort names for consistent dropdown order (optional)
         uniqueMeshNames.sort();
 
-        console.log('Model Effect: Calling onTeethLoaded with:', uniqueMeshNames);
+        console.log('Loaded Model has the following meshes:', uniqueMeshNames);
         onTeethLoaded(uniqueMeshNames); // Pass the unique mesh names
 
     }, [scene, onTeethLoaded]); // Depend on scene and the callback itself
 
+
     // Effect to store original materials on mount and restore on unmount
+    // Allows tooth colour to be returned to original after edits.
     useEffect(() => {
         if (!scene) return;
         const materialsToStore = {};
@@ -87,7 +90,7 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
     useEffect(() => {
         if (!scene) return;
         // Log effect run with the array of selected teeth
-        console.log(`Color Effect: Running for selectedTeeth: ${JSON.stringify(selectedTeeth)}`);
+        console.log(`Colouring selected teeth: ${JSON.stringify(selectedTeeth)}`);
 
         scene.traverse((child) => {
             if (child.isMesh) {
@@ -99,14 +102,12 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
                     if (isSelected) {
                         // Apply blue material if selected and not already blue
                         if (child.material !== blueMaterial.current) {
-                            console.log(`Color Effect: Applying blue material to ${child.name}`);
                             child.material = blueMaterial.current;
                             // child.material.color.copy(new THREE.Color('green'));
                         }
                     } else {
                         // Restore original material if not selected and not already original
                         if (child.material !== originalMat) {
-                            console.log(`Color Effect: Restoring original material for ${child.name}`);
                             child.material = originalMat;
                         }
                     }
@@ -126,7 +127,7 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
 
                 if (originalMat) {
                     if (!(tooth.name in mouthData)) {
-                        console.log(tooth.name + " has no mouth data! Skipping...");
+                        console.log("API returned no data for tooth " + tooth.name + ". Skipping...");
                         return;
                     }
 
@@ -150,7 +151,6 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
     const handleModelPointerDown = (event) => {
         event.stopPropagation(); // Prevent Canvas click handler from firing
         if (event.object.isMesh && event.object.name) {
-            console.log("PointerDown on Mesh:", event.object.name);
             onMeshClick(event.object.name); // Call the callback with the mesh name
         }
     };
@@ -167,31 +167,14 @@ Model.propTypes = {
     selectedTeeth: PropTypes.arrayOf(PropTypes.string).isRequired,
     onTeethLoaded: PropTypes.func.isRequired, // Make callback required
     onMeshClick: PropTypes.func.isRequired, // Add prop type for the click handler
-
+    mouthData: PropTypes.object.isRequired, // Add prop type for mouthData
 };
 
-var wholeMouth = {
-    't_11': {
-        index: "11",
-        treatments: {
-            fillings: [
-                {
-                    faces: ['mesial', 'occlusal'],
-                    dateAdded: ['11-10-2012'],
-                    material: "composite"
-                }
-            ],
-            crowns: []
-        },
-        conditions: {
-            cavities: []
-        }
-    }
-}
-
-function DisplayWholeMouth() {
+var wholeMouth = await getPatientMouthData('NH123');
 
 
+// Component which holds the 3D model and handles interactions.
+export default function DisplayWholeMouth() {
     // Change state to hold an array of selected teeth
     const [selectedTeeth, setSelectedTeeth] = useState([]);
     const [availableTeeth, setAvailableTeeth] = useState([]); // State for teeth names from model
@@ -200,7 +183,7 @@ function DisplayWholeMouth() {
     const handleTeethLoaded = useCallback((meshNames) => {
         console.log("DisplayWholeMouth: Received mesh names:", meshNames); // Log received names
         setAvailableTeeth(meshNames);
-    }, []); // Empty dependency array means this function is created once
+    }, []); // Empty dependency array means this function is run once
 
     // Callback for when a mesh is clicked in the Model component
     const handleMeshClick = useCallback((meshName) => {
@@ -294,5 +277,3 @@ function DisplayWholeMouth() {
         </div>
     );
 }
-
-export default DisplayWholeMouth;

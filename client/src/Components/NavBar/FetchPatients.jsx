@@ -5,9 +5,6 @@ const useFetchPatients = (refreshTrigger) => {
     const [patients, setPatients] = useState([]);
     // Get the server URL from environment variables
     const serverUrl = import.meta.env.VITE_SERVER_URL;
-    
-    // Add debugging
-    console.log('Server URL from environment:', serverUrl);
 
     useEffect(() => {
         const fetchPatients = async () => {
