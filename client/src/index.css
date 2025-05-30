@@ -15,7 +15,8 @@
 body {
   font-family: 'Nunito', sans-serif;
   line-height: 1.5;
-  background-image: linear-gradient(to bottom, #E0B1CB, #796FBA);
+  /* background-image: linear-gradient(to bottom, #E0B1CB, #796FBA); */
+  background-color: #DDD;
   height: 100%;
 }
 

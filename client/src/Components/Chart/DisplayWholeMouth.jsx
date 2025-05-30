@@ -1,8 +1,21 @@
+/*
+    3D view of the mouth. Does not include any interface.
+    Allows panning and scrolling of the model.
+    Highlights teeth with treatments.
+
+    authors:
+        - Skye Pooley
+            - Fetching and displaying tooth treatments.
+        Jim Buchan 
+            - Loading mouth 3D models into three.js
+
+*/
+
 import { Suspense, useState, useEffect, useRef, useCallback } from 'react'; // Import hooks
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
-import * as THREE from 'three'; // Import THREE
 import PropTypes from 'prop-types'; // Import PropTypes
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,11 +26,22 @@ import {
 } from "../ui/dropdown-menu"; // Assuming dropdown components are here
 import { Button } from "../ui/button"; // Assuming a Button component exists
 
+import { getPatientMouthData, TreatmentType } from '../../api/MouthApi';
+import { 
+    blueMaterial, 
+    fillingMaterial, 
+    crownMaterial, 
+    rootCanalMaterial, 
+    extractionMaterial,
+    implantMaterial,
+    veneerMaterial,
+    sealantMaterial
+} from './ToothMaterials';
 
-function Model({ selectedTeeth, onTeethLoaded, onMeshClick }) { // Accept selectedTeeth, onTeethLoaded, and onMeshClick props
-    const { scene } = useGLTF('/assets/3DModels/PatientTeeth/NH123/adult_whole_mouth_client1.glb');
-    const originalMaterials = useRef({});
-    const blueMaterial = useRef(new THREE.MeshStandardMaterial({ color: 'blue', side: THREE.DoubleSide })); // Use DoubleSide if needed
+// Host and modify the mouth 3D model
+function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Accept selectedTeeth, onTeethLoaded, and onMeshClick props
+    const { scene } = useGLTF('/assets/3DModels/NewAdultTeeth/ISO_adult_whole_mouth.glb');
+    const originalMaterials = useRef({});    
 
     // Effect to extract mesh names and call onTeethLoaded
     // By default, effects run on every render pass. 
@@ -25,17 +49,17 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick }) { // Accept select
     useEffect(() => {
         // Skip until the teeth are loaded
         if (!scene || !onTeethLoaded) {
-            console.log('Model Effect: Scene or onTeethLoaded not ready.');
+            console.log('Trying to extract mesh names but scene or onTeethLoaded not ready.');
             return;
         }
 
         console.log('Model Effect: Traversing scene to find all mesh names...');
         const extractedMeshNames = [];
         scene.traverse((child) => {
-            console.log('Traversing child:', child.name, 'Is Mesh:', child.isMesh);
+            // console.log('Traversing child:', child.name, 'Is Mesh:', child.isMesh);
             // Collect names of all mesh objects
             if (child.isMesh && child.name) { // Ensure it's a mesh and has a name
-                console.log('Found mesh:', child.name, typeof child.material);
+                // console.log('Found mesh:', child.name, typeof child.material);
                 extractedMeshNames.push(child.name);
             }
         });
@@ -46,12 +70,14 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick }) { // Accept select
         // Sort names for consistent dropdown order (optional)
         uniqueMeshNames.sort();
 
-        console.log('Model Effect: Calling onTeethLoaded with:', uniqueMeshNames);
+        console.log('Loaded Model has the following meshes:', uniqueMeshNames);
         onTeethLoaded(uniqueMeshNames); // Pass the unique mesh names
 
     }, [scene, onTeethLoaded]); // Depend on scene and the callback itself
 
+
     // Effect to store original materials on mount and restore on unmount
+    // Allows tooth colour to be returned to original after edits.
     useEffect(() => {
         if (!scene) return;
         const materialsToStore = {};
@@ -82,44 +108,77 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick }) { // Accept select
         };
     }, [scene]); // Run when the scene loads.
 
-    // Effect to change color based on selection
+    // Effect to change color based on treatment and condition data
     useEffect(() => {
         if (!scene) return;
-        // Log effect run with the array of selected teeth
-        console.log(`Color Effect: Running for selectedTeeth: ${JSON.stringify(selectedTeeth)}`);
 
-        scene.traverse((child) => {
-            if (child.isMesh) {
-                const originalMat = originalMaterials.current[child.uuid];
-                if (originalMat) {
-                    // Check if this tooth is in the selectedTeeth array
-                    const isSelected = selectedTeeth.includes(child.name);
+        scene.traverse((tooth) => {
+            if (!tooth.isMesh) return;
 
-                    if (isSelected) {
-                        // Apply blue material if selected and not already blue
-                        if (child.material !== blueMaterial.current) {
-                            console.log(`Color Effect: Applying blue material to ${child.name}`);
-                            child.material = blueMaterial.current;
-                            // child.material.color.copy(new THREE.Color('green'));
-                        }
-                    } else {
-                        // Restore original material if not selected and not already original
-                        if (child.material !== originalMat) {
-                            console.log(`Color Effect: Restoring original material for ${child.name}`);
-                            child.material = originalMat;
-                        }
-                    }
+            // We only want to change the tooth texture if we have the original texture saved to restore it later.
+            const originalMat = originalMaterials.current[tooth.uuid];
+            if (!originalMat) return;
+
+            // Tooth selection texture overrides treatment textures.
+            if (selectedTeeth.includes(tooth.name)) {
+                if (tooth.material !== blueMaterial.current) {
+                    tooth.material = blueMaterial.current;
+                    return;
+                }
+            } else {
+                tooth.material = originalMat;
+            }
+
+            // Do we have any data on treatments and conditions?
+            if (!(tooth.name in mouthData)) {
+                // console.log("API returned no data for tooth " + tooth.name + ". Skipping...");
+                return;
+            }
+
+            // Colour based on treatments.
+            let toothData = mouthData[tooth.name];
+            if (toothData.treatments.length > 0) {
+                let latestTreatment = toothData.treatments[0];
+                switch (latestTreatment.type) {
+                    case TreatmentType.FILLING:
+                        tooth.material = fillingMaterial;
+                        break;
+                    case TreatmentType.CROWN:
+                        tooth.material = crownMaterial;
+                        break;
+                    case TreatmentType.ROOT_CANAL:
+                        tooth.material = rootCanalMaterial;
+                        break;
+                    case TreatmentType.EXTRACTION:
+                        tooth.material = extractionMaterial;
+                        break;
+                    case TreatmentType.IMPLANT:
+                        tooth.material = implantMaterial;
+                        break;
+                    case TreatmentType.VENEER:
+                        tooth.material = veneerMaterial;
+                        break;
+                    case TreatmentType.SEALANT:
+                        tooth.material = sealantMaterial;
+                        break;
+                    default:
+                        console.log("Tooth "+ tooth.name +" has a treatment '"+ latestTreatment.type +"' but a texture for that treatment has not been defined!");
+                        break;
+                }
+            } else {
+                // Restore original material if has no treatments and is not selected.
+                if (tooth.material !== originalMat) {
+                    tooth.material = originalMat;
                 }
             }
         });
-        // Depend on the array of selected teeth
-    }, [scene, selectedTeeth]);
+        // Run whenever these objects are updated.
+    }, [scene, mouthData, selectedTeeth]);
 
     // Handle pointer down events on the model
     const handleModelPointerDown = (event) => {
         event.stopPropagation(); // Prevent Canvas click handler from firing
         if (event.object.isMesh && event.object.name) {
-            console.log("PointerDown on Mesh:", event.object.name);
             onMeshClick(event.object.name); // Call the callback with the mesh name
         }
     };
@@ -136,10 +195,14 @@ Model.propTypes = {
     selectedTeeth: PropTypes.arrayOf(PropTypes.string).isRequired,
     onTeethLoaded: PropTypes.func.isRequired, // Make callback required
     onMeshClick: PropTypes.func.isRequired, // Add prop type for the click handler
-
+    mouthData: PropTypes.object.isRequired, // Add prop type for mouthData
 };
 
-function DisplayWholeMouth() {
+var wholeMouth = await getPatientMouthData('NH123');
+
+
+// Component which holds the 3D model and handles interactions.
+export default function DisplayWholeMouth() {
     // Change state to hold an array of selected teeth
     const [selectedTeeth, setSelectedTeeth] = useState([]);
     const [availableTeeth, setAvailableTeeth] = useState([]); // State for teeth names from model
@@ -148,7 +211,7 @@ function DisplayWholeMouth() {
     const handleTeethLoaded = useCallback((meshNames) => {
         console.log("DisplayWholeMouth: Received mesh names:", meshNames); // Log received names
         setAvailableTeeth(meshNames);
-    }, []); // Empty dependency array means this function is created once
+    }, []); // Empty dependency array means this function is run once
 
     // Callback for when a mesh is clicked in the Model component
     const handleMeshClick = useCallback((meshName) => {
@@ -165,7 +228,7 @@ function DisplayWholeMouth() {
     // This is super broken. Only the fallback case is ever triggered.
     const handleCanvasClick = (event) => {
         // Simplified check to avoid error: Check if the direct target is the canvas itself
-        if (event.target.localname == "canvas" ) {
+        if (event.target.localname == "canvas") {
             console.log("Canvas background clicked. Selection remains unchanged.");
             // This case is never triggered. Not sure why.
         } else if (event.intersections?.length > 0) {
@@ -176,6 +239,7 @@ function DisplayWholeMouth() {
             console.log("Canvas click detected, but event structure is unexpected.", event);
         }
     };
+
 
     return (
         <div style={{ position: 'relative', height: '800px', width: '100%' }}>
@@ -197,8 +261,13 @@ function DisplayWholeMouth() {
                         {availableTeeth.length > 0 ? (
                             availableTeeth.map((meshName) => (
                                 // Use handleMeshClick to toggle selection from dropdown
-                                <DropdownMenuItem key={meshName} onSelect={() => handleMeshClick(meshName)}>
-                                    {/* Indicate if tooth is currently selected */}
+                                <DropdownMenuItem
+                                    key={meshName}
+                                    onSelect={(event) => {
+                                        event.preventDefault(); // Prevents the dropdown from closing
+                                        handleMeshClick(meshName);
+                                    }}>
+                                    {/* This is an indicator if tooth is selected */}
                                     {meshName} {selectedTeeth.includes(meshName) ? '✓' : ''}
                                 </DropdownMenuItem>
                             ))
@@ -207,7 +276,12 @@ function DisplayWholeMouth() {
                         )}
                         <DropdownMenuSeparator />
                         {/* Update clear selection to use the new state setter */}
-                        <DropdownMenuItem onSelect={() => setSelectedTeeth([])} disabled={selectedTeeth.length === 0}>
+                        <DropdownMenuItem
+                            onSelect={(event) => {
+                                event.preventDefault();
+                                setSelectedTeeth([])
+                            }}
+                            disabled={selectedTeeth.length === 0}>
                             Clear All Selections
                         </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -224,6 +298,7 @@ function DisplayWholeMouth() {
                         selectedTeeth={selectedTeeth} // Pass the array
                         onTeethLoaded={handleTeethLoaded}
                         onMeshClick={handleMeshClick}
+                        mouthData={wholeMouth}
                     />
                 </Suspense>
                 <OrbitControls />
@@ -231,5 +306,3 @@ function DisplayWholeMouth() {
         </div>
     );
 }
-
-export default DisplayWholeMouth;
