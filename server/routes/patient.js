@@ -12,33 +12,6 @@ router.get("/patients", (req, res) => {
     console.log("success");
 });
 
-// Return the mouth data for a given patient.
-// Temporarily implemented with hard-coded data.
-// @author Skye Pooley
-// Updated 29 May
-router.get("/mouthdata", (req, res) => {
-    console.log("fetching placeholder mouth");
-    let wholeMouth = {
-        t_11: {
-            index: "11",
-            treatments: {
-                fillings: [
-                    {
-                        faces: ["mesial", "occlusal"],
-                        dateAdded: ["11-10-2012"],
-                        material: "composite",
-                    },
-                ],
-                crowns: [],
-            },
-            conditions: {
-                cavities: [],
-            },
-        },
-    };
-    res.json(wholeMouth);
-});
-
 // Server code (e.g., app.js or server.js)
 router.post("/save-patient", (req, res) => {
     console.log("saving patient");

@@ -1,6 +1,6 @@
 /*
 Mouth Data interfaces and API
-Provides a function to fetch all the mouth data for a given patient.
+Provides a function to fetch all the mouth-related data for a given patient.
 Mouth data includes the treatments and conditions for each tooth.
 
 @author Skye Pooley - 22179237
@@ -10,7 +10,19 @@ import Axios from "axios";
 
 const serverUrl: string = import.meta.env.VITE_SERVER_URL;
 
-interface iFillingData {
+export const TreatmentType = {
+    FILLING: 'filling',
+    CROWN: 'crown',
+    VENEER: 'veneer',
+    IMPLANT: 'implant',
+    EXTRACTION: 'extraction',
+    ROOT_CANAL: 'root canal',
+    BRIDGE: 'bridge',
+    SEALANT: 'sealant'
+}
+
+interface iTreatmentData {
+    type: string,
     faces: string[],
     dateAdded: Date,
     material: string
@@ -18,10 +30,9 @@ interface iFillingData {
 
 interface iToothData {
     index: string,
-    treatments: {
-        fillings: iFillingData[]
-    }
-    conditions: {}
+    treatments: iTreatmentData[]
+    conditions: {},
+    extracted: boolean
 }
 
 export interface iMouthData {
