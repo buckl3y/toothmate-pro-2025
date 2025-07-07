@@ -40,7 +40,8 @@ import {
 
 // Host and modify the mouth 3D model
 function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Accept selectedTeeth, onTeethLoaded, and onMeshClick props
-    const { scene } = useGLTF('/assets/3DModels/NewAdultTeeth/ISO_adult_whole_mouth.glb');
+    // const { scene } = useGLTF('/assets/3DModels/NewAdultTeeth/ISO_adult_whole_mouth.glb');
+    const { scene } = useGLTF('/assets/3DModels/NewAdultTeeth/mouth.glb');
     const originalMaterials = useRef({});    
 
     // Effect to extract mesh names and call onTeethLoaded
@@ -117,16 +118,16 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
 
             // We only want to change the tooth texture if we have the original texture saved to restore it later.
             const originalMat = originalMaterials.current[tooth.uuid];
-            if (!originalMat) return;
+            if (!originalMat) return; // Don't proceed if originalMat is missing
 
-            // Tooth selection texture overrides treatment textures.
             if (selectedTeeth.includes(tooth.name)) {
-                if (tooth.material !== blueMaterial.current) {
+                if (blueMaterial.current && tooth.material !== blueMaterial.current) {
                     tooth.material = blueMaterial.current;
-                    return;
                 }
             } else {
-                tooth.material = originalMat;
+                if (originalMat && tooth.material !== originalMat) {
+                    tooth.material = originalMat;
+                }
             }
 
             // Do we have any data on treatments and conditions?
@@ -141,25 +142,25 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
                 let latestTreatment = toothData.treatments[0];
                 switch (latestTreatment.type) {
                     case TreatmentType.FILLING:
-                        tooth.material = fillingMaterial;
+                        if (fillingMaterial) tooth.material = fillingMaterial;
                         break;
                     case TreatmentType.CROWN:
-                        tooth.material = crownMaterial;
+                        if (crownMaterial) tooth.material = crownMaterial;
                         break;
                     case TreatmentType.ROOT_CANAL:
-                        tooth.material = rootCanalMaterial;
+                        if (rootCanalMaterial) tooth.material = rootCanalMaterial;
                         break;
                     case TreatmentType.EXTRACTION:
-                        tooth.material = extractionMaterial;
+                        if (extractionMaterial) tooth.material = extractionMaterial;
                         break;
                     case TreatmentType.IMPLANT:
-                        tooth.material = implantMaterial;
+                        if (implantMaterial) tooth.material = implantMaterial;
                         break;
                     case TreatmentType.VENEER:
-                        tooth.material = veneerMaterial;
+                        if (veneerMaterial) tooth.material = veneerMaterial;
                         break;
                     case TreatmentType.SEALANT:
-                        tooth.material = sealantMaterial;
+                        if (sealantMaterial) tooth.material = sealantMaterial;
                         break;
                     default:
                         console.log("Tooth "+ tooth.name +" has a treatment '"+ latestTreatment.type +"' but a texture for that treatment has not been defined!");
