@@ -16,15 +16,6 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import PropTypes from 'prop-types'; // Import PropTypes
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "../ui/dropdown-menu"; // Assuming dropdown components are here
-import { Button } from "../ui/button"; // Assuming a Button component exists
 
 import { getPatientMouthData, TreatmentType } from '../../api/MouthApi';
 import { 
@@ -218,10 +209,18 @@ export default function DisplayWholeMouth() {
 
     // Callback for when a mesh is clicked in the Model component
     const handleMeshClick = useCallback((meshName) => {
-        console.log(`DisplayWholeMouth: handleMeshClick called with: ${meshName}`); // Log click callback
+        if (meshName == "upper_jaw" || meshName == "lower_jaw") {
+            return;
+        }
+
         // Toggle selection: add if not present, remove if present
-        setselectedTooth(meshName);
-    }, []); // Dependency array is empty, function created once
+        if (selectedTooth == meshName) {
+            setselectedTooth(null);
+        }
+        else {
+            setselectedTooth(meshName);
+        }
+    }, [selectedTooth]); // Dependency array is empty, function created once
 
     // Callback for clicking the canvas background
     // This is super broken. Only the fallback case is ever triggered.
@@ -256,7 +255,7 @@ export default function DisplayWholeMouth() {
                         mouthData={wholeMouth}
                     />
                 </Suspense>
-                <OrbitControls />
+                <OrbitControls enableZoom={false} enablePan={false}/>
             </Canvas>
         </div>
     );
