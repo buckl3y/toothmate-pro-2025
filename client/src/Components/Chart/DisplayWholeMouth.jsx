@@ -44,7 +44,7 @@ function Model({ selectedTooth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
             return;
         }
 
-        scene.scale.set(6, 6, 6);
+        scene.scale.set(4, 4, 4);
 
         console.log('Model Effect: Traversing scene to find all mesh names...');
         const extractedMeshNames = [];
@@ -244,8 +244,8 @@ export default function DisplayWholeMouth() {
 
             {/* Canvas for 3D Model */}
             <Canvas style={{ height: '100%', width: '100%' }} onClick={handleCanvasClick}>
-                <ambientLight intensity={2.0} />
-                <directionalLight position={[0, 10, 5]} intensity={1.5} />
+                <ambientLight intensity={1.5} />
+                <directionalLight position={[0, 10, 5]} intensity={2.0} />
                 <Suspense fallback={null}>
                     {/* Pass selectedTooth array, onTeethLoaded, and onMeshClick to Model */}
                     <Model
