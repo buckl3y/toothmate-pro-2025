@@ -26,12 +26,14 @@ const patientRouter = require('./routes/patient');
 const historyRouter = require('./routes/history');
 const cautionRouter = require('./routes/caution');
 const autofillRouter = require('./routes/autofill');
+const teethRouter = require('./routes/teeth.ts');
 
 // Use routers
 app.use('/api', xrayRouter);
 app.use('/api', patientRouter);
 app.use('/api', historyRouter);
 app.use('/api', cautionRouter);
+app.use('/api', teethRouter);
 app.use('/autofill', autofillRouter);
 
 // Start the server
