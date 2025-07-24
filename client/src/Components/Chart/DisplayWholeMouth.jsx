@@ -39,8 +39,7 @@ import {
 } from './ToothMaterials';
 
 // Host and modify the mouth 3D model
-function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Accept selectedTeeth, onTeethLoaded, and onMeshClick props
-    // const { scene } = useGLTF('/assets/3DModels/NewAdultTeeth/ISO_adult_whole_mouth.glb');
+function Model({ selectedTooth, onTeethLoaded, onMeshClick, mouthData }) { // Accept selectedTooth, onTeethLoaded, and onMeshClick props
     const { scene } = useGLTF('/assets/3DModels/NewAdultTeeth/mouth.glb');
     const originalMaterials = useRef({});    
 
@@ -53,6 +52,8 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
             console.log('Trying to extract mesh names but scene or onTeethLoaded not ready.');
             return;
         }
+
+        scene.scale.set(6, 6, 6);
 
         console.log('Model Effect: Traversing scene to find all mesh names...');
         const extractedMeshNames = [];
@@ -120,9 +121,10 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
             const originalMat = originalMaterials.current[tooth.uuid];
             if (!originalMat) return; // Don't proceed if originalMat is missing
 
-            if (selectedTeeth.includes(tooth.name)) {
-                if (blueMaterial.current && tooth.material !== blueMaterial.current) {
-                    tooth.material = blueMaterial.current;
+            if (selectedTooth && selectedTooth == tooth.name) {
+                if (blueMaterial && tooth.material !== blueMaterial) {
+                    tooth.material = blueMaterial;
+                    return;
                 }
             } else {
                 if (originalMat && tooth.material !== originalMat) {
@@ -132,7 +134,6 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
 
             // Do we have any data on treatments and conditions?
             if (!(tooth.name in mouthData)) {
-                // console.log("API returned no data for tooth " + tooth.name + ". Skipping...");
                 return;
             }
 
@@ -168,13 +169,14 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
                 }
             } else {
                 // Restore original material if has no treatments and is not selected.
-                if (tooth.material !== originalMat) {
+                if ((tooth.material !== originalMat) && !(selectedTooth && selectedTooth == tooth.name)) {
+
                     tooth.material = originalMat;
                 }
             }
         });
         // Run whenever these objects are updated.
-    }, [scene, mouthData, selectedTeeth]);
+    }, [scene, mouthData, selectedTooth]);
 
     // Handle pointer down events on the model
     const handleModelPointerDown = (event) => {
@@ -193,7 +195,7 @@ function Model({ selectedTeeth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
 // This prevents the wrong types being passed to the object.
 Model.propTypes = {
     // Update prop type to array of strings
-    selectedTeeth: PropTypes.arrayOf(PropTypes.string).isRequired,
+    selectedTooth: PropTypes.arrayOf(PropTypes.string).isRequired,
     onTeethLoaded: PropTypes.func.isRequired, // Make callback required
     onMeshClick: PropTypes.func.isRequired, // Add prop type for the click handler
     mouthData: PropTypes.object.isRequired, // Add prop type for mouthData
@@ -205,7 +207,7 @@ var wholeMouth = await getPatientMouthData('NH123');
 // Component which holds the 3D model and handles interactions.
 export default function DisplayWholeMouth() {
     // Change state to hold an array of selected teeth
-    const [selectedTeeth, setSelectedTeeth] = useState([]);
+    const [selectedTooth, setselectedTooth] = useState();
     const [availableTeeth, setAvailableTeeth] = useState([]); // State for teeth names from model
 
     // Callback function to receive mesh names from the Model component
@@ -218,11 +220,7 @@ export default function DisplayWholeMouth() {
     const handleMeshClick = useCallback((meshName) => {
         console.log(`DisplayWholeMouth: handleMeshClick called with: ${meshName}`); // Log click callback
         // Toggle selection: add if not present, remove if present
-        setSelectedTeeth(prevSelected =>
-            prevSelected.includes(meshName)
-                ? prevSelected.filter(name => name !== meshName) // Remove
-                : [...prevSelected, meshName] // Add
-        );
+        setselectedTooth(meshName);
     }, []); // Dependency array is empty, function created once
 
     // Callback for clicking the canvas background
@@ -244,59 +242,15 @@ export default function DisplayWholeMouth() {
 
     return (
         <div style={{ position: 'relative', height: '800px', width: '100%' }}>
-            {/* Dropdown Menu */}
-            <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        {/* Disable button until meshes are loaded */}
-                        <Button variant="outline" disabled={availableTeeth.length === 0}>
-                            {/* Update button text logic for multiple selections */}
-                            {availableTeeth.length === 0
-                                ? 'Loading Teeth...'
-                                : `Select Tooth (${selectedTeeth.length} selected)`}
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuLabel>Select Tooth (Toggle)</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {availableTeeth.length > 0 ? (
-                            availableTeeth.map((meshName) => (
-                                // Use handleMeshClick to toggle selection from dropdown
-                                <DropdownMenuItem
-                                    key={meshName}
-                                    onSelect={(event) => {
-                                        event.preventDefault(); // Prevents the dropdown from closing
-                                        handleMeshClick(meshName);
-                                    }}>
-                                    {/* This is an indicator if tooth is selected */}
-                                    {meshName} {selectedTeeth.includes(meshName) ? '✓' : ''}
-                                </DropdownMenuItem>
-                            ))
-                        ) : (
-                            <DropdownMenuItem disabled>No meshes found in model</DropdownMenuItem>
-                        )}
-                        <DropdownMenuSeparator />
-                        {/* Update clear selection to use the new state setter */}
-                        <DropdownMenuItem
-                            onSelect={(event) => {
-                                event.preventDefault();
-                                setSelectedTeeth([])
-                            }}
-                            disabled={selectedTeeth.length === 0}>
-                            Clear All Selections
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
 
             {/* Canvas for 3D Model */}
             <Canvas style={{ height: '100%', width: '100%' }} onClick={handleCanvasClick}>
-                <ambientLight intensity={2.5} />
-                <directionalLight position={[0, 10, 5]} intensity={1} />
+                <ambientLight intensity={2.0} />
+                <directionalLight position={[0, 10, 5]} intensity={1.5} />
                 <Suspense fallback={null}>
-                    {/* Pass selectedTeeth array, onTeethLoaded, and onMeshClick to Model */}
+                    {/* Pass selectedTooth array, onTeethLoaded, and onMeshClick to Model */}
                     <Model
-                        selectedTeeth={selectedTeeth} // Pass the array
+                        selectedTooth={selectedTooth} // Pass the array
                         onTeethLoaded={handleTeethLoaded}
                         onMeshClick={handleMeshClick}
                         mouthData={wholeMouth}
