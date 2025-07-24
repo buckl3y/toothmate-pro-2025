@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+
+// Commented out dotenv for development purposes
 // const dotenv = require('dotenv');
 // dotenv.config();
 
