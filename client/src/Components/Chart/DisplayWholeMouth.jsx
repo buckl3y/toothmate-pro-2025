@@ -31,7 +31,7 @@ import {
 
 // Host and modify the mouth 3D model
 function Model({ selectedTooth, onTeethLoaded, onMeshClick, mouthData }) { // Accept selectedTooth, onTeethLoaded, and onMeshClick props
-    const { scene } = useGLTF('/assets/3DModels/NewAdultTeeth/mouth.glb');
+    const { scene } = useGLTF('/assets/3DModels/CompressedAdultTeeth/mouth.glb');
     const originalMaterials = useRef({});    
 
     // Effect to extract mesh names and call onTeethLoaded
@@ -186,7 +186,7 @@ function Model({ selectedTooth, onTeethLoaded, onMeshClick, mouthData }) { // Ac
 // This prevents the wrong types being passed to the object.
 Model.propTypes = {
     // Update prop type to array of strings
-    selectedTooth: PropTypes.arrayOf(PropTypes.string).isRequired,
+    selectedTooth: PropTypes.string,
     onTeethLoaded: PropTypes.func.isRequired, // Make callback required
     onMeshClick: PropTypes.func.isRequired, // Add prop type for the click handler
     mouthData: PropTypes.object.isRequired, // Add prop type for mouthData
@@ -255,7 +255,7 @@ export default function DisplayWholeMouth() {
                         mouthData={wholeMouth}
                     />
                 </Suspense>
-                <OrbitControls enableZoom={false} enablePan={false}/>
+                <OrbitControls enableZoom={false} enablePan={false} enableDamping={false}/>
             </Canvas>
         </div>
     );

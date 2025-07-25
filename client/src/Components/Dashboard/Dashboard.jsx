@@ -30,75 +30,6 @@ const Dashboard = () => {
 
     const [teethLayout, setTeethLayout] = useTeethLayout(selectedPatient, selectedDate);
 
-    // const handleToothAdd = (toothName) => {
-    //     if (!selectedPatient) return;
-
-    //     const exists = teethLayout.some((row) =>
-    //         row.some((tooth) => tooth && tooth.includes(`${toothName}.glb`))
-    //     );
-
-    //     if (exists) {
-    //         setMessage(`Tooth ${toothName} already exists in the layout.`);
-    //         return;
-    //     }
-
-    //     let rowIndex = -1;
-    //     let colIndex = -1;
-    //     let toothUrl = '';
-
-    //     templates.mixedView.forEach((row, rIndex) => {
-    //         row.forEach((url, cIndex) => {
-    //             const name = url.split('/').pop().replace('.glb', '');
-    //             if (name === toothName) {
-    //                 rowIndex = rIndex;
-    //                 colIndex = cIndex;
-    //                 toothUrl = url;
-    //             }
-    //         });
-    //     });
-
-    //     if (rowIndex === -1 || colIndex === -1) {
-    //         setMessage(`Tooth ${toothName} not found in templates.`);
-    //         return;
-    //     }
-
-    //     const updatedLayout = cloneDeep(teethLayout);
-    //     updatedLayout[rowIndex][colIndex] = toothUrl;
-
-    //     setTeethLayout(updatedLayout);
-    //     setMessage(`Tooth ${toothName} added successfully.`);
-    //     setTimeout(clearMessage, 2000);
-    // };
-
-    // const handleToothRemove = (toothName) => {
-    //     if (!selectedPatient) return;
-
-    //     let rowIndex = -1;
-    //     let colIndex = -1;
-
-    //     templates.mixedView.forEach((row, rIndex) => {
-    //         row.forEach((toothUrl, cIndex) => {
-    //             const name = toothUrl.split('/').pop().replace('.glb', '');
-    //             if (name === toothName) {
-    //                 rowIndex = rIndex;
-    //                 colIndex = cIndex;
-    //             }
-    //         });
-    //     });
-
-    //     if (rowIndex === -1 || colIndex === -1) {
-    //         setMessage(`Tooth ${toothName} not found in templates.`);
-    //         return;
-    //     }
-
-    //     const updatedLayout = cloneDeep(teethLayout);
-    //     updatedLayout[rowIndex][colIndex] = null;
-
-    //     setTeethLayout(updatedLayout);
-    //     setMessage(`Tooth ${toothName} removed successfully.`);
-    //     setTimeout(clearMessage, 2000);
-    // };
-
     const handleNoteUpdate = (updatedNote) => {
         setNote(updatedNote);
         setSelectedNote(updatedNote);
@@ -163,13 +94,16 @@ const Dashboard = () => {
                             </div>  
                             <div className="col-span-2 row-span-3 bg-white rounded-md">
                                 {selectedTooth ? (
-                                    <TreatmentPlan
-                                        toothUrl={selectedTooth}
-                                        patient={selectedPatient}
-                                        selectedDate={selectedDate}
-                                        onClose={() => setSelectedTooth(null)}
-                                        onUpdatePatient={setSelectedPatient}
-                                    />
+                                    <>
+                                        <p>Tooth Selected {selectedTooth}</p>
+                                        <TreatmentPlan
+                                            toothUrl={selectedTooth}
+                                            patient={selectedPatient}
+                                            selectedDate={selectedDate}
+                                            onClose={() => setSelectedTooth(null)}
+                                            onUpdatePatient={setSelectedPatient}
+                                        />
+                                    </>
                                 ) : (
                                     <p>Select a Tooth to Edit</p>
                                 )}

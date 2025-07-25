@@ -65,7 +65,7 @@ const PatientInformation = ({ patient, onUpdate }) => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-md w-1/2 h-full">
+        <div className="bg-white p-6 rounded-2xl shadow-md w-full h-full">
             <h2 className="text-lg font-semibold mb-4">Patient Information</h2>
             {statusMessage && <p className={`mb-4 ${statusColor}`}>{statusMessage}</p>}
             {!isEditing ? (
