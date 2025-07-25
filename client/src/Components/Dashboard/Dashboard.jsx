@@ -1,17 +1,22 @@
 // src/components/Dashboard/Dashboard.jsx
 
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 import PatientInformation from '../PatientInformation/PatientInformation';
-import Notes from '../Notes/Notes';
+import NavBar from '../NavBar/NavBar';
+// import Notes from '../Notes/Notes';
+import AdminView from '../AdminView/AdminView';
+import MouthManager from '../Chart/MouthViewer/MouthManager';
+import ToothCanvas from '../Chart/ToothViewer/ToothCanvas';
+
 import PatientHistory from '../PatientHistory/PatientHistory';
 import XrayHistory from '../XrayHistory/XrayHistory';
-import TeethView from '../Chart/DisplayWholeMouth';
-import NavBar from '../NavBar/NavBar';
 import TreatmentPlan from '../TreatmentPlan/TreatmentPlan';
-import AdminView from '../AdminView/AdminView';
 import usePatientData from '../../hooks/usePatientData';
 import useTeethLayout from '../../hooks/useTeethLayout';
+import { getPatientMouthData } from '../../api/MouthApi';
+
+const mouthData = await getPatientMouthData("NH123");
 
 const Dashboard = () => {
     const [selectedPatientKey, setSelectedPatientKey] = useState(null);
@@ -39,7 +44,6 @@ const Dashboard = () => {
         setSelectedNote(note);
         setNote(note);
         setSelectedDate(date);
-        setTeethLayout(layout);
     };
 
     // When patient loaded / changed
@@ -65,6 +69,14 @@ const Dashboard = () => {
         setIsAdminView(isAdmin);
     };
 
+    const handleToothSelection = (Tooth) => {
+        // Start transition prevents the app from crashing while it waits for the tooth viewer to load.
+        startTransition(() => {
+            setSelectedTooth(Tooth);
+            console.log("Tooth " + Tooth + "was selected!")
+        })
+    }
+
     return (
         <div className="dashboard-container mx-auto p-5 h-screen w-full box-border flex flex-col gap-4">
             <NavBar
@@ -83,36 +95,51 @@ const Dashboard = () => {
                     {selectedPatient ? (
                         <div className="grid grid-cols-5 grid-rows-5 gap-4 w-full">
                             <div className="row-span-3 col-span-2 bg-white rounded-md">
-                                <TeethView
-                                    view={teethLayout}
-                                    toothTreatments={toothTreatments}
-                                    onToothSelect={setSelectedTooth}
+                                <MouthManager
+                                    mouthData={mouthData}
+                                    onToothSelected={handleToothSelection}
                                 />
                             </div>  
                             <div className="col-span-1 row-span-3 bg-white rounded-md">
-                                <h3>Single Tooth Viewer</h3>
+                                {selectedTooth ? (
+                                    <div>
+                                        <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
+                                            Selected Tooth: {selectedTooth}
+                                        </h3>
+                                        <ToothCanvas selectedTooth={selectedTooth} />
+                                    </div>
+                                    
+                                ) : (
+                                    <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
+                                        Select a Tooth to View
+                                    </h3>
+                                )}
                             </div>  
                             <div className="col-span-2 row-span-3 bg-white rounded-md">
                                 {selectedTooth ? (
                                     <>
-                                        <p>Tooth Selected {selectedTooth}</p>
-                                        <TreatmentPlan
+                                        <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
+                                            Tooth Selected: {selectedTooth}
+                                        </h3>
+                                        {/* <TreatmentPlan
                                             toothUrl={selectedTooth}
                                             patient={selectedPatient}
                                             selectedDate={selectedDate}
                                             onClose={() => setSelectedTooth(null)}
                                             onUpdatePatient={setSelectedPatient}
-                                        />
+                                        /> */}
                                     </>
                                 ) : (
-                                    <p>Select a Tooth to Edit</p>
+                                    <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
+                                        Tooth Editor Placeholder
+                                    </h3>
                                 )}
                             </div>
                             <div className='col-span-2 row-span-2 bg-white rounded-md'>
                                 <PatientHistory
                                     patient={selectedPatient}
                                     onSelectNote={handleSelectNote}
-                                    onPatientUpdate={handlePatientUpdate}
+                                    // onPatientUpdate={handlePatientUpdate}
                                     currentTeethLayout={teethLayout}
                                 />
                             </div>
