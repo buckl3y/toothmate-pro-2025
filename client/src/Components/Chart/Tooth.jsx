@@ -4,7 +4,7 @@ import { MeshStandardMaterial } from 'three';
 import * as THREE from 'three';
 
 const ToothModel = ({ position, rotation, url, reset, onResetComplete, onHoverChange, onToothSelect, interactive = true,  latestTreatment, selectedTreatmentOption, }) => {
-  const validUrl = url || '/assets/3DModels/AdultTeeth/11_Left_Upper_Central_Incisor.glb';
+  const validUrl = url || '/assets/3DModels/CompressedAdultTeeth/t_11.glb';
   const { scene } = useGLTF(validUrl);
   const mesh = useRef();
   const toothName = validUrl.split('/').pop().replace('.glb', '');

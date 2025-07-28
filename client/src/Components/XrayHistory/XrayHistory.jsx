@@ -266,7 +266,7 @@ const XrayHistory = ({ patient, refreshPatientData }) => {
 
   if (!patient || !xrayHistory || Object.keys(xrayHistory).length === 0) {
     return (
-      <div className="bg-white p-6 rounded-2xl shadow-md h-1/2">
+      <div className="bg-white p-6 rounded-2xl shadow-md h-full">
         <h2 className="text-lg font-semibold mb-4">X-Ray History</h2>
         <p className="text-gray-500">No X-ray history available.</p>
         {/* Upload Button */}
@@ -338,7 +338,7 @@ const XrayHistory = ({ patient, refreshPatientData }) => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-md h-1/2 relative">
+    <div className="bg-white p-6 rounded-2xl shadow-md h-full relative">
       <h2 className="text-lg font-semibold mb-4">X-Ray History</h2>
       <div className="space-y-4 overflow-y-auto h-5/6">
         {xrayHistory &&
