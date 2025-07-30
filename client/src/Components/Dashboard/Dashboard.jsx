@@ -27,6 +27,7 @@ const Dashboard = () => {
     const [selectedTooth, setSelectedTooth] = useState(null);
     const [isAdminView, setIsAdminView] = useState(false);
     const [toothTreatments, setToothTreatments] = useState({});
+    const [is3DView, setIs3DView] = useState(true);
 
     const {
         patient: selectedPatient,
@@ -100,10 +101,28 @@ const Dashboard = () => {
                     {selectedPatient ? (
                         <div className="grid grid-cols-5 grid-rows-6 gap-4 w-full">
                             <div className="row-span-4 col-span-2 bg-white rounded-md">
-                                <MouthManager
-                                    mouthData={mouthData}
-                                    onToothSelected={handleToothSelection}
-                                />
+                                
+                                {is3DView ? (
+                                    <>
+                                        <button id="view-change-button" onClick={()=>setIs3DView(!is3DView)}>
+                                            2D View
+                                        </button>
+                                        <MouthManager
+                                            mouthData={mouthData}
+                                            onToothSelected={handleToothSelection}
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        <button id="view-change-button" onClick={()=>setIs3DView(!is3DView)}>
+                                            3D View
+                                        </button>
+                                        <h1>2d view</h1>
+                                    </>
+
+                                    
+                                )}
+                                
                             </div>  
                             <div className="col-span-1 row-span-2 bg-white rounded-md">
                                 {selectedTooth ? (
