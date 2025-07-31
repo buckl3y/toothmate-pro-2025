@@ -135,3 +135,15 @@ footer {
     @apply bg-background text-foreground;
   }
 }
+
+.btn-surface {
+  @apply text-white font-semibold py-2 px-4 rounded-xl shadow-md transition duration-300;
+  background-color: #bdbdbd;
+}
+.btn-surface-selected {
+  @apply text-white font-semibold py-2 px-4 rounded-xl shadow-md transition duration-300;
+  background-color: #000fdb;
+}
+.btn-surface:hover {
+  background-color: #7a7daf;
+}
