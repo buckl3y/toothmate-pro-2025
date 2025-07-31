@@ -13,33 +13,22 @@
 
 import { Suspense, useState,  useCallback } from 'react'; // Import hooks
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
-import { getPatientMouthData } from '../../../api/MouthApi';
+import { OrbitControls, OrthographicCamera } from '@react-three/drei';
 import PropTypes from 'prop-types'; // Import PropTypes
 
 
 import MouthCanvas from './MouthCanvas';
+import { useRef, useEffect } from 'react';
 
 
 // Component which holds the 3D model and handles interactions.
 export default function MouthManager({mouthData, onToothSelected}) {
     // Change state to hold an array of selected teeth
     const [selectedTooth, setselectedTooth] = useState();
-    const [availableTeeth, setAvailableTeeth] = useState([]); // State for teeth names from model
-
-    // Callback function to receive mesh names from the Model component
-    const handleTeethLoaded = useCallback((meshNames) => {
-        console.log("DisplayWholeMouth: Received mesh names:", meshNames); // Log received names
-        setAvailableTeeth(meshNames);
-    }, []); // Empty dependency array means this function is run once
+    const [is3DView, setIs3DView] = useState(true);
 
     // Callback for when a mesh is clicked in the Model component
     const handleMeshClick = (meshName) => {
-        // Disallow selection of the jaws
-        if (meshName == "upper_jaw" || meshName == "lower_jaw") {
-            return;
-        }
-
         // Toggle selection: add if not present, remove if present
         if (selectedTooth == meshName) {
             setselectedTooth(null);
@@ -51,21 +40,9 @@ export default function MouthManager({mouthData, onToothSelected}) {
         }
     }
 
-    // Callback for clicking the canvas background
-    // This is super broken. Only the fallback case is ever triggered.
-    const handleCanvasClick = (event) => {
-        // Simplified check to avoid error: Check if the direct target is the canvas itself
-        if (event.target.localname == "canvas") {
-            console.log("Canvas background clicked. Selection remains unchanged.");
-            // This case is never triggered. Not sure why.
-        } else if (event.intersections?.length > 0) {
-            // This case is handled by onPointerDown in Model due to event propagation stopping
-            console.log("Canvas click detected on an object. Selection handled by mesh click.");
-        } else {
-            // Fallback log for unexpected event structure
-            console.log("Canvas click detected, but event structure is unexpected.", event);
-        }
-    };
+    function handleViewChanged(is3d) {
+        setIs3DView(is3d);
+    }
 
     function loadingPlaceholder() {
         return (
@@ -76,23 +53,54 @@ export default function MouthManager({mouthData, onToothSelected}) {
     }
 
 
+    // Ref for OrbitControls
+    const controlsRef = useRef();
+
+    // Reset rotation when is3DView changes
+    useEffect(() => {
+        if (controlsRef.current) {
+            controlsRef.current.reset();
+        }
+    }, [is3DView]);
+
     return (
         <div style={{ position: 'relative', height: '800px', width: '100%' }}>
 
+            {is3DView ? (
+                <>
+                    <button id="view-change-button" onClick={()=>handleViewChanged(!is3DView)}>
+                        2D View
+                    </button>
+                </>
+            ) : (
+                <>
+                    <button id="view-change-button" onClick={()=>handleViewChanged(!is3DView)}>
+                        3D View
+                    </button>
+                </>
+            )}
+
             {/* Canvas for 3D Model */}
-            <Canvas style={{ height: '100%', width: '100%' }} onClick={handleCanvasClick}>
+            <Canvas style={{ height: '100%', width: '100%' }}>
                 <ambientLight intensity={1.5} />
                 <directionalLight position={[0, 10, 5]} intensity={2.0} />
                 <Suspense fallback={loadingPlaceholder}>
                     {/* Pass selectedTooth array, onTeethLoaded, and onMeshClick to Model */}
                     <MouthCanvas
                         selectedTooth={selectedTooth} // Pass the array
-                        onTeethLoaded={handleTeethLoaded}
                         onMeshClick={handleMeshClick}
                         mouthData={mouthData}
+                        is3d={is3DView}
                     />
                 </Suspense>
-                <OrbitControls enableZoom={false} enablePan={false} enableDamping={false}/>
+                <OrbitControls
+                    ref={controlsRef}
+                    enableZoom={false}
+                    enablePan={false}
+                    enableDamping={false}
+                    enableRotate={is3DView}
+                />
+                <OrthographicCamera />
             </Canvas>
         </div>
     );
