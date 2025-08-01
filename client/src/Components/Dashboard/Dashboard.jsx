@@ -9,6 +9,7 @@ import AdminView from '../AdminView/AdminView';
 import MouthManager from '../Chart/MouthViewer/MouthManager';
 import ToothCanvas from '../Chart/ToothViewer/ToothCanvas';
 import SurfaceSelector from '../Chart/SurfaceSelector/SurfaceSelector';
+import ToothTreatmentEditor from '../ToothTreatmentEditor/ToothTreatmentEditor';
 
 import PatientHistory from '../PatientHistory/PatientHistory';
 import XrayHistory from '../XrayHistory/XrayHistory';
@@ -126,18 +127,20 @@ const Dashboard = () => {
                             
                             <div className="col-span-2 row-span-4 bg-white rounded-md">
                                 {selectedTooth ? (
-                                    <>
-                                        <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
-                                            Tooth Selected: {selectedTooth}
-                                        </h3>
-                                        {/* <TreatmentPlan
-                                            toothUrl={selectedTooth}
-                                            patient={selectedPatient}
-                                            selectedDate={selectedDate}
-                                            onClose={() => setSelectedTooth(null)}
-                                            onUpdatePatient={setSelectedPatient}
-                                        /> */}
-                                    </>
+                                        <div className="col-span-2 row-span-4 bg-white rounded-md h-full">
+                                            <ToothTreatmentEditor
+                                                selectedTooth={selectedTooth}
+                                                selectedPatient={selectedPatient}
+                                                selectedDate={selectedDate}
+                                            />
+                                            {/* <TreatmentPlan
+                                                toothUrl={selectedTooth}
+                                                patient={selectedPatient}
+                                                selectedDate={selectedDate}
+                                                onClose={() => setSelectedTooth(null)}
+                                                onUpdatePatient={setSelectedPatient}
+                                            /> */}
+                                        </div>
                                 ) : (
                                     <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
                                         Tooth Editor Placeholder
