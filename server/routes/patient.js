@@ -4,6 +4,8 @@ const path = require("path");
 const fs = require("fs");
 const patients = require("../data/patients.js");
 const normalizeNhiNumber = require("../utils/normalizeNhiNumber");
+const sql = require("../utils/getConnection.js")(); 
+const Patient = sql.models.Patient;
 
 // Get all patients
 router.get("/patients", (req, res) => {
@@ -12,9 +14,8 @@ router.get("/patients", (req, res) => {
     console.log("success");
 });
 
-// Server code (e.g., app.js or server.js)
-router.post("/save-patient", (req, res) => {
-    console.log("saving patient");
+// Receives posts from the New Patient menu
+router.post("/save-patient", async (req, res) => {
     const { patientName, nhiNumber, dateOfBirth, address, phone, teethLayout } =
         req.body;
     let { notes, toothTreatments, caution } = req.body;
@@ -25,46 +26,21 @@ router.post("/save-patient", (req, res) => {
 
     const newPatientId = normalizeNhiNumber(nhiNumber);
 
-    if (patients[newPatientId]) {
-        return res.status(400).json({ error: "NHI number already exists" });
+    // Check patient exitsts?
+    if (await Patient.findOne({where: {nhiNumber: newPatientId}})) {
+        console.log("NHI number "+ newPatientId +" already exists");
+        return res.status(400).json({ error: "NHI number "+ newPatientId +" already exists" });
     }
 
-    patients[newPatientId] = {
+    const patient = await Patient.create({
         nhiNumber: newPatientId,
         name: patientName,
         dateOfBirth: dateOfBirth,
         address: address,
-        phone: phone,
-        caution: caution, // Store caution at the patient level
-        patientHistory: [
-            {
-                date: new Date().toISOString().split("T")[0],
-                teethLayout: teethLayout,
-                notes: notes,
-                toothTreatments: toothTreatments,
-            },
-        ],
-        xrayHistory: {},
-    };
-
-    const filePath = path.join(__dirname, "..", "data", "patients.js");
-    const updatedPatients = `const patients = ${JSON.stringify(
-        patients,
-        null,
-        2
-    )};\n\nmodule.exports = patients;`;
-
-    fs.writeFile(filePath, updatedPatients, "utf8", (err) => {
-        if (err) {
-            return res.status(500).json({ error: "Could not save patient" });
-        }
-
-        res.status(200).json({
-            message: "Patient saved successfully!",
-            patientId: newPatientId,
-        });
-        console.log("success");
+        phone: phone
     });
+    console.log("Just added patient " + patient.nhiNumber);
+    return res.status(201).json({ message: "Patient created successfully", patient: patient });
 });
 
 // server.js
@@ -98,6 +74,7 @@ router.post("/update-patient", (req, res) => {
         });
     });
 });
+
 router.get("/patient/:nhi", (req, res) => {
     console.log("getting patient");
     const { nhi } = req.params;

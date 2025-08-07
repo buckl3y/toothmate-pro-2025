@@ -1,8 +1,7 @@
 // AdminAddPatientOverlay.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import templates from '../../data/templates';
 
 const AdminAddPatientOverlay = ({ isVisible, onClose, onSaveSuccess }) => {
   const [patientName, setPatientName] = useState('');
