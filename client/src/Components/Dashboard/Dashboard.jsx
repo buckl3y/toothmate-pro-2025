@@ -28,7 +28,6 @@ const Dashboard = () => {
     const [selectedTooth, setSelectedTooth] = useState(null);
     const [isAdminView, setIsAdminView] = useState(false);
     const [toothTreatments, setToothTreatments] = useState({});
-    const [is3DView, setIs3DView] = useState(true);
 
     const {
         patient: selectedPatient,

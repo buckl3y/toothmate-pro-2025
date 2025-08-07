@@ -4,21 +4,27 @@
     Highlights teeth with treatments.
 
     authors:
+        - Whole Team
+            - 3d/3d Switch
+            - Bugfixes
+            - Camera Controls
+            - Layout
         - Skye Pooley
             - Fetching and displaying tooth treatments.
+            - Flat Mouth View
         Jim Buchan 
             - Loading mouth 3D models into three.js
 
 */
 
-import { Suspense, useState,  useCallback } from 'react'; // Import hooks
+import { Suspense, useState } from 'react'; // Import hooks
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, OrthographicCamera } from '@react-three/drei';
 import PropTypes from 'prop-types'; // Import PropTypes
 
 
 import MouthCanvas from './MouthCanvas';
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 
 
 // Component which holds the 3D model and handles interactions.
@@ -26,10 +32,10 @@ export default function MouthManager({mouthData, onToothSelected}) {
     // Change state to hold an array of selected teeth
     const [selectedTooth, setselectedTooth] = useState();
     const [is3DView, setIs3DView] = useState(true);
+    const controlsRef = useRef(); // Allows programatic control of camera.
 
-    // Callback for when a mesh is clicked in the Model component
+    // Select / Deselect teeth when clicked.
     const handleMeshClick = (meshName) => {
-        // Toggle selection: add if not present, remove if present
         if (selectedTooth == meshName) {
             setselectedTooth(null);
             onToothSelected(null)
@@ -42,8 +48,12 @@ export default function MouthManager({mouthData, onToothSelected}) {
 
     function handleViewChanged(is3d) {
         setIs3DView(is3d);
+        if (controlsRef.current) {
+            controlsRef.current.reset();
+        }
     }
 
+    // Linter throws a fuss if we don't have this but it doesn't seem to be used.. mysteries never cease.
     function loadingPlaceholder() {
         return (
             <>
@@ -51,17 +61,6 @@ export default function MouthManager({mouthData, onToothSelected}) {
             </>
         )
     }
-
-
-    // Ref for OrbitControls
-    const controlsRef = useRef();
-
-    // Reset rotation when is3DView changes
-    useEffect(() => {
-        if (controlsRef.current) {
-            controlsRef.current.reset();
-        }
-    }, [is3DView]);
 
     return (
         <div style={{ position: 'relative', height: '800px', width: '100%' }}>
@@ -93,14 +92,20 @@ export default function MouthManager({mouthData, onToothSelected}) {
                         is3d={is3DView}
                     />
                 </Suspense>
+                {/* Use these props to control the limits of the camera. */}
                 <OrbitControls
                     ref={controlsRef}
-                    enableZoom={false}
-                    enablePan={false}
-                    enableDamping={false}
+                    enableZoom={true}
+                    maxDistance={5}
+                    minDistance={2}
+                    enablePan={!is3DView}
+                    minAzimuthAngle={-Math.PI / 2}
+                    maxAzimuthAngle={Math.PI / 2}
+                    minPolarAngle={Math.PI / 2.75}
+                    maxPolarAngle={Math.PI / 1.75}
+                    dampingFactor={0.2}
                     enableRotate={is3DView}
                 />
-                <OrthographicCamera />
             </Canvas>
         </div>
     );
