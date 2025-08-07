@@ -1,6 +1,5 @@
 // src/components/Dashboard/Dashboard.jsx
 
-
 import { useState, useEffect, startTransition } from 'react';
 import PatientInformation from '../PatientInformation/PatientInformation';
 import NavBar from '../NavBar/NavBar';

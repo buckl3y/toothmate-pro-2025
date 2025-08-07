@@ -48,8 +48,15 @@ export default function MouthManager({mouthData, onToothSelected}) {
 
     function handleViewChanged(is3d) {
         setIs3DView(is3d);
+        resetView();
+    }
+
+    function resetView() {
         if (controlsRef.current) {
             controlsRef.current.reset();
+        }
+        else {
+            console.log("Unable to reset view. OrbitControls reference lost!");
         }
     }
 
@@ -67,17 +74,19 @@ export default function MouthManager({mouthData, onToothSelected}) {
 
             {is3DView ? (
                 <>
-                    <button id="view-change-button" onClick={()=>handleViewChanged(!is3DView)}>
+                    <button id="view-change-button" className='btn' onClick={()=>handleViewChanged(!is3DView)}>
                         2D View
                     </button>
                 </>
             ) : (
                 <>
-                    <button id="view-change-button" onClick={()=>handleViewChanged(!is3DView)}>
+                    <button id="view-change-button" className='btn' onClick={()=>handleViewChanged(!is3DView)}>
                         3D View
                     </button>
                 </>
             )}
+
+            <button id='camera-reset-button' className='btn-secondary' onClick={()=>resetView()}>Reset Camera</button>
 
             {/* Canvas for 3D Model */}
             <Canvas style={{ height: '100%', width: '100%' }}>
