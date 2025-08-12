@@ -1,4 +1,5 @@
-// src/components/Dashboard/Dashboard.jsx
+// Effectively the entry point to the application.
+// Everything happens here.
 
 import { useState, useEffect, startTransition } from 'react';
 import PatientInformation from '../PatientInformation/PatientInformation';
@@ -12,7 +13,6 @@ import ToothTreatmentEditor from '../ToothTreatmentEditor/ToothTreatmentEditor';
 
 import PatientHistory from '../PatientHistory/PatientHistory';
 import XrayHistory from '../XrayHistory/XrayHistory';
-import TreatmentPlan from '../TreatmentPlan/TreatmentPlan';
 import usePatientData from '../../hooks/usePatientData';
 import useTeethLayout from '../../hooks/useTeethLayout';
 import { getPatientMouthData } from '../../api/MouthApi';

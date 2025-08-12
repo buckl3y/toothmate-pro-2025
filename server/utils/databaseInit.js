@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 
 
 module.exports = async function createDatabaseObjects(sql) {
-    await sql.define(
+    const Patient = await sql.define(
         "Patient",
         {
             nhiNumber: {
@@ -30,7 +30,20 @@ module.exports = async function createDatabaseObjects(sql) {
                 allowNull: true
             }
         }
-    ).sync({force: false, alter: true}); // Apply to DB if different.
+    );
 
+    const Treatment = await sql.define(
+        "Treatment",
+        {
+            date: DataTypes.DATE,
+            notes: DataTypes.STRING,
+            procedure: {type: DataTypes.STRING, allowNull: false},
+            tooth: {type: DataTypes.STRING, allowNull: false} 
+        }
+    );
+
+    Patient.hasMany(Treatment);
+
+    sql.sync({modify: true});
 }
 

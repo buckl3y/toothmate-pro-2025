@@ -51,7 +51,6 @@ const AdminAddPatientOverlay = ({ isVisible, onClose, onSaveSuccess }) => {
   };
 
   const handleSavePatient = async () => {
-    const selectedTeethLayout = templates[`${view}View`] || templates['mixedView'];
     try {
       const response = await axios.post(`${serverUrl}/api/save-patient`, {
         patientName,
@@ -61,7 +60,7 @@ const AdminAddPatientOverlay = ({ isVisible, onClose, onSaveSuccess }) => {
         phone,
         notes,     
         caution,  
-        teethLayout: selectedTeethLayout,
+        teethLayout: view,
       });
 
       console.log('Patient saved:', response.data);
