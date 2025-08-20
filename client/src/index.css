@@ -4,7 +4,6 @@
 @tailwind utilities;
 
 
-
 * {
   margin: 0;
   padding: 0;
@@ -28,7 +27,7 @@ h1 {
 p {
   margin-bottom: 10px;
   border: 1px solid transparent;
-
+}
 
 header {
   background-color: #333;
@@ -69,6 +68,36 @@ footer {
   padding: 20px;
   text-align: center;
 }
+
+.btn {
+    display: inline-block;
+    outline: 0;
+    border: 0;
+    cursor: pointer;
+    background-color: #4299e1;
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    line-height: 26px;
+}
+
+.btn-secondary {
+    display: inline-block;
+    outline: 0;
+    border: 0;
+    cursor: pointer;
+    background-color: white;
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(43, 108, 176);
+    border: 1px solid rgb(66, 153, 225);
+    line-height: 26px;
 }
 
 @layer base {
