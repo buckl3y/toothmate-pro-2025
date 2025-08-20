@@ -24,6 +24,12 @@ h1 {
   margin-bottom: 20px;
 }
 
+h4 {
+  font-size: 14;
+  font-weight: "semibold";
+  margin-top: 5px;
+}
+
 p {
   margin-bottom: 10px;
   border: 1px solid transparent;
@@ -98,6 +104,14 @@ footer {
     color: rgb(43, 108, 176);
     border: 1px solid rgb(66, 153, 225);
     line-height: 26px;
+}
+
+.legend-colour {
+  width: 16px;
+  height: 16px;
+  display: 'inline-block';
+  margin-right: 8px;
+  border-radius: 3px;
 }
 
 @layer base {
