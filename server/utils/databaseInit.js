@@ -1,7 +1,13 @@
-const { Sequelize, DataTypes } = require("sequelize");
+const { DataTypes } = require("sequelize");
 
+/*
+    Create the database tables and associations in code.
+    Check the docs on the Sequelize website for details.
 
+    @author Skye Pooley
+*/
 module.exports = async function createDatabaseObjects(sql) {
+    // Patient object stores personal details and is used to join treatments, conditions, notes, etc.
     const Patient = await sql.define(
         "Patient",
         {
@@ -32,11 +38,12 @@ module.exports = async function createDatabaseObjects(sql) {
         }
     );
 
+    // Treatments on teeth, for example: fillings, crowns.
     const Treatment = await sql.define(
         "Treatment",
         {
-            date: DataTypes.DATE,
-            notes: DataTypes.STRING,
+            datePlanned: {type: DataTypes.DATE, allowNull: true },
+            dateCompleted: {type: DataTypes.DATE, allowNull: true },
             procedure: {type: DataTypes.STRING, allowNull: false},
             tooth: {type: DataTypes.STRING, allowNull: false} 
         }
@@ -44,6 +51,50 @@ module.exports = async function createDatabaseObjects(sql) {
 
     Patient.hasMany(Treatment);
 
-    sql.sync({modify: true});
+    // Conditions that teeth can have. for example: cavities, impaction.
+    const Condition = await sql.define(
+        "Condition",
+        {
+            name: {type: DataTypes.STRING, allowNull: false},
+            tooth: {type: DataTypes.STRING, allowNull: false}
+        }
+    );
+
+    Patient.hasMany(Condition);
+
+    const ToothSurface = await sql.define(
+        "ToothSurface",
+        {
+            name: {type: DataTypes.STRING, allowNull: false},
+            appliesTo: {type: DataTypes.STRING, allowNull: false}
+        }
+    );
+
+    Treatment.hasMany(ToothSurface);
+
+    const Note = await sql.define(
+        "Note",
+        {
+            body: {type: DataTypes.STRING, allowNull: false},
+            author: {type: DataTypes.STRING, default: "dentist"}
+        }
+    );
+    Patient.hasMany(Note);
+    Treatment.hasMany(Note);
+    Condition.hasMany(Note);
+    
+
+    await sql.sync({modify: true});
+
+    // This needs to happen after the tables have been synced.
+    // Uncomment if database has been reset.
+    // await ToothSurface.create({name: "incisal", appliesTo: "fore"});
+    // await ToothSurface.create({name: "occlusal", appliesTo: "rear"});
+    // await ToothSurface.create({name: "mesial", appliesTo: "all"});
+    // await ToothSurface.create({name: "distal", appliesTo: "all"});
+    // await ToothSurface.create({name: "lingual", appliesTo: "all"});
+    // await ToothSurface.create({name: "facial", appliesTo: "all"});
+
+    sql.sync();
 }
 

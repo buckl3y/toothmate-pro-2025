@@ -1,8 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const path = require("path");
-const fs = require("fs");
-const patients = require("../data/patients.js");
 const normalizeNhiNumber = require("../utils/normalizeNhiNumber");
 const sql = require("../utils/getConnection.js")(); 
 const DbPatient = sql.models.Patient;
@@ -20,13 +17,8 @@ router.get("/patients", async (req, res) => {
 
 // Receives posts from the New DbPatient menu
 router.post("/save-patient", async (req, res) => {
-    const { patientName, nhiNumber, dateOfBirth, address, phone, teethLayout } =
+    const { patientName, nhiNumber, dateOfBirth, address, phone } =
         req.body;
-    let { notes, toothTreatments, caution } = req.body;
-
-    notes = notes || "";
-    toothTreatments = toothTreatments || {};
-    caution = caution || {};
 
     const newPatientId = normalizeNhiNumber(nhiNumber);
 
