@@ -29,11 +29,6 @@ export default function DentistView({selectedPatient, refreshPatientData, select
         console.log(surface);
     }
 
-    const handlePatientUpdate = (newPatient) => {
-        console.log("Patient information component has updated patient details. Updating patient in dentistview.");
-        refreshPatientData();
-    }
-
     return (
         <div className="flex flex-row justify-center h-full w-full gap-3">
             {selectedPatient ? (
@@ -85,9 +80,6 @@ export default function DentistView({selectedPatient, refreshPatientData, select
                             patient={selectedPatient}
                             refreshPatientData={refreshPatientData}
                         />
-                    </div>
-                    <div className='col-span-1 row-span-2 bg-white rounded-md'>
-                        <PatientInformation patient={selectedPatient} onUpdate={handlePatientUpdate} />
                     </div>
                 </div>
             ) : (

@@ -66,15 +66,15 @@ const PatientInformation = ({ patient, onUpdate }) => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-md w-full h-full">
-            <h2 className="text-lg font-semibold mb-4">Patient Information</h2>
+        <div className="drop-shadow-md bg-black rounded-lg max-w-full bg-white text-black p-2 flex justify-between items-center">
+            <h2 className="m-1 mr-5 flex text-lg font-semibold">Patient Details</h2>
             {statusMessage && <p className={`mb-4 ${statusColor}`}>{statusMessage}</p>}
             {!isEditing ? (
-                <ul className="space-y-2">
-                    <li className="border-b border-gray-300 pb-2">Name: {name}</li>
-                    <li className="border-b border-gray-300 pb-2">Date of Birth: {dateOfBirth}</li>
-                    <li className="border-b border-gray-300 pb-2">Address: {address}</li>
-                    <li className="border-b border-gray-300 pb-2">Phone: {phone}</li>
+                <ul className="flex space-x-9 w-lg">
+                    <li className='grow'><b>Name:</b> {name}</li>
+                    <li className='grow'><b>Date of Birth:</b> {dateOfBirth.substring(0, 10)}</li>
+                    <li className='grow'><b>Address:</b> {address}</li>
+                    <li className='grow'><b>Phone:</b> {phone}</li>
                 </ul>
             ) : (
                 <div className="">
@@ -123,7 +123,7 @@ const PatientInformation = ({ patient, onUpdate }) => {
                     </div>
                 </div>
             )}
-            <div className="mt-4 flex justify-end space-x-2">
+            <div className="flex justify-end space-x-2">
                 {!isEditing ? (
                     <button
                         onClick={handleEditToggle}
