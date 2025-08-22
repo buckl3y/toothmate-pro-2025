@@ -1,6 +1,6 @@
 // src/tests/PatientInformation.test.jsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import PatientInformation from '../Components/PatientInformation/PatientInformation';
+import PatientInformation from '../Components/Dashboard/DentistView/PatientInformation/PatientInformation';
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import axios from 'axios';

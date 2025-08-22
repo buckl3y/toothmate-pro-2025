@@ -19,7 +19,7 @@
 
 import { Suspense, useState } from 'react'; // Import hooks
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, OrthographicCamera } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import PropTypes from 'prop-types'; // Import PropTypes
 
 

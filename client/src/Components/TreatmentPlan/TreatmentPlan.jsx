@@ -1,7 +1,7 @@
 // TreatmentPlan.jsx
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import ToothModel from '../Chart/Tooth';
+import ToothModel from '../Dashboard/DentistView/Chart/Tooth';
 import {Canvas} from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
 import { updatePatient } from '../../api';

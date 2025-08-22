@@ -5,7 +5,7 @@ import {
   uploadXray,
   deleteXray,
   checkXrayFilename,
-} from '../../api';
+} from '../../../../api';
 
 const XrayHistory = ({ patient, refreshPatientData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);

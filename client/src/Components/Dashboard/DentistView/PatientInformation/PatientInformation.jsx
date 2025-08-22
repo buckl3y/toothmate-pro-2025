@@ -4,7 +4,7 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const PatientInformation = ({ patient, onUpdate }) => {
-    const { name = '', dateOfBirth = '', address = '', phone = '' } = patient || {};
+    const { name, dateOfBirth, address, phone } = patient || {};
 
     const [isEditing, setIsEditing] = useState(false);
     const [editedPatient, setEditedPatient] = useState({
@@ -23,6 +23,7 @@ const PatientInformation = ({ patient, onUpdate }) => {
     };
 
     const handleChange = (e) => {
+        console.log("PatientInformation handleChange");
         const { name, value } = e.target;
         setEditedPatient((prev) => ({ ...prev, [name]: value }));
     };
@@ -153,12 +154,12 @@ const PatientInformation = ({ patient, onUpdate }) => {
 
 PatientInformation.propTypes = {
     patient: PropTypes.shape({
-        nhiNumber: PropTypes.string,
-        name: PropTypes.string,
-        dateOfBirth: PropTypes.string,
+        nhiNumber: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        dateOfBirth: PropTypes.object,
         address: PropTypes.string,
-        phone: PropTypes.string,
-    }).isRequired,
+        phone: PropTypes.string
+      }).isRequired,
     onUpdate: PropTypes.func.isRequired,
 };
 

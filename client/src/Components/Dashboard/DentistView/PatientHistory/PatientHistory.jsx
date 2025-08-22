@@ -1,7 +1,7 @@
 // PatientHistory.jsx
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { updatePatient } from '../../api';
+import { updatePatient } from '../../../../api';
 import AddEntryModal from './_components/AddEntryModal';
 
 const PatientHistory = ({ patient, onSelectNote, onPatientUpdate, currentTeethLayout }) => {
@@ -91,7 +91,7 @@ const PatientHistory = ({ patient, onSelectNote, onPatientUpdate, currentTeethLa
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold mb-4">Patient History</h2>
       </div>
-      {patient.Treatments.length === 0 ? (
+      {(!patient.Treatments || patient.Treatments.length === 0) ? (
         <p className="text-gray-500">No history available for this patient.</p>
       ) : (
         <ul className="mt-4 overflow-y-auto max-h-64 flex-grow">

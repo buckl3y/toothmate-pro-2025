@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'; // Import PropTypes
 import { useGLTF } from '@react-three/drei';
 import { useEffect, useRef } from 'react'; // Import hooks
 
-import { TreatmentType } from '../../../api/MouthApi';
+import { TreatmentType } from '../../../../../api/MouthApi';
 import { 
     blueMaterial, 
     fillingMaterial, 
