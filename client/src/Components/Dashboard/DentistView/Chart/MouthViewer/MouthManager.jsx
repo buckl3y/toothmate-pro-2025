@@ -101,21 +101,21 @@ export default function MouthManager({patient, onToothSelected}) {
             >
                 <button
                     className="btn-secondary"
-                    style={{ marginBottom: '8px', fontSize: '18pt', fontWeight: "bold" }}
+                    style={{ marginBottom: '4px', fontSize: '12pt', fontWeight: "bold" }}
                     onClick={() => setMenuCollapsed((prev) => !prev)}
                 >
-                    {menuCollapsed ? '☰' : '☰'}
+                    {menuCollapsed ? '> Show Options' : '< Hide Options'}
                 </button>
                 {!menuCollapsed && (
                     <>
                         <br />
                         {is3DView ? (
                             <button id="view-change-button" className='btn' onClick={() => handleViewChanged(!is3DView)}>
-                                2D
+                                3D Mouth
                             </button>
                         ) : (
-                            <button id="view-change-button" className='btn' onClick={() => handleViewChanged(!is3DView)}>
-                                3D
+                            <button id="view-change-button" className='btn-secondary' onClick={() => handleViewChanged(!is3DView)}>
+                                3D Mouth
                             </button>
                         )}
                         <button id='camera-reset-button' className='btn-secondary' onClick={() => resetView()}>To Front</button>

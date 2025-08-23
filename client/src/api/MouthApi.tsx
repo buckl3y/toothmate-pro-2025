@@ -1,14 +1,10 @@
 /*
-Mouth Data interfaces and API
-Provides a function to fetch all the mouth-related data for a given patient.
-Mouth data includes the treatments and conditions for each tooth.
+Previously this was an api that returned dummy data for mouth treatments but that function was moved to the patient
+api during database migration.
+Now this file is just used to keep track of treatment types.
 
 @author Skye Pooley - 22179237
 */
-
-import Axios from "axios";
-
-const serverUrl: string = import.meta.env.VITE_SERVER_URL;
 
 export const TreatmentType = {
     FILLING: 'filling',
