@@ -28,7 +28,7 @@ import { useRef } from 'react';
 import { useEffect } from 'react';
 
 
-// Component which holds the 3D model and handles interactions.
+// The mouth viewer. Supports both 3D and grid layout.
 export default function MouthManager({patient, onToothSelected}) {
     // Change state to hold an array of selected teeth
     const [selectedTooth, setselectedTooth] = useState();
@@ -70,39 +70,157 @@ export default function MouthManager({patient, onToothSelected}) {
         )
     }
 
+    const [menuCollapsed, setMenuCollapsed] = useState(false);
+    const [treatmentVisibility, setTreatmentVisibility] = useState({
+        all: true,
+        filling: true,
+        crown: true,
+        rootCanal: true,
+        extraction: true,
+        implant: true,
+        veneer: true,
+        sealant: true
+    });
+
     return (
         <div style={{ position: 'relative', height: '800px', width: '100%' }}>
+            {/* Treatment Options */}
+            <div
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    zIndex: 2,
+                    background: '#fff',
+                    padding: menuCollapsed ? '6px' : '12px',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                    
+                    transition: 'min-width 0.2s, padding 0.2s'
+                }}
+            >
+                <button
+                    className="btn-secondary"
+                    style={{ marginBottom: '8px', fontSize: '18pt', fontWeight: "bold" }}
+                    onClick={() => setMenuCollapsed((prev) => !prev)}
+                >
+                    {menuCollapsed ? '☰' : '☰'}
+                </button>
+                {!menuCollapsed && (
+                    <>
+                        <br />
+                        {is3DView ? (
+                            <button id="view-change-button" className='btn' onClick={() => handleViewChanged(!is3DView)}>
+                                2D
+                            </button>
+                        ) : (
+                            <button id="view-change-button" className='btn' onClick={() => handleViewChanged(!is3DView)}>
+                                3D
+                            </button>
+                        )}
+                        <button id='camera-reset-button' className='btn-secondary' onClick={() => resetView()}>To Front</button>
 
-            {is3DView ? (
-                <>
-                    <button id="view-change-button" className='btn' onClick={()=>handleViewChanged(!is3DView)}>
-                        2D View
-                    </button>
-                </>
-            ) : (
-                <>
-                    <button id="view-change-button" className='btn' onClick={()=>handleViewChanged(!is3DView)}>
-                        3D View
-                    </button>
-                </>
-            )}
-
-            <button id='camera-reset-button' className='btn-secondary' onClick={()=>resetView()}>Reset Camera</button>
+                        <h4>Show:</h4>
+                        <label style={{ display: 'flex', alignItems: 'center' }}>
+                            <input 
+                                type="checkbox" 
+                                style={{ marginRight: 6 }} 
+                                onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, all: e.target.checked}})} 
+                                checked={treatmentVisibility.all} 
+                            />
+                            Treatments:
+                        </label>
+                        {treatmentVisibility.all && (
+                            <>
+                                <label style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ background: "#C00A0A" }} className='legend-colour' />
+                                    <input 
+                                        type="checkbox" 
+                                        style={{ marginRight: 6 }} 
+                                        onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, filling: e.target.checked}})} 
+                                        checked={treatmentVisibility.filling} 
+                                    />
+                                    Fillings
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ background: "#FF5100" }} className='legend-colour' />
+                                    <input 
+                                        type="checkbox" 
+                                        style={{ marginRight: 6 }} 
+                                        onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, crown: e.target.checked}})} 
+                                        checked={treatmentVisibility.crown} 
+                                    />
+                                    Crowns
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ background: "#0080FF" }} className='legend-colour' />
+                                    <input 
+                                        type="checkbox" 
+                                        style={{ marginRight: 6 }} 
+                                        onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, rootCanal: e.target.checked}})} 
+                                        checked={treatmentVisibility.rootCanal} 
+                                    />
+                                    Root Canals
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ background: "#EEEEEE", borderColor: "black", borderWidth: "2px" }} className='legend-colour' />
+                                    <input 
+                                        type="checkbox" 
+                                        style={{ marginRight: 6 }} 
+                                        onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, extraction: e.target.checked}})} 
+                                        checked={treatmentVisibility.extraction} 
+                                    />
+                                    Extractions
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ background: "#007610" }} className='legend-colour' />
+                                    <input 
+                                        type="checkbox" 
+                                        style={{ marginRight: 6 }} 
+                                        onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, implant: e.target.checked}})} 
+                                        checked={treatmentVisibility.implant} 
+                                    />
+                                    Implants
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ background: "#7B00FF" }} className='legend-colour' />
+                                    <input 
+                                        type="checkbox" 
+                                        style={{ marginRight: 6 }} 
+                                        onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, veneer: e.target.checked}})} 
+                                        checked={treatmentVisibility.veneer} 
+                                    />
+                                    Veneers
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ background: "#FF0099" }} className='legend-colour' />
+                                    <input 
+                                        type="checkbox" 
+                                        style={{ marginRight: 6 }} 
+                                        onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, sealant: e.target.checked}})} 
+                                        checked={treatmentVisibility.sealant} 
+                                    />
+                                    Sealant
+                                </label>
+                            </>
+                        )}
+                    </>
+                )}
+            </div>
 
             {/* Canvas for 3D Model */}
             <Canvas style={{ height: '100%', width: '100%' }}>
                 <ambientLight intensity={1.5} />
                 <directionalLight position={[0, 10, 5]} intensity={2.0} />
                 <Suspense fallback={loadingPlaceholder}>
-                    {/* Pass selectedTooth array, onTeethLoaded, and onMeshClick to Model */}
                     <MouthCanvas
-                        selectedTooth={selectedTooth} // Pass the array
+                        selectedTooth={selectedTooth}
                         onMeshClick={handleMeshClick}
                         patient={patient}
+                        treatmentVisibility={treatmentVisibility}
                         is3d={is3DView}
                     />
                 </Suspense>
-                {/* Use these props to control the limits of the camera. */}
                 <OrbitControls
                     ref={controlsRef}
                     enableZoom={true}
