@@ -25,10 +25,11 @@ import PropTypes from 'prop-types'; // Import PropTypes
 
 import MouthCanvas from './MouthCanvas';
 import { useRef } from 'react';
+import { useEffect } from 'react';
 
 
 // Component which holds the 3D model and handles interactions.
-export default function MouthManager({mouthData, onToothSelected}) {
+export default function MouthManager({patient, onToothSelected}) {
     // Change state to hold an array of selected teeth
     const [selectedTooth, setselectedTooth] = useState();
     const [is3DView, setIs3DView] = useState(true);
@@ -97,7 +98,7 @@ export default function MouthManager({mouthData, onToothSelected}) {
                     <MouthCanvas
                         selectedTooth={selectedTooth} // Pass the array
                         onMeshClick={handleMeshClick}
-                        mouthData={mouthData}
+                        patient={patient}
                         is3d={is3DView}
                     />
                 </Suspense>

@@ -20,35 +20,3 @@ export const TreatmentType = {
     BRIDGE: 'bridge',
     SEALANT: 'sealant'
 }
-
-interface iTreatmentData {
-    type: string,
-    faces: string[],
-    dateAdded: Date,
-    material: string
-}
-
-interface iToothData {
-    index: string,
-    treatments: iTreatmentData[]
-    conditions: {},
-    extracted: boolean
-}
-
-export interface iMouthData {
-    't_11': iToothData,
-    't_12': iToothData,
-}
-
-export async function getPatientMouthData(patientId: string): Promise<iMouthData | null> {
-    try {
-        let req = `${serverUrl}/api/mouthdata`;
-        let response = await Axios.get(req)
-        console.log(response);
-        return response.data;
-    }
-    catch (error: any) {
-        console.log(error.response);
-        return null;
-    }
-}

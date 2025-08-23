@@ -3,6 +3,7 @@ const router = express.Router();
 const normalizeNhiNumber = require("../utils/normalizeNhiNumber");
 const sql = require("../utils/getConnection.js")(); 
 const DbPatient = sql.models.Patient;
+const DbTreatment = sql.models.Treatment;
 
 // Get all patients
 router.get("/patients", async (req, res) => {
@@ -107,6 +108,31 @@ router.put("/updateinfo/:nhiNumber", async (req, res) => {
         console.log(ex.error);
         return res.status(500).json("Could not update patient!");
     }
+});
+
+
+router.post("/add-treatment", async (req, res) => {
+    const {patient, treatment} = req.body;
+    const db_patient = await DbPatient.findOne({
+        where: {nhiNumber: patient.nhiNumber}, 
+        include: sql.models.Treatment
+    });
+    if (!patient) { return res.status(400).json({success: false, message: "Could not find associated patient."}) }
+
+    try {
+        const db_treatment = await sql.models.Treatment.create({procedure: treatment.procedure, tooth: treatment.tooth});
+        const surface = await sql.models.ToothSurface.findOne({where: {name: treatment.surface}});
+        if (surface) {
+            db_treatment.addToothSurface(surface);
+        }
+        await db_patient.addTreatment(db_treatment);
+        console.log("Successfully added treatment: " + JSON.stringify(db_treatment));
+        return res.status(201).json({success: true, message: "Treatment saved to database", patient: db_patient, treatment: db_treatment})  
+    }
+    catch(ex) {
+        return res.status(500).json({message: "unable to save new treatment", error: ex});
+    }
+    
 });
 
 module.exports = router;

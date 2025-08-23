@@ -1,7 +1,6 @@
 import { useState, startTransition } from 'react';
 import PropTypes from 'prop-types';
 
-import PatientInformation from './PatientInformation/PatientInformation';
 import XrayHistory from './XrayHistory/XrayHistory';
 
 import MouthManager from './Chart/MouthViewer/MouthManager';
@@ -10,12 +9,9 @@ import SurfaceSelector from './Chart/SurfaceSelector/SurfaceSelector';
 import ToothTreatmentEditor from './ToothTreatmentEditor/ToothTreatmentEditor';
 
 
-import { getPatientMouthData } from '../../../api/MouthApi';
-const mouthData = await getPatientMouthData("NH123");
-
-
 export default function DentistView({selectedPatient, refreshPatientData, selectedDate}) {
     const [selectedTooth, setSelectedTooth] = useState(null);
+    const [selectedSurface, setSelectedSurface] = useState(null);
 
     const handleToothSelection = (Tooth) => {
         // Start transition prevents the app from crashing while it waits for the tooth viewer to load.
@@ -27,6 +23,7 @@ export default function DentistView({selectedPatient, refreshPatientData, select
 
     const handleSurfaceSelection = (surface) => {
         console.log(surface);
+        setSelectedSurface(surface);
     }
 
     return (
@@ -36,7 +33,7 @@ export default function DentistView({selectedPatient, refreshPatientData, select
                     <div className="row-span-4 col-span-2 bg-white rounded-md">
 
                         <MouthManager
-                            mouthData={mouthData}
+                            patient={selectedPatient}
                             onToothSelected={handleToothSelection}
                         />
                         
@@ -62,13 +59,15 @@ export default function DentistView({selectedPatient, refreshPatientData, select
                                 <div className="col-span-2 row-span-4 bg-white rounded-md h-full">
                                     <ToothTreatmentEditor
                                         selectedTooth={selectedTooth}
+                                        selectedSurface={selectedSurface}
                                         selectedPatient={selectedPatient}
+                                        refreshPatientData={refreshPatientData}
                                         selectedDate={selectedDate}
                                     />
                                 </div>
                         ) : (
                             <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
-                                Tooth Editor Placeholder
+                                Select a tooth to edit.
                             </h3>
                         )}
                     </div>

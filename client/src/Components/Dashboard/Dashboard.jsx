@@ -1,7 +1,7 @@
 // Effectively the entry point to the application.
 // Everything happens here.
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import NavBar from '../NavBar/NavBar';
 import AdminView from './AdminView/AdminView';
@@ -9,7 +9,6 @@ import DentistView from './DentistView/DentistView';
 import PatientInformation from './DentistView/PatientInformation/PatientInformation';
 
 import usePatientData from '../../hooks/usePatientData';
-
 
 const Dashboard = () => {
     const [selectedPatientKey, setSelectedPatientKey] = useState(null);
@@ -28,7 +27,7 @@ const Dashboard = () => {
         setSelectedPatient(patient);
     }
 
-    const handlePatientUpdate = (newPatient) => {
+    const handlePatientUpdate = (_newPatient) => {
         console.log("Patient information component has updated patient details. Updating patient in dashboard.");
         refreshPatientData();
     }

@@ -53,3 +53,12 @@ export const deleteXray = async (patientId, fileName) => {
 export const checkXrayFilename = async (patientId, fileName) => {
   return axios.get(`${serverUrl}/api/check-xray-filename/${patientId}/${fileName}`);
 };
+
+export const addTreatment = async (patient, treatment) => {
+  return axios.post(`${serverUrl}/api/add-treatment`, 
+    {
+      patient: patient,
+      treatment: treatment
+    }
+  );
+}

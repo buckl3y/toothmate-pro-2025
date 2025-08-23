@@ -16,7 +16,7 @@ import {
 import { useState } from 'react';
 
 // Host and modify the mouth 3D model
-export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3d }) { 
+export default function MouthCanvas({ selectedTooth, onMeshClick, patient, is3d }) { 
     // Unpack only the GLTF from useGLTF
     const { scene: model3d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/mouth.glb');
     const { scene: model2d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/flat-mouth.glb');
@@ -106,16 +106,11 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3
                 }
             }
 
-            // Do we have any data on treatments and conditions?
-            if (!(toothName in mouthData)) {
-                return;
-            }
-
             // Colour based on treatments.
-            let toothData = mouthData[toothName];
-            if (toothData.treatments.length > 0) {
-                let latestTreatment = toothData.treatments[0];
-                switch (latestTreatment.type) {
+            let toothData = patient.Treatments.filter(treatment => treatment.tooth === toothName);
+            if (toothData.length > 0) {
+                let latestTreatment = toothData[toothData.length-1];
+                switch (latestTreatment.procedure) {
                     case TreatmentType.FILLING:
                         if (fillingMaterial) tooth.material = fillingMaterial;
                         break;
@@ -150,7 +145,7 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3
             }
         });
         // Run whenever these objects are updated.
-    }, [model, mouthData, selectedTooth]);
+    }, [model, patient, selectedTooth]);
 
     // Handle pointer down events on the model
     // Does tooth selection
@@ -185,6 +180,6 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3
 MouthCanvas.propTypes = {
     selectedTooth: PropTypes.string,
     onMeshClick: PropTypes.func.isRequired, 
-    mouthData: PropTypes.object.isRequired, 
+    patient: PropTypes.object.isRequired, 
     is3d: PropTypes.bool.isRequired
 };
