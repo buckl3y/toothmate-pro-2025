@@ -83,7 +83,7 @@ module.exports = async function createDatabaseObjects(sql) {
     Treatment.hasMany(Note);
     Condition.hasMany(Note);
 
-    await sql.sync({modify: true, force: true});
+    await sql.sync({modify: true, force: false});
 
     // This needs to happen after the tables have been synced.
     // Uncomment if database has been reset.

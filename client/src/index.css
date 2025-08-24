@@ -121,6 +121,37 @@ footer {
   border-radius: 3px;
 }
 
+.btn-surface {
+  @apply text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300;
+  @apply flex justify-center items-center;
+  @apply w-full h-full;
+  background-color: #bdbdbd;
+  padding: 0;
+}
+.btn-surface-selected {
+  @apply text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300;
+  @apply flex justify-center items-center;
+  @apply w-full h-full;
+  background-color: #000fdb;
+  padding: 0;
+}
+.btn-surface:hover {
+  background-color: #7a7daf;
+}
+
+.btn-filler {
+  visibility: hidden;
+  @apply bg-gray-200 rounded-sm cursor-pointer;
+  @apply flex justify-center items-center;
+  @apply w-full h-full;
+  padding: 0;
+}
+
+.btn-filler:active {
+  visibility: hidden;
+  @apply bg-gray-300;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
