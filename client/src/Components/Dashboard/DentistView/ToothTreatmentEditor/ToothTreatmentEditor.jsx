@@ -1,10 +1,26 @@
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { addTreatment } from "../../../../api";
+import Treatment from "./Treatment";
 
-const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedTooth, selectedSurfaces, selectedDate }) => {
+/**
+ * ToothTreatmentEditor 
+ * Shows list of existing treatments and allows addition of new treatments.
+ * @param {Object} param0 - Component props.
+ * @param {Object} param0.selectedPatient - The currently selected patient.
+ * @param {Function} param0.refreshPatientData - Patient data stored in parent component. Call this to refresh from database
+ * @param {string} param0.selectedTooth - The currently selected tooth as tooth code string: t_14.
+ * @param {Array} param0.selectedSurfaces - The currently selected tooth surfaces. List of surface names.
+ * @returns {JSX.Element} The rendered component.
+ * 
+ * @author Skye Pooley
+ */
+
+const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedTooth, selectedSurfaces }) => {
     const [treatmentType, setTreatmentType] = useState('filling');
-    const [treatmentDate, setTreatmentDate] = useState(Date.now());
+    const [treatmentDate, setTreatmentDate] = useState(new Date());
     const [relevantTreatments, setRelevantTreatments] = useState([]);
+    const [treatmentNotes, setTreatmentNotes] = useState("");
 
     useEffect(() => {
         if (selectedTooth) {
@@ -28,7 +44,9 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
         const treatment = {
             procedure: treatmentType,
             tooth: selectedTooth,
-            surfaces: selectedSurfaces
+            surfaces: selectedSurfaces,
+            notes: [treatmentNotes],
+            plannedDate: treatmentDate
         }
 
         await addTreatment(selectedPatient, treatment);
@@ -36,54 +54,109 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
     };
 
     return (
-        <div className="h-full w-full p-4">
+        <div className="h-full w-full p-4 flex flex-col">
             {selectedTooth ? (
-                <h3 className="text-center">Tooth {selectedTooth} Treatments</h3>
+                <h3 className="text-center">{selectedPatient.name} Tooth {selectedTooth} Treatments</h3>
             ) : (
                 <h3 className="text-center">Treatments for {selectedPatient.name}</h3>
             )}
-            <hr />
-
-            {selectedTooth &&
+            
+            {relevantTreatments.length > 0 ? (
             <>
+                <div className="flex items-center justify-center w-full">
+                    <hr className="aside"/>
+                    <h5 className="ml-5 mr-5 text-center">Upcoming</h5>
+                    <hr className="aside"/>
+                </div>
+
+                <div>
+
+                    {relevantTreatments.map(treatment => <Treatment key={treatment.id} treatment={treatment} />)}
+
+                    <div className="flex items-center justify-center w-full">
+                        <hr className="aside"/>
+                        <h5 className="ml-5 mr-5 text-center">Completed</h5>
+                        <hr className="aside"/>
+                    </div>
+                </div>
+            </>
+            ) : (
+                <p className="text-center">No Treatments On Record</p>
+            )}
+            
+            
+            {/* Treatment Editor */}
+            {selectedTooth &&
+            <div className="subpanel" style={{ marginTop: "auto" }}>
                 <h4 className="text-center">Add a New Treatment</h4>
                 <div className="flex justify-between m-3">
                     
-                    <select value={treatmentType} onChange={e => setTreatmentType(e.target.value)}>
-                        <option value={'filling'}>Filling</option>
-                        <option value={'crown'}>Crown</option>
-                        <option value={'root canal'}>Root Canal</option>
-                        <option value={'extraction'}>Extraction</option>
-                        <option value={'implant'}>Implant</option>
-                        <option value={'veneer'}>Veneer</option>
-                        <option value={'sealant'}>Sealant</option>
-                    </select>
+                    <div className="flex flex-col w-full mr-3">
+                        <div className="flex justify-between">
+                            <select 
+                            value={treatmentType} 
+                            onChange={e => setTreatmentType(e.target.value)}
+                            className="border border-gray-300 rounded-md p-1"
+                            >
+                                <option value={'filling'}>Filling</option>
+                                <option value={'crown'}>Crown</option>
+                                <option value={'root canal'}>Root Canal</option>
+                                <option value={'extraction'}>Extraction</option>
+                                <option value={'implant'}>Implant</option>
+                                <option value={'veneer'}>Veneer</option>
+                                <option value={'sealant'}>Sealant</option>
+                            </select>
 
-                    {selectedSurfaces.length > 0 ? "Surface:" +  selectedSurfaces.join(", ") : "Select a Surface"}
+                            <div className="">
+                                {selectedSurfaces.length > 0 ? selectedSurfaces.join(", ") : "Select a Surface"}
+                            </div>
+
+                            <div>
+                                <label htmlFor="treatment-date">Date:</label>
+                                <input
+                                    type="date"
+                                    id="treatment-date"
+                                    value={treatmentDate.toISOString().split("T")[0]}
+                                    onChange={e => setTreatmentDate(new Date(e.target.value))}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="w-full">
+                            <textarea
+                                className="border border-gray-300 rounded-md p-1 mt-2 w-full"
+                                id="treatment-notes"
+                                placeholder="Notes (optional)"
+                                value={treatmentNotes}
+                                onChange={e => setTreatmentNotes(e.target.value)}
+                            />
+                        </div>
+                    </div>
 
                     <button className="btn" onClick={handleTreatmentAdd} disabled={selectedSurfaces.length < 1}>Add</button>
                 </div>
-            </>
+            </div>
             }
-            <hr/>
-
-            <h4>Planned Treatments</h4>
-            <br/>
-
-            <ul>
-                {relevantTreatments.map(treatment => 
-                <li key={treatment.id}>
-                    {treatment.tooth} - {treatment.procedure} 
-                    {treatment.ToothSurfaces && (" on " + treatment.ToothSurfaces.map(surface => ` ${surface.name} `))}
-                </li>)}
-            </ul>
-
-            <hr/>
-            <h4>Completed Treatments</h4>
-            <br/>
-            <hr/>
         </div>
     );
+};
+ToothTreatmentEditor.propTypes = {
+    selectedPatient: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        Treatments: PropTypes.arrayOf(PropTypes.shape({
+            id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+            tooth: PropTypes.string,
+            procedure: PropTypes.string,
+            ToothSurfaces: PropTypes.arrayOf(
+                PropTypes.shape({
+                    name: PropTypes.string
+                })
+            )
+        })).isRequired
+    }).isRequired,
+    refreshPatientData: PropTypes.func.isRequired,
+    selectedTooth: PropTypes.string,
+    selectedSurfaces: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 export default ToothTreatmentEditor;

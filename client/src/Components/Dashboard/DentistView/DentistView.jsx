@@ -1,15 +1,13 @@
 import { useState, startTransition } from 'react';
 import PropTypes from 'prop-types';
 
-import XrayHistory from './XrayHistory/XrayHistory';
-
 import MouthManager from './Chart/MouthViewer/MouthManager';
 import ToothCanvas from './Chart/ToothViewer/ToothCanvas';
 import SurfaceSelector from './Chart/SurfaceSelector/SurfaceSelector';
 import ToothTreatmentEditor from './ToothTreatmentEditor/ToothTreatmentEditor';
 
 
-export default function DentistView({selectedPatient, refreshPatientData, selectedDate}) {
+export default function DentistView({selectedPatient, refreshPatientData }) {
     const [selectedTooth, setSelectedTooth] = useState(null);
     const [selectedSurfaces, setSelectedSurfaces] = useState([]);
 
@@ -22,9 +20,11 @@ export default function DentistView({selectedPatient, refreshPatientData, select
     }
 
     return (
-        <div className="flex flex-row justify-center h-full w-full gap-3">
+        <div className="flex flex-row justify-center w-full gap-3">
             {selectedPatient ? (
-                <div className="grid grid-cols-5 grid-rows-6 gap-4 w-full h-full">
+                <div className={selectedTooth ? 
+                        "grid grid-cols-5 grid-rows-6 gap-4 w-full " : 
+                        "grid grid-cols-4 grid-rows-6 gap-4 w-full "}>
                     <div className="row-span-4 col-span-2 bg-white rounded-md">
 
                         <MouthManager
@@ -53,7 +53,6 @@ export default function DentistView({selectedPatient, refreshPatientData, select
                                 selectedSurfaces={selectedSurfaces}
                                 selectedPatient={selectedPatient}
                                 refreshPatientData={refreshPatientData}
-                                selectedDate={selectedDate}
                             />
                         </div>
 

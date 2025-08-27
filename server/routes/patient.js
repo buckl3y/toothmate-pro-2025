@@ -11,7 +11,10 @@ router.get("/patients", async (req, res) => {
         include: [
             {
                 model: sql.models.Treatment,
-                include: [sql.models.ToothSurface]
+                include: [sql.models.ToothSurface, sql.models.Note]
+            },
+            {
+                model: sql.models.Note,
             }
         ]
     });
@@ -22,6 +25,34 @@ router.get("/patients", async (req, res) => {
     res.json(indexed_patients);
     console.log("Fetched "+ Object.keys(indexed_patients).length +" patients.");
 });
+
+
+/// Get a single patient by nhi number
+/// Responds 200 if found, 404 if not.
+router.get("/patient/:nhi", async (req, res) => {
+    const { nhi } = req.params;
+    const normalizedNhi = normalizeNhiNumber(nhi);
+
+    // Check patient exitsts?
+    const patient = await DbPatient.findOne({
+        where: { nhiNumber: normalizedNhi },
+        include: [
+            {
+                model: sql.models.Treatment,
+                include: [sql.models.ToothSurface, sql.models.Note]
+            },
+            {
+                model: sql.models.Note
+            }
+        ]
+    });
+    if (patient) {
+        console.log("Returning patient " + normalizedNhi );
+        return res.status(200).json(patient);
+    }
+    return res.status(404).json({"error": "patient "+ normalizedNhi +" not found."});
+});
+
 
 // Receives posts from the New DbPatient menu
 router.post("/save-patient", async (req, res) => {
@@ -58,28 +89,7 @@ router.post("/update-patient", (req, res) => {
     
 });
 
-/// Get a single patient by nhi number
-/// Responds 200 if found, 404 if not.
-router.get("/patient/:nhi", async (req, res) => {
-    const { nhi } = req.params;
-    const normalizedNhi = normalizeNhiNumber(nhi);
 
-    // Check patient exitsts?
-    const patient = await DbPatient.findOne({
-        where: { nhiNumber: normalizedNhi },
-        include: [
-            {
-                model: sql.models.Treatment,
-                include: [sql.models.ToothSurface]
-            }
-        ]
-    });
-    if (patient) {
-        console.log("Returning patient " + normalizedNhi );
-        return res.status(200).json(patient);
-    }
-    return res.status(404).json({"error": "patient "+ normalizedNhi +" not found."});
-});
 
 // Update an existing patient's personal details.
 router.put("/updateinfo/:nhiNumber", async (req, res) => {
@@ -126,24 +136,47 @@ router.put("/updateinfo/:nhiNumber", async (req, res) => {
 });
 
 
+/**
+ * Adds a new treatment for a patient.
+ * Associates notes and surfaces.
+ * 
+ * @author Skye Pooley
+ */
 router.post("/add-treatment", async (req, res) => {
     const {patient, treatment} = req.body;
+
     const db_patient = await DbPatient.findOne({
         where: {nhiNumber: patient.nhiNumber}, 
-        include: sql.models.Treatment
+        include: [sql.models.Treatment, sql.models.Note]
     });
     if (!patient) { return res.status(400).json({success: false, message: "Could not find associated patient."}) }
 
     try {
-        const db_treatment = await sql.models.Treatment.create({procedure: treatment.procedure, tooth: treatment.tooth});
-        console.log(JSON.stringify(treatment.surfaces)); 
+        const db_treatment = await sql.models.Treatment.create({
+            procedure: treatment.procedure, 
+            tooth: treatment.tooth,
+            datePlanned: treatment.plannedDate
+        });
+        
         treatment.surfaces.forEach(async (surface) => {
             const db_surface = await sql.models.ToothSurface.findOne({where: {name: surface}});
             if (db_surface) {
                 db_treatment.addToothSurface(db_surface);
+            } else {
+                console.log("Error: Could not find tooth surface " + surface);
             }
         });
         await db_patient.addTreatment(db_treatment);
+
+        treatment.notes.forEach(async (note) => {
+            const db_note = await sql.models.Note.create({
+                body: note,
+                author: "dentist",
+            });
+            await db_treatment.addNote(db_note);
+            await db_patient.addNote(db_note);
+        });
+
         console.log("Successfully added treatment: " + JSON.stringify(db_treatment));
         return res.status(201).json({success: true, message: "Treatment saved to database", patient: db_patient, treatment: db_treatment})  
     }

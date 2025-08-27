@@ -11,9 +11,7 @@ import PatientInformation from './DentistView/PatientInformation/PatientInformat
 import usePatientData from '../../hooks/usePatientData';
 
 const Dashboard = () => {
-    const [selectedPatientKey, setSelectedPatientKey] = useState(null);
-    const [selectedDate, setSelectedDate] = useState(Date.now());
-    
+    const [selectedPatientKey, setSelectedPatientKey] = useState(null);    
     const [isAdminView, setIsAdminView] = useState(false);
 
     const {
@@ -33,7 +31,7 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="dashboard-container mx-auto p-5 h-screen w-full box-border flex flex-col gap-4">
+        <div className="dashboard-container mx-auto p-5 h-full w-full box-border flex flex-col gap-4">
             <NavBar
                 selectedPatient={selectedPatient}
                 onSelectPatient={(key, patient) => {
@@ -46,15 +44,17 @@ const Dashboard = () => {
             {selectedPatient && (
                 <PatientInformation patient={selectedPatient} onUpdate={handlePatientUpdate} />
             )}
-            {isAdminView ? (
-                <AdminView />
-            ) : (
-                <DentistView 
-                    selectedPatient={selectedPatient} 
-                    refreshPatientData={refreshPatientData} 
-                    selectedDate={selectedDate}
-                />
-            )}
+            <div className='h-full'>
+                {isAdminView ? (
+                    <AdminView />
+                ) : (
+                    <DentistView 
+                        selectedPatient={selectedPatient} 
+                        refreshPatientData={refreshPatientData} 
+                    />
+                )}
+            </div>
+            
         </div>
     );
 };

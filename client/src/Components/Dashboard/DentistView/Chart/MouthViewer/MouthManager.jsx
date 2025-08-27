@@ -3,18 +3,6 @@
     Allows panning and scrolling of the model.
     Highlights teeth with treatments.
 
-    authors:
-        - Whole Team
-            - 3d/3d Switch
-            - Bugfixes
-            - Camera Controls
-            - Layout
-        - Skye Pooley
-            - Fetching and displaying tooth treatments.
-            - Flat Mouth View
-        Jim Buchan 
-            - Loading mouth 3D models into three.js
-
 */
 
 import { Suspense, useState } from 'react'; // Import hooks

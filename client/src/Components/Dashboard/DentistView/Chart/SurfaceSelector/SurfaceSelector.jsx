@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
 
 export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces }) {
 
@@ -19,6 +18,7 @@ export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces 
 
     return (
         <>
+        <h4 className="text-center pt-2 mb-0">Select Tooth Surfaces</h4>
             <div className="h-full flex justify-center items-center">
                 <div className="grid grid-cols-5 grid-rows-5 gap-2 place-items-center w-full h-full p-2">
                     {Array.from({ length: 25 }, (_, index) => {
@@ -64,5 +64,6 @@ export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces 
 }
 
 SurfaceSelector.propTypes = {
-    onSurfaceSelected: PropTypes.func.isRequired
+    selectedSurfaces: PropTypes.arrayOf(PropTypes.string).isRequired,
+    setSelectedSurfaces: PropTypes.func.isRequired
 }
