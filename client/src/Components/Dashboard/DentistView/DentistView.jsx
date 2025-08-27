@@ -24,7 +24,7 @@ export default function DentistView({selectedPatient, refreshPatientData, select
     return (
         <div className="flex flex-row justify-center h-full w-full gap-3">
             {selectedPatient ? (
-                <div className="grid grid-cols-5 grid-rows-6 gap-4 w-full">
+                <div className="grid grid-cols-5 grid-rows-6 gap-4 w-full h-full">
                     <div className="row-span-4 col-span-2 bg-white rounded-md">
 
                         <MouthManager
@@ -33,48 +33,38 @@ export default function DentistView({selectedPatient, refreshPatientData, select
                         />
                         
                     </div>  
-                    <div className="col-span-1 row-span-2 bg-white rounded-md">
-                        {selectedTooth ? (
-                            <div>
-                                <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
-                                    Selected Tooth: {selectedTooth}
-                                </h3>
-                                <ToothCanvas selectedTooth={selectedTooth} />
-                            </div>
-                            
-                        ) : (
+                    
+                    {selectedTooth && (
+                        <div className="col-span-1 row-span-2 bg-white rounded-md">
+                        
                             <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
-                                Select a Tooth to View
+                                Selected Tooth: {selectedTooth}
                             </h3>
-                        )}
-                    </div>  
+                            <ToothCanvas selectedTooth={selectedTooth} />
+
+                        </div>
+                    )}
                     
                     <div className="col-span-2 row-span-4 bg-white rounded-md">
-                        {selectedTooth ? (
-                                <div className="col-span-2 row-span-4 bg-white rounded-md h-full">
-                                    <ToothTreatmentEditor
-                                        selectedTooth={selectedTooth}
-                                        selectedSurfaces={selectedSurfaces}
-                                        selectedPatient={selectedPatient}
-                                        refreshPatientData={refreshPatientData}
-                                        selectedDate={selectedDate}
-                                    />
-                                </div>
-                        ) : (
-                            <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
-                                Select a tooth to edit.
-                            </h3>
-                        )}
+
+                        <div className="col-span-2 row-span-4 bg-white rounded-md h-full">
+                            <ToothTreatmentEditor
+                                selectedTooth={selectedTooth}
+                                selectedSurfaces={selectedSurfaces}
+                                selectedPatient={selectedPatient}
+                                refreshPatientData={refreshPatientData}
+                                selectedDate={selectedDate}
+                            />
+                        </div>
+
                     </div>
-                    <div className='col-span-1 row-span-2 bg-white rounded-md h-full w-full'>
-                        <SurfaceSelector selectedSurfaces={selectedSurfaces} setSelectedSurfaces={setSelectedSurfaces} />
-                    </div>
-                    <div className='col-span-2 row-span-2 bg-white rounded-md'>
-                        <XrayHistory
-                            patient={selectedPatient}
-                            refreshPatientData={refreshPatientData}
-                        />
-                    </div>
+
+                    {selectedTooth && 
+                        <div className='col-span-1 row-span-2 bg-white rounded-md h-full w-full'>
+                            <SurfaceSelector selectedSurfaces={selectedSurfaces} setSelectedSurfaces={setSelectedSurfaces} />
+                        </div>
+                    }
+                    
                 </div>
             ) : (
                 <div className="flex flex-col items-center justify-center w-full h-full">

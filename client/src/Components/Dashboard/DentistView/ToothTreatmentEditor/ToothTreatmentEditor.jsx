@@ -7,9 +7,15 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
     const [relevantTreatments, setRelevantTreatments] = useState([]);
 
     useEffect(() => {
-        setRelevantTreatments(
-            selectedPatient.Treatments.filter(treatment => treatment.tooth === selectedTooth)
-        );
+        if (selectedTooth) {
+            setRelevantTreatments(
+                selectedPatient.Treatments.filter(treatment => treatment.tooth === selectedTooth)
+            );
+        }
+        else {
+            setRelevantTreatments(selectedPatient.Treatments);
+        }
+        
     }, [selectedPatient, selectedTooth]);
 
     const handleTreatmentAdd = async () => {
@@ -29,38 +35,39 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
         refreshPatientData();
     };
 
-    if (!selectedTooth) {
-        return (
-            <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
-                Tooth Editor Placeholder
-            </h3>
-        );
-    }
-
     return (
         <div className="h-full w-full p-4">
-            <h3 className="text-center">Tooth {selectedTooth} Treatments</h3>
+            {selectedTooth ? (
+                <h3 className="text-center">Tooth {selectedTooth} Treatments</h3>
+            ) : (
+                <h3 className="text-center">Treatments for {selectedPatient.name}</h3>
+            )}
             <hr />
 
-            <div className="flex justify-between m-3">
-                <select value={treatmentType} onChange={e => setTreatmentType(e.target.value)}>
-                    <option value={'filling'}>Filling</option>
-                    <option value={'crown'}>Crown</option>
-                    <option value={'root canal'}>Root Canal</option>
-                    <option value={'extraction'}>Extraction</option>
-                    <option value={'implant'}>Implant</option>
-                    <option value={'veneer'}>Veneer</option>
-                    <option value={'sealant'}>Sealant</option>
-                </select>
+            {selectedTooth &&
+            <>
+                <h4 className="text-center">Add a New Treatment</h4>
+                <div className="flex justify-between m-3">
+                    
+                    <select value={treatmentType} onChange={e => setTreatmentType(e.target.value)}>
+                        <option value={'filling'}>Filling</option>
+                        <option value={'crown'}>Crown</option>
+                        <option value={'root canal'}>Root Canal</option>
+                        <option value={'extraction'}>Extraction</option>
+                        <option value={'implant'}>Implant</option>
+                        <option value={'veneer'}>Veneer</option>
+                        <option value={'sealant'}>Sealant</option>
+                    </select>
 
-                {selectedSurfaces.length > 0 ? "Surface:" +  selectedSurfaces.join(", ") : "Select a Surface"}
+                    {selectedSurfaces.length > 0 ? "Surface:" +  selectedSurfaces.join(", ") : "Select a Surface"}
 
-                <button className="btn" onClick={handleTreatmentAdd} disabled={selectedSurfaces.length < 1}>Add</button>
-            </div>
-            
+                    <button className="btn" onClick={handleTreatmentAdd} disabled={selectedSurfaces.length < 1}>Add</button>
+                </div>
+            </>
+            }
             <hr/>
 
-            <h3>Planned Treatments</h3>
+            <h4>Planned Treatments</h4>
             <br/>
 
             <ul>
@@ -72,7 +79,7 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
             </ul>
 
             <hr/>
-            <h3>Completed Treatments</h3>
+            <h4>Completed Treatments</h4>
             <br/>
             <hr/>
         </div>
