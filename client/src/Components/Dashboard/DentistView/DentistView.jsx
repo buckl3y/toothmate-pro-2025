@@ -11,7 +11,7 @@ import ToothTreatmentEditor from './ToothTreatmentEditor/ToothTreatmentEditor';
 
 export default function DentistView({selectedPatient, refreshPatientData, selectedDate}) {
     const [selectedTooth, setSelectedTooth] = useState(null);
-    const [selectedSurface, setSelectedSurface] = useState(null);
+    const [selectedSurfaces, setSelectedSurfaces] = useState([]);
 
     const handleToothSelection = (Tooth) => {
         // Start transition prevents the app from crashing while it waits for the tooth viewer to load.
@@ -19,11 +19,6 @@ export default function DentistView({selectedPatient, refreshPatientData, select
             setSelectedTooth(Tooth);
             console.log("Tooth " + Tooth + "was selected!")
         })
-    }
-
-    const handleSurfaceSelection = (surface) => {
-        console.log(surface);
-        setSelectedSurface(surface);
     }
 
     return (
@@ -59,7 +54,7 @@ export default function DentistView({selectedPatient, refreshPatientData, select
                                 <div className="col-span-2 row-span-4 bg-white rounded-md h-full">
                                     <ToothTreatmentEditor
                                         selectedTooth={selectedTooth}
-                                        selectedSurface={selectedSurface}
+                                        selectedSurfaces={selectedSurfaces}
                                         selectedPatient={selectedPatient}
                                         refreshPatientData={refreshPatientData}
                                         selectedDate={selectedDate}
@@ -72,7 +67,7 @@ export default function DentistView({selectedPatient, refreshPatientData, select
                         )}
                     </div>
                     <div className='col-span-1 row-span-2 bg-white rounded-md h-full w-full'>
-                        <SurfaceSelector onSurfaceSelected={handleSurfaceSelection}/>
+                        <SurfaceSelector selectedSurfaces={selectedSurfaces} setSelectedSurfaces={setSelectedSurfaces} />
                     </div>
                     <div className='col-span-2 row-span-2 bg-white rounded-md'>
                         <XrayHistory

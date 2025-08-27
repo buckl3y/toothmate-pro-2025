@@ -97,6 +97,11 @@ footer {
     line-height: 26px;
 }
 
+.btn:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+}
+
 .btn-secondary {
     display: inline-block;
     outline: 0;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { addTreatment } from "../../../../api";
 
-const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedTooth, selectedSurface, selectedDate }) => {
+const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedTooth, selectedSurfaces, selectedDate }) => {
     const [treatmentType, setTreatmentType] = useState('filling');
     const [treatmentDate, setTreatmentDate] = useState(Date.now());
     const [relevantTreatments, setRelevantTreatments] = useState([]);
@@ -15,10 +15,14 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
     const handleTreatmentAdd = async () => {
         console.log("Adding new treament for " + selectedPatient.name);
 
+        selectedSurfaces.forEach(surface => {
+            console.log("Surface: " + surface);
+        });
+
         const treatment = {
             procedure: treatmentType,
             tooth: selectedTooth,
-            surface: selectedSurface
+            surfaces: selectedSurfaces
         }
 
         await addTreatment(selectedPatient, treatment);
@@ -49,9 +53,9 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                     <option value={'sealant'}>Sealant</option>
                 </select>
 
-                Surface: {selectedSurface}
+                {selectedSurfaces.length > 0 ? "Surface:" +  selectedSurfaces.join(", ") : "Select a Surface"}
 
-                <button className="btn" onClick={handleTreatmentAdd}>Add</button>
+                <button className="btn" onClick={handleTreatmentAdd} disabled={selectedSurfaces.length < 1}>Add</button>
             </div>
             
             <hr/>
@@ -62,7 +66,8 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
             <ul>
                 {relevantTreatments.map(treatment => 
                 <li key={treatment.id}>
-                    {treatment.procedure}
+                    {treatment.tooth} - {treatment.procedure} 
+                    {treatment.ToothSurfaces && (" on " + treatment.ToothSurfaces.map(surface => ` ${surface.name} `))}
                 </li>)}
             </ul>
 

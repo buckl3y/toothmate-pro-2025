@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-export default function SurfaceSelector({ onSurfaceSelected }) {
-    const [selectedSurfaces, setSelectedSurface] = useState([]);
+export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces }) {
 
     function handleSurfaceSelected(surface) {
         let updated;
@@ -13,8 +12,7 @@ export default function SurfaceSelector({ onSurfaceSelected }) {
             updated = [...selectedSurfaces, surface];
         }
 
-        setSelectedSurface(updated);
-        onSurfaceSelected(surface);
+        setSelectedSurfaces(updated);
     }
 
     const isSelected = (surface) => selectedSurfaces.includes(surface);

@@ -25,7 +25,6 @@ import PropTypes from 'prop-types'; // Import PropTypes
 
 import MouthCanvas from './MouthCanvas';
 import { useRef } from 'react';
-import { useEffect } from 'react';
 
 
 // The mouth viewer. Supports both 3D and grid layout.
@@ -70,7 +69,7 @@ export default function MouthManager({patient, onToothSelected}) {
         )
     }
 
-    const [menuCollapsed, setMenuCollapsed] = useState(false);
+    const [menuCollapsed, setMenuCollapsed] = useState(true);
     const [treatmentVisibility, setTreatmentVisibility] = useState({
         all: true,
         filling: true,

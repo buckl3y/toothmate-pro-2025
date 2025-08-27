@@ -7,7 +7,14 @@ const DbTreatment = sql.models.Treatment;
 
 // Get all patients
 router.get("/patients", async (req, res) => {
-    const _patients = await DbPatient.findAll({include: sql.models.Treatment});
+    const _patients = await DbPatient.findAll({
+        include: [
+            {
+                model: sql.models.Treatment,
+                include: [sql.models.ToothSurface]
+            }
+        ]
+    });
     let indexed_patients = {};
     _patients.forEach(patient => {
         indexed_patients[patient.nhiNumber] = patient;
@@ -58,7 +65,15 @@ router.get("/patient/:nhi", async (req, res) => {
     const normalizedNhi = normalizeNhiNumber(nhi);
 
     // Check patient exitsts?
-    const patient = await DbPatient.findOne({where: {nhiNumber: normalizedNhi}, include: sql.models.Treatment});
+    const patient = await DbPatient.findOne({
+        where: { nhiNumber: normalizedNhi },
+        include: [
+            {
+                model: sql.models.Treatment,
+                include: [sql.models.ToothSurface]
+            }
+        ]
+    });
     if (patient) {
         console.log("Returning patient " + normalizedNhi );
         return res.status(200).json(patient);
@@ -121,10 +136,13 @@ router.post("/add-treatment", async (req, res) => {
 
     try {
         const db_treatment = await sql.models.Treatment.create({procedure: treatment.procedure, tooth: treatment.tooth});
-        const surface = await sql.models.ToothSurface.findOne({where: {name: treatment.surface}});
-        if (surface) {
-            db_treatment.addToothSurface(surface);
-        }
+        console.log(JSON.stringify(treatment.surfaces)); 
+        treatment.surfaces.forEach(async (surface) => {
+            const db_surface = await sql.models.ToothSurface.findOne({where: {name: surface}});
+            if (db_surface) {
+                db_treatment.addToothSurface(db_surface);
+            }
+        });
         await db_patient.addTreatment(db_treatment);
         console.log("Successfully added treatment: " + JSON.stringify(db_treatment));
         return res.status(201).json({success: true, message: "Treatment saved to database", patient: db_patient, treatment: db_treatment})  

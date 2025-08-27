@@ -70,7 +70,7 @@ module.exports = async function createDatabaseObjects(sql) {
         }
     );
 
-    ToothSurface.hasMany(Treatment);
+    Treatment.belongsToMany(ToothSurface, {through: 'TreatmentToothSurfaces'});
 
     const Note = await sql.define(
         "Note",
@@ -85,14 +85,21 @@ module.exports = async function createDatabaseObjects(sql) {
 
     await sql.sync({modify: true, force: false});
 
-    // This needs to happen after the tables have been synced.
-    // Uncomment if database has been reset.
-    await ToothSurface.create({name: "incisal", appliesTo: "fore"});
-    await ToothSurface.create({name: "occlusal", appliesTo: "rear"});
-    await ToothSurface.create({name: "mesial", appliesTo: "all"});
-    await ToothSurface.create({name: "distal", appliesTo: "all"});
-    await ToothSurface.create({name: "lingual", appliesTo: "all"});
-    await ToothSurface.create({name: "facial", appliesTo: "all"});
+    // This needs to happen after the tables have been created.
+    const surfaces = [
+        { name: "incisal", appliesTo: "fore" },
+        { name: "occlusal", appliesTo: "rear" },
+        { name: "mesial", appliesTo: "all" },
+        { name: "distal", appliesTo: "all" },
+        { name: "lingual", appliesTo: "all" },
+        { name: "facial", appliesTo: "all" }
+    ];
+    for (const surface of surfaces) {
+        const exists = await ToothSurface.findOne({ where: surface });
+        if (!exists) {
+            await ToothSurface.create(surface);
+        }
+    }
 
     sql.sync();
 }
