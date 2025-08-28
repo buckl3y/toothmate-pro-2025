@@ -1,70 +1,81 @@
 const express = require("express");
 const router = express.Router();
-const path = require("path");
-const fs = require("fs");
-const patients = require("../data/patients.js");
 const normalizeNhiNumber = require("../utils/normalizeNhiNumber");
+const sql = require("../utils/getConnection.js")(); 
+const DbPatient = sql.models.Patient;
+const DbTreatment = sql.models.Treatment;
 
 // Get all patients
-router.get("/patients", (req, res) => {
-    console.log("Fetching all patients");
-    res.json(patients);
-    console.log("success");
+router.get("/patients", async (req, res) => {
+    const _patients = await DbPatient.findAll({
+        include: [
+            {
+                model: sql.models.Treatment,
+                include: [sql.models.ToothSurface, sql.models.Note]
+            },
+            {
+                model: sql.models.Note,
+            }
+        ]
+    });
+    let indexed_patients = {};
+    _patients.forEach(patient => {
+        indexed_patients[patient.nhiNumber] = patient;
+    });
+    res.json(indexed_patients);
+    console.log("Fetched "+ Object.keys(indexed_patients).length +" patients.");
 });
 
-// Server code (e.g., app.js or server.js)
-router.post("/save-patient", (req, res) => {
-    console.log("saving patient");
-    const { patientName, nhiNumber, dateOfBirth, address, phone, teethLayout } =
-        req.body;
-    let { notes, toothTreatments, caution } = req.body;
 
-    notes = notes || "";
-    toothTreatments = toothTreatments || {};
-    caution = caution || {};
+/// Get a single patient by nhi number
+/// Responds 200 if found, 404 if not.
+router.get("/patient/:nhi", async (req, res) => {
+    const { nhi } = req.params;
+    const normalizedNhi = normalizeNhiNumber(nhi);
+
+    // Check patient exitsts?
+    const patient = await DbPatient.findOne({
+        where: { nhiNumber: normalizedNhi },
+        include: [
+            {
+                model: sql.models.Treatment,
+                include: [sql.models.ToothSurface, sql.models.Note]
+            },
+            {
+                model: sql.models.Note
+            }
+        ]
+    });
+    if (patient) {
+        console.log("Returning patient " + normalizedNhi );
+        return res.status(200).json(patient);
+    }
+    return res.status(404).json({"error": "patient "+ normalizedNhi +" not found."});
+});
+
+
+// Receives posts from the New DbPatient menu
+router.post("/save-patient", async (req, res) => {
+    const { patientName, nhiNumber, dateOfBirth, address, phone } =
+        req.body;
 
     const newPatientId = normalizeNhiNumber(nhiNumber);
 
-    if (patients[newPatientId]) {
-        return res.status(400).json({ error: "NHI number already exists" });
+    // Check patient exitsts?
+    if (await DbPatient.findOne({where: {nhiNumber: newPatientId}})) {
+        console.log("NHI number "+ newPatientId +" already exists");
+        return res.status(400).json({ error: "NHI number "+ newPatientId +" already exists" });
     }
 
-    patients[newPatientId] = {
+    const patient = await DbPatient.create({
         nhiNumber: newPatientId,
         name: patientName,
         dateOfBirth: dateOfBirth,
         address: address,
-        phone: phone,
-        caution: caution, // Store caution at the patient level
-        patientHistory: [
-            {
-                date: new Date().toISOString().split("T")[0],
-                teethLayout: teethLayout,
-                notes: notes,
-                toothTreatments: toothTreatments,
-            },
-        ],
-        xrayHistory: {},
-    };
-
-    const filePath = path.join(__dirname, "..", "data", "patients.js");
-    const updatedPatients = `const patients = ${JSON.stringify(
-        patients,
-        null,
-        2
-    )};\n\nmodule.exports = patients;`;
-
-    fs.writeFile(filePath, updatedPatients, "utf8", (err) => {
-        if (err) {
-            return res.status(500).json({ error: "Could not save patient" });
-        }
-
-        res.status(200).json({
-            message: "Patient saved successfully!",
-            patientId: newPatientId,
-        });
-        console.log("success");
+        phone: phone
     });
+    console.log("Just added patient " + patient.nhiNumber);
+    return res.status(201).json({ message: "DbPatient created successfully", patient: patient });
 });
 
 // server.js
@@ -73,45 +84,15 @@ router.post("/update-patient", (req, res) => {
     const { patient } = req.body;
     const normalizedNhi = normalizeNhiNumber(patient.nhiNumber);
 
-    if (!patients[normalizedNhi]) {
-        return res.status(404).json({ error: "Patient not found" });
-    }
+    return res.status(500).json({success: false, message: "/update-patient route has not been updated to support database."})
 
-    patients[normalizedNhi] = patient;
-
-    const filePath = path.join(__dirname, "..", "data", "patients.js");
-    const updatedPatients = `const patients = ${JSON.stringify(
-        patients,
-        null,
-        2
-    )};\n\nmodule.exports = patients;`;
-
-    fs.writeFile(filePath, updatedPatients, "utf8", (err) => {
-        if (err) {
-            console.error("Error writing to file:", err);
-            return res
-                .status(500)
-                .json({ error: "Could not update patient information" });
-        }
-        res.status(200).json({
-            message: "Patient information updated successfully!",
-        });
-    });
-});
-router.get("/patient/:nhi", (req, res) => {
-    console.log("getting patient");
-    const { nhi } = req.params;
-    const normalizedNhi = normalizeNhiNumber(nhi);
-
-    if (!patients[normalizedNhi]) {
-        return res.status(404).json({ error: "Patient not found" });
-    }
-
-    res.json(patients[normalizedNhi]);
-    console.log("success");
+    
 });
 
-router.put("/updateinfo/:nhiNumber", (req, res) => {
+
+
+// Update an existing patient's personal details.
+router.put("/updateinfo/:nhiNumber", async (req, res) => {
     const { nhiNumber } = req.params;
     const normalizedNhi = normalizeNhiNumber(nhiNumber).toUpperCase();
 
@@ -119,9 +100,10 @@ router.put("/updateinfo/:nhiNumber", (req, res) => {
     console.log(req.body);
 
     // Check if patient exists
-    if (!patients[normalizedNhi]) {
-        console.log(`Patient with NHI ${normalizedNhi} not found.`);
-        return res.status(404).json({ error: "Patient not found." });
+    const patient = await DbPatient.findOne({where: {nhiNumber: normalizedNhi}, include: sql.models.Treatment});
+    if (!patient) {
+        console.log(`DbPatient with NHI ${normalizedNhi} not found.`);
+        return res.status(404).json({ error: "DbPatient not found." });
     }
 
     // Extract updated data from request body
@@ -138,37 +120,71 @@ router.put("/updateinfo/:nhiNumber", (req, res) => {
     }
 
     // Update patient data
-    patients[normalizedNhi] = {
-        ...patients[normalizedNhi],
-        name,
-        dateOfBirth,
-        address,
-        phone,
-    };
+    patient.name = name;
+    patient.dateOfBirth = dateOfBirth;
+    patient.address = address;
+    patient.phone = phone;
 
-    console.log(`Patient ${normalizedNhi} updated:`, patients[normalizedNhi]);
+    try{
+        const updatedPatient = await patient.save();
+        return res.status(200).json(updatedPatient);
+    }
+    catch (ex) {
+        console.log(ex.error);
+        return res.status(500).json("Could not update patient!");
+    }
+});
 
-    // Write updated patients to 'patients.js'
-    const filePath = path.join(__dirname, "..", "data", "patients.js");
-    const updatedPatients = `const patients = ${JSON.stringify(
-        patients,
-        null,
-        2
-    )};\n\nmodule.exports = patients;`;
 
-    fs.writeFile(filePath, updatedPatients, "utf8", (err) => {
-        if (err) {
-            console.error("Error writing to file:", err);
-            return res
-                .status(500)
-                .json({ error: "Could not update patient information" });
-        }
-        res.status(200).json({
-            message: "Patient information updated successfully!",
-            patient: patients[normalizedNhi],
-        });
-        console.log("success");
+/**
+ * Adds a new treatment for a patient.
+ * Associates notes and surfaces.
+ * 
+ * @author Skye Pooley
+ */
+router.post("/add-treatment", async (req, res) => {
+    const {patient, treatment} = req.body;
+
+    const db_patient = await DbPatient.findOne({
+        where: {nhiNumber: patient.nhiNumber}, 
+        include: [sql.models.Treatment, sql.models.Note]
     });
+    if (!patient) { return res.status(400).json({success: false, message: "Could not find associated patient."}) }
+
+    try {
+        const db_treatment = await sql.models.Treatment.create({
+            procedure: treatment.procedure, 
+            tooth: treatment.tooth,
+            datePlanned: treatment.plannedDate
+        });
+        
+        treatment.surfaces.forEach(async (surface) => {
+            const db_surface = await sql.models.ToothSurface.findOne({where: {name: surface}});
+            if (db_surface) {
+                db_treatment.addToothSurface(db_surface);
+            } else {
+                console.log("Error: Could not find tooth surface " + surface);
+            }
+        });
+        await db_patient.addTreatment(db_treatment);
+
+        treatment.notes.forEach(async (note) => {
+            if (note == '') {return;}
+            const db_note = await sql.models.Note.create({
+                body: note,
+                author: "dentist",
+            });
+            await db_treatment.addNote(db_note);
+            await db_patient.addNote(db_note);
+        });
+
+        console.log("Successfully added treatment: " + JSON.stringify(db_treatment));
+        return res.status(201).json({success: true, message: "Treatment saved to database", patient: db_patient, treatment: db_treatment})  
+    }
+    catch(ex) {
+        return res.status(500).json({message: "unable to save new treatment", error: ex});
+    }
+    
 });
 
 module.exports = router;

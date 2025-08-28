@@ -22,7 +22,7 @@ export default function ToothCanvas({selectedTooth}) {
 
 
     return (
-        <div style={{ height: '250px', width: '100%' }}>
+        <div style={{ height: '30vh', width: '100%' }}>
             <Suspense fallback={<h3>Loading Tooth 3D model...</h3>}>
                 <Canvas style={{ height: '100%', width: '100%' }}>
                     <ambientLight intensity={1.5} />

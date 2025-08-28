@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';  // <-- Import this to get additional matchers
-import AdminView from '../Components/AdminView/AdminView.jsx';
+import AdminView from '../Components/Dashboard/AdminView/AdminView.jsx';
 import { getPatientById, updatePatient } from '../api.jsx';
 
 // Mock the API calls

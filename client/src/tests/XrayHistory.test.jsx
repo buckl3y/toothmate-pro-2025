@@ -1,6 +1,6 @@
 
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
-import XrayHistory from '../Components/XrayHistory/XrayHistory';
+import XrayHistory from '../Components/Dashboard/DentistView/XrayHistory/XrayHistory';
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { uploadXray, deleteXray, checkXrayFilename } from '../api';

@@ -5,7 +5,7 @@ WORKDIR /app
 COPY ./server/package*.json ./
 
 RUN npm install
-
+COPY ./server/node_modules ./node_modules
 COPY ./server ./
 
 EXPOSE 5005

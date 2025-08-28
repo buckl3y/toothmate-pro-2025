@@ -6,12 +6,28 @@ const path = require('path');
 const dotenv = require('dotenv');
 dotenv.config();
 
+// Import and run straight away to get connection to db.
+const sql = require("./utils/getConnection.js")(); 
+async function connectToDatabase() {
+    try {
+        await sql.authenticate();
+        console.log('Connection to database has been established successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+        throw error; // bubble up the error to exit if we cant find the database.
+    }
+}
+connectToDatabase(); // Await doesn't work at top level.
 
+require("./utils/databaseInit.js")(sql); // Set up models.
+
+// This is what does all the http api stuff.
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Allow connections from the client or localhost. All others blocked.
 app.use(cors({
   origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
   credentials: true

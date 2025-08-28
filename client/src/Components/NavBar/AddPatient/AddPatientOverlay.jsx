@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import templates from '../../data/templates';
 
 const AddPatientOverlay = ({ isVisible, onClose, onSaveSuccess,onSelectPatient }) => {
     const [patientName, setPatientName] = useState('');
@@ -12,9 +10,9 @@ const AddPatientOverlay = ({ isVisible, onClose, onSaveSuccess,onSelectPatient }
     const [phone, setPhone] = useState('');
     const [statusMessage, setStatusMessage] = useState('');
     const [statusColor, setStatusColor] = useState('');
-    const [view, setView] = useState('mixed'); // Default to 'mixed'
+    const [view, setView] = useState('adult'); // Default to 'mixed'
 
-    const handleChange = (event) => {
+    const handleViewChange = (event) => {
         setView(event.target.value);
     };
 
@@ -23,15 +21,16 @@ const AddPatientOverlay = ({ isVisible, onClose, onSaveSuccess,onSelectPatient }
     }
 
     const handleSavePatient = async () => {
-        const selectedTeethLayout = templates[`${view}View`] || templates['mixedView'];
         try {
-          const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/save-patient`, {
+          const response = await axios.post(
+            `${import.meta.env.VITE_SERVER_URL}/api/save-patient`, 
+            {
             patientName,
             nhiNumber,
             dateOfBirth,
             address,
             phone,
-            teethLayout: selectedTeethLayout,
+            teethLayout: view,
           });
     
           console.log('Patient saved:', response.data);
@@ -206,7 +205,7 @@ const AddPatientOverlay = ({ isVisible, onClose, onSaveSuccess,onSelectPatient }
                         name="view"
                         value="adult"
                         checked={view === 'adult'}
-                        onChange={handleChange}
+                        onChange={handleViewChange}
                     />
                     <label htmlFor="adult-view">Adult View</label>
 
@@ -216,19 +215,9 @@ const AddPatientOverlay = ({ isVisible, onClose, onSaveSuccess,onSelectPatient }
                         name="view"
                         value="deciduous"
                         checked={view === 'deciduous'}
-                        onChange={handleChange}
+                        onChange={handleViewChange}
                     />
                     <label htmlFor="deciduous-view">Deciduous View</label>
-
-                    <input
-                        type="radio"
-                        id="mixed-view"
-                        name="view"
-                        value="mixed"
-                        checked={view === 'mixed'}
-                        onChange={handleChange}
-                    />
-                    <label htmlFor="mixed-view">Mixed View</label>
                 </div>
                 
                 <div className="flex justify-end space-x-4">

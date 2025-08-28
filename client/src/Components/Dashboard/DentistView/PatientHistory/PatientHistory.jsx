@@ -1,7 +1,7 @@
 // PatientHistory.jsx
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { updatePatient } from '../../api';
+import { updatePatient } from '../../../../api';
 import AddEntryModal from './_components/AddEntryModal';
 
 const PatientHistory = ({ patient, onSelectNote, onPatientUpdate, currentTeethLayout }) => {
@@ -9,9 +9,9 @@ const PatientHistory = ({ patient, onSelectNote, onPatientUpdate, currentTeethLa
   const [isAddEntryModalOpen, setIsAddEntryModalOpen] = useState(false);
   const [newEntryProcedure, setNewEntryProcedure] = useState('');
 
-  const handleEntryClick = (index, notes, date, teethLayout) => {
+  const handleEntryClick = (index, notes, date) => {
     setSelectedEntryIndex(index);
-    onSelectNote(notes, date, teethLayout);
+    onSelectNote(notes, date, []);
   };
 
   const handleAddEntry = () => {
@@ -35,7 +35,7 @@ const PatientHistory = ({ patient, onSelectNote, onPatientUpdate, currentTeethLa
 
     const updatedPatient = {
       ...patient,
-      patientHistory: [newEntry, ...patient.patientHistory],
+      patientHistory: [newEntry, ...patient.Treatments],
     };
 
     try {
@@ -59,7 +59,7 @@ const PatientHistory = ({ patient, onSelectNote, onPatientUpdate, currentTeethLa
       return;
     }
 
-    const updatedPatientHistory = [...patient.patientHistory];
+    const updatedPatientHistory = [...patient.Treatments];
     updatedPatientHistory.splice(selectedEntryIndex, 1);
 
     const updatedPatient = {
@@ -91,11 +91,11 @@ const PatientHistory = ({ patient, onSelectNote, onPatientUpdate, currentTeethLa
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold mb-4">Patient History</h2>
       </div>
-      {patient.patientHistory.length === 0 ? (
+      {(!patient.Treatments || patient.Treatments.length === 0) ? (
         <p className="text-gray-500">No history available for this patient.</p>
       ) : (
         <ul className="mt-4 overflow-y-auto max-h-64 flex-grow">
-          {patient.patientHistory.map((entry, index) => (
+          {patient.Treatments.map((entry, index) => (
             <li
               key={index}
               className={`flex justify-between border-b border-black py-1 cursor-pointer ${
@@ -106,7 +106,6 @@ const PatientHistory = ({ patient, onSelectNote, onPatientUpdate, currentTeethLa
                   index,
                   entry.notes,
                   entry.date,
-                  entry.teethLayout
                 )
               }
               style={{
@@ -149,21 +148,14 @@ const PatientHistory = ({ patient, onSelectNote, onPatientUpdate, currentTeethLa
 PatientHistory.propTypes = {
   patient: PropTypes.shape({
     nhiNumber: PropTypes.string.isRequired,
-    patientHistory: PropTypes.arrayOf(
+    Treatments: PropTypes.arrayOf(
       PropTypes.shape({
         date: PropTypes.string.isRequired,
         procedure: PropTypes.string,
         notes: PropTypes.string,
-        teethLayout: PropTypes.array.isRequired,
-        toothTreatments: PropTypes.object.isRequired, 
+        tooth: PropTypes.string 
       })
-    ).isRequired,
-    caution: PropTypes.shape({
-      allergies: PropTypes.arrayOf(PropTypes.string),
-      medicalConditions: PropTypes.arrayOf(PropTypes.string),
-      medication: PropTypes.arrayOf(PropTypes.string),
-      patientPreferences: PropTypes.arrayOf(PropTypes.string),
-    }),
+    ).isRequired
   }).isRequired,
   onSelectNote: PropTypes.func.isRequired,
   onPatientUpdate: PropTypes.func.isRequired,

@@ -6,34 +6,33 @@
     @author Skye Pooley
 */
 
-import { useRef } from "react";
-import { MeshStandardMaterial, DoubleSide } from "three";
+import { MeshPhysicalMaterial, DoubleSide } from "three";
 
-export const blueMaterial = new MeshStandardMaterial({
+export const blueMaterial = new MeshPhysicalMaterial({
     color: 'blue',
     side: DoubleSide,
     metalness: 0.0,    // Higher metalness for more reflection
     roughness: 0.2,    // Lower roughness for shinier surface
 });
-export const fillingMaterial = new MeshStandardMaterial({
+export const fillingMaterial = new MeshPhysicalMaterial({
     color: '#C00A0A',
     side: DoubleSide,
     metalness: 0.0,
     roughness: 0.2,
 });
-export const crownMaterial = new MeshStandardMaterial({
+export const crownMaterial = new MeshPhysicalMaterial({
     color: '#FF5100',
     side: DoubleSide,
     metalness: 0.0,
     roughness: 0.2,
 });
-export const rootCanalMaterial = new MeshStandardMaterial({
+export const rootCanalMaterial = new MeshPhysicalMaterial({
     color: '#0080FF',
     side: DoubleSide,
     metalness: 0.0,
     roughness: 0.2,
 });
-export const extractionMaterial = new MeshStandardMaterial({
+export const extractionMaterial = new MeshPhysicalMaterial({
     color: '#EECCFF',
     side: DoubleSide,
     metalness: 0.6,
@@ -41,19 +40,19 @@ export const extractionMaterial = new MeshStandardMaterial({
     transparent: true,
     opacity: 0.3
 });
-export const implantMaterial = new MeshStandardMaterial({
+export const implantMaterial = new MeshPhysicalMaterial({
     color: '#007610',
     side: DoubleSide,
     metalness: 0.0,
     roughness: 0.2,
 });
-export const veneerMaterial = new MeshStandardMaterial({
+export const veneerMaterial = new MeshPhysicalMaterial({
     color: '#7B00FF',
     side: DoubleSide,
     metalness: 0.0,
     roughness: 0.2,
 });
-export const sealantMaterial = new MeshStandardMaterial({
+export const sealantMaterial = new MeshPhysicalMaterial({
     color: '#FF0099',
     side: DoubleSide,
     metalness: 0.0,

@@ -1,8 +1,7 @@
 // AdminAddPatientOverlay.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import templates from '../../data/templates';
 
 const AdminAddPatientOverlay = ({ isVisible, onClose, onSaveSuccess }) => {
   const [patientName, setPatientName] = useState('');
@@ -52,7 +51,6 @@ const AdminAddPatientOverlay = ({ isVisible, onClose, onSaveSuccess }) => {
   };
 
   const handleSavePatient = async () => {
-    const selectedTeethLayout = templates[`${view}View`] || templates['mixedView'];
     try {
       const response = await axios.post(`${serverUrl}/api/save-patient`, {
         patientName,
@@ -62,7 +60,7 @@ const AdminAddPatientOverlay = ({ isVisible, onClose, onSaveSuccess }) => {
         phone,
         notes,     
         caution,  
-        teethLayout: selectedTeethLayout,
+        teethLayout: view,
       });
 
       console.log('Patient saved:', response.data);

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import AdminSearch from './_components/AdminSearch';
 import PatientDetails from './_components/PatientDetails';
-import { getPatientById, updatePatient } from '../../api';
+import { getPatientById, updatePatient } from '../../../api';
 
 const AdminView = () => {
   const [nhiSearchTerm, setNhiSearchTerm] = useState('');
