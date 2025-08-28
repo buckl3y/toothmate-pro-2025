@@ -17,9 +17,9 @@ export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces 
     const isSelected = (surface) => selectedSurfaces.includes(surface);
 
     return (
-        <>
-        <h4 className="text-center pt-2 mb-0">Select Tooth Surfaces</h4>
-            <div className="h-full flex justify-center items-center">
+        <div className="h-full">
+            <h4 className="text-center pt-2 mb-0">Select Tooth Surfaces</h4>
+            <div className="flex justify-center items-center" style={{height: '80%'}}>
                 <div className="grid grid-cols-5 grid-rows-5 gap-2 place-items-center w-full h-full p-2">
                     {Array.from({ length: 25 }, (_, index) => {
                         const row = Math.floor(index / 5);
@@ -59,7 +59,7 @@ export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces 
                     })}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

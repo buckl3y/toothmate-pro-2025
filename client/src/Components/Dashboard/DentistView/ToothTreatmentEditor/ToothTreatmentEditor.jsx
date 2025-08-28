@@ -54,90 +54,99 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
     };
 
     return (
-        <div className="h-full w-full p-4 flex flex-col">
-            {selectedTooth ? (
-                <h3 className="text-center">{selectedPatient.name} Tooth {selectedTooth} Treatments</h3>
-            ) : (
-                <h3 className="text-center">Treatments for {selectedPatient.name}</h3>
-            )}
+        <table className="w-full p-4 ">
+            <th style={{height: '10%'}}>
+                {selectedTooth ? (
+                    <h3 className="text-center mt-3">{selectedPatient.name} Tooth {selectedTooth} Treatments</h3>
+                ) : (
+                    <h3 className="text-center mt-3">Treatments for {selectedPatient.name}</h3>
+                )}
+            </th>
             
-            {relevantTreatments.length > 0 ? (
-            <>
-                <div className="flex items-center justify-center w-full">
-                    <hr className="aside"/>
-                    <h5 className="ml-5 mr-5 text-center">Upcoming</h5>
-                    <hr className="aside"/>
-                </div>
 
-                <div>
+            <tr style={{height: '70%'}}>
+                <td colSpan="100%">
+                    {relevantTreatments.length > 0 ? (
+                    <div style={{ height: "530px", overflow: 'scroll' }}>
+                        <div className="flex items-center justify-center w-full">
+                            <hr className="aside"/>
+                            <h5 className="ml-5 mr-5 text-center">Upcoming</h5>
+                            <hr className="aside"/>
+                        </div>
 
-                    {relevantTreatments.map(treatment => <Treatment key={treatment.id} treatment={treatment} />)}
+                        <div>
+                            {relevantTreatments.map(treatment => <Treatment key={treatment.id} treatment={treatment} />)}
 
-                    <div className="flex items-center justify-center w-full">
-                        <hr className="aside"/>
-                        <h5 className="ml-5 mr-5 text-center">Completed</h5>
-                        <hr className="aside"/>
+                            <div className="flex items-center justify-center w-full">
+                                <hr className="aside"/>
+                                <h5 className="ml-5 mr-5 text-center">Completed</h5>
+                                <hr className="aside"/>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </>
-            ) : (
-                <p className="text-center">No Treatments On Record</p>
-            )}
+                    ) : (
+                        <p className="text-center">No Treatments On Record</p>
+                    )}
+                </td>
+            </tr>
+
+            
             
             
             {/* Treatment Editor */}
+            <tr style={{height:'20%', verticalAlign: 'bottom', width: '100%'}}>
             {selectedTooth &&
-            <div className="subpanel" style={{ marginTop: "auto" }}>
-                <h4 className="text-center">Add a New Treatment</h4>
-                <div className="flex justify-between m-3">
-                    
-                    <div className="flex flex-col w-full mr-3">
-                        <div className="flex justify-between">
-                            <select 
-                            value={treatmentType} 
-                            onChange={e => setTreatmentType(e.target.value)}
-                            className="border border-gray-300 rounded-md p-1"
-                            >
-                                <option value={'filling'}>Filling</option>
-                                <option value={'crown'}>Crown</option>
-                                <option value={'root canal'}>Root Canal</option>
-                                <option value={'extraction'}>Extraction</option>
-                                <option value={'implant'}>Implant</option>
-                                <option value={'veneer'}>Veneer</option>
-                                <option value={'sealant'}>Sealant</option>
-                            </select>
+                <div className="subpanel h-full">
+                    <h4 className="text-center">Add a New Treatment</h4>
+                    <div className="flex justify-between m-3">
+                        <div className="flex flex-col w-full mr-3">
+                            <div className="flex justify-between">
+                                <select 
+                                value={treatmentType} 
+                                onChange={e => setTreatmentType(e.target.value)}
+                                className="border border-gray-300 rounded-md p-1"
+                                >
+                                    <option value={'filling'}>Filling</option>
+                                    <option value={'crown'}>Crown</option>
+                                    <option value={'root canal'}>Root Canal</option>
+                                    <option value={'extraction'}>Extraction</option>
+                                    <option value={'implant'}>Implant</option>
+                                    <option value={'veneer'}>Veneer</option>
+                                    <option value={'sealant'}>Sealant</option>
+                                </select>
 
-                            <div className="">
-                                {selectedSurfaces.length > 0 ? selectedSurfaces.join(", ") : "Select a Surface"}
+                                <div className="">
+                                    {selectedSurfaces.length > 0 ? selectedSurfaces.join(", ") : "Select a Surface"}
+                                </div>
+
+                                <div>
+                                    <label htmlFor="treatment-date">Date:</label>
+                                    <input
+                                        type="date"
+                                        id="treatment-date"
+                                        value={treatmentDate.toISOString().split("T")[0]}
+                                        onChange={e => setTreatmentDate(new Date(e.target.value))}
+                                    />
+                                </div>
                             </div>
 
-                            <div>
-                                <label htmlFor="treatment-date">Date:</label>
-                                <input
-                                    type="date"
-                                    id="treatment-date"
-                                    value={treatmentDate.toISOString().split("T")[0]}
-                                    onChange={e => setTreatmentDate(new Date(e.target.value))}
+                            <div className="w-full">
+                                <textarea
+                                    className="border border-gray-300 rounded-md p-1 mt-2 w-full"
+                                    id="treatment-notes"
+                                    placeholder="Notes (optional)"
+                                    value={treatmentNotes}
+                                    onChange={e => setTreatmentNotes(e.target.value)}
                                 />
                             </div>
                         </div>
 
-                        <div className="w-full">
-                            <textarea
-                                className="border border-gray-300 rounded-md p-1 mt-2 w-full"
-                                id="treatment-notes"
-                                placeholder="Notes (optional)"
-                                value={treatmentNotes}
-                                onChange={e => setTreatmentNotes(e.target.value)}
-                            />
-                        </div>
+                        <button className="btn" onClick={handleTreatmentAdd} disabled={selectedSurfaces.length < 1}>Add</button>
                     </div>
-
-                    <button className="btn" onClick={handleTreatmentAdd} disabled={selectedSurfaces.length < 1}>Add</button>
                 </div>
-            </div>
             }
-        </div>
+            </tr>
+        </table>
     );
 };
 ToothTreatmentEditor.propTypes = {

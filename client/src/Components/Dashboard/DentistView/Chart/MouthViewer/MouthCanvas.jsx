@@ -44,7 +44,7 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
             setModelScale(4);
         }else {
             setmodel(model2d);
-            setModelScale(7);
+            setModelScale(8);
         }
     }, [is3d, model3d, model2d])
 

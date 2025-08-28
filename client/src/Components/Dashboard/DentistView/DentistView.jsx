@@ -45,7 +45,7 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
                         </div>
                     )}
                     
-                    <div className="col-span-2 row-span-4 bg-white rounded-md">
+                    <div className="h-full col-span-2 row-span-4 bg-white rounded-md">
 
                         <div className="col-span-2 row-span-4 bg-white rounded-md h-full">
                             <ToothTreatmentEditor

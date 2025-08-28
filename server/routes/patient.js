@@ -169,6 +169,7 @@ router.post("/add-treatment", async (req, res) => {
         await db_patient.addTreatment(db_treatment);
 
         treatment.notes.forEach(async (note) => {
+            if (note == '') {return;}
             const db_note = await sql.models.Note.create({
                 body: note,
                 author: "dentist",

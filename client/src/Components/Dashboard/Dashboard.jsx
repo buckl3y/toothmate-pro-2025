@@ -25,13 +25,16 @@ const Dashboard = () => {
         setSelectedPatient(patient);
     }
 
-    const handlePatientUpdate = (_newPatient) => {
+    const handlePatientUpdate = () => {
         console.log("Patient information component has updated patient details. Updating patient in dashboard.");
         refreshPatientData();
     }
 
     return (
-        <div className="dashboard-container mx-auto p-5 h-full w-full box-border flex flex-col gap-4">
+        <div
+            className="dashboard-container mx-auto p-5 w-full box-border flex flex-col gap-4"
+            style={{ maxHeight: '100vh', overflowY: 'hidden', height: '98vh' }}
+        >
             <NavBar
                 selectedPatient={selectedPatient}
                 onSelectPatient={(key, patient) => {
@@ -44,7 +47,7 @@ const Dashboard = () => {
             {selectedPatient && (
                 <PatientInformation patient={selectedPatient} onUpdate={handlePatientUpdate} />
             )}
-            <div className='h-full'>
+            <div>
                 {isAdminView ? (
                     <AdminView />
                 ) : (
@@ -54,7 +57,6 @@ const Dashboard = () => {
                     />
                 )}
             </div>
-            
         </div>
     );
 };
