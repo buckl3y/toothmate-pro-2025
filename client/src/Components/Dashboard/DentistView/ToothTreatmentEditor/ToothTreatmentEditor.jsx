@@ -57,9 +57,9 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
         <table className="w-full p-4 ">
             <th style={{height: '10%'}}>
                 {selectedTooth ? (
-                    <h3 className="text-center mt-3">{selectedPatient.name} Tooth {selectedTooth} Treatments</h3>
+                    <h4 className="text-center mt-3">{selectedPatient.name} Tooth {selectedTooth} Treatments</h4>
                 ) : (
-                    <h3 className="text-center mt-3">Treatments for {selectedPatient.name}</h3>
+                    <h4 className="text-center mt-3">Treatments for {selectedPatient.name}</h4>
                 )}
             </th>
             

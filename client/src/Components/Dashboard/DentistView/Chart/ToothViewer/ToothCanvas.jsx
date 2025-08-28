@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'; // Import PropTypes
 import { useGLTF } from '@react-three/drei';
-import { useEffect, useRef } from 'react'; // Import hooks
+import { useEffect } from 'react'; // Import hooks
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Suspense } from 'react';

@@ -37,9 +37,9 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
                     {selectedTooth && (
                         <div className="col-span-1 row-span-2 bg-white rounded-md">
                         
-                            <h3 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
-                                Selected Tooth: {selectedTooth}
-                            </h3>
+                            <h4 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
+                                Tooth {selectedTooth.substring(2,5)}
+                            </h4>
                             <ToothCanvas selectedTooth={selectedTooth} />
 
                         </div>
