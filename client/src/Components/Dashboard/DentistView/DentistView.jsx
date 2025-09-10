@@ -89,5 +89,5 @@ DentistView.propTypes = {
           })
         ).isRequired
       }).isRequired,
-      refreshPatientData: PropTypes.func.isRequired,
+    refreshPatientData: PropTypes.func.isRequired,
 }

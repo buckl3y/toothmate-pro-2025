@@ -32,7 +32,7 @@ const Dashboard = () => {
 
     return (
         <div
-            className="dashboard-container mx-auto p-5 w-full box-border flex flex-col gap-4"
+            className="dashboard-container mx-auto p-3 w-full box-border flex flex-col gap-4"
             style={{ maxHeight: '100vh', overflowY: 'hidden', height: '98vh' }}
         >
             <NavBar

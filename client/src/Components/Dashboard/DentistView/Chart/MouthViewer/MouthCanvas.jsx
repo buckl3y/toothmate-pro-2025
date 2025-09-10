@@ -19,6 +19,7 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
     const { scene: model3d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/mouth.glb');
     const { scene: model2d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/flat-mouth.glb');
     const [modelScale, setModelScale] = useState(4);
+    const [modelPosition, setModelPosition] = useState([0,2,-1]);
     const [model, setmodel] = useState(model3d);
     const originalMaterials = useRef({});
     const [visibleTreatments, setVisibleTreatments] = useState([]);
@@ -41,10 +42,12 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
         console.log("Switching mouth views");
         if (is3d) {
             setmodel(model3d);
-            setModelScale(4);
+            setModelScale(8);
+            setModelPosition([0,-1.75,-1])
         }else {
             setmodel(model2d);
-            setModelScale(8);
+            setModelScale(20);
+            setModelPosition([0,-0.2,0]);
         }
     }, [is3d, model3d, model2d])
 
@@ -195,7 +198,12 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
     return (
         <>
             {model && 
-                <primitive object={model} scale={modelScale} onPointerDown={handleModelPointerDown} />
+                <primitive 
+                object={model} 
+                scale={modelScale} 
+                onPointerDown={handleModelPointerDown}
+                position={modelPosition}
+                />
             }
         </>
         
