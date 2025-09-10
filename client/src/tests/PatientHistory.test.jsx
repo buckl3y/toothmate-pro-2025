@@ -1,6 +1,6 @@
 // src/tests/PatientHistory.test.jsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import PatientHistory from '../Components/PatientHistory/PatientHistory';
+import PatientHistory from '../Components/Dashboard/DentistView/PatientHistory/PatientHistory';
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { updatePatient } from '../api';

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'; // Import PropTypes
 import { useGLTF } from '@react-three/drei';
 import { useEffect, useRef } from 'react'; // Import hooks
 
-import { TreatmentType } from '../../../api/MouthApi';
+import { TreatmentType } from '../../../../../api/MouthApi';
 import { 
     blueMaterial, 
     fillingMaterial, 
@@ -15,16 +15,17 @@ import {
 } from './ToothMaterials';
 import { useState } from 'react';
 
-// Host and modify the mouth 3D model
-export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3d }) { 
-    // Unpack only the GLTF from useGLTF
+export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treatmentVisibility, is3d }) { 
     const { scene: model3d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/mouth.glb');
     const { scene: model2d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/flat-mouth.glb');
     const [modelScale, setModelScale] = useState(4);
+    const [modelPosition, setModelPosition] = useState([0,2,-1]);
     const [model, setmodel] = useState(model3d);
-
     const originalMaterials = useRef({});
+    const [visibleTreatments, setVisibleTreatments] = useState([]);
 
+    // Effect to switch between 3D and grid chart views
+    // @author Skye Pooley
     useEffect(() => {
         if (!model3d) { 
             console.log(
@@ -41,15 +42,18 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3
         console.log("Switching mouth views");
         if (is3d) {
             setmodel(model3d);
-            setModelScale(4);
+            setModelScale(8);
+            setModelPosition([0,-1.75,-1])
         }else {
             setmodel(model2d);
-            setModelScale(7);
+            setModelScale(20);
+            setModelPosition([0,-0.2,0]);
         }
     }, [is3d, model3d, model2d])
 
     // Effect to store original materials on mount and restore on unmount
     // Allows tooth colour to be returned to original after edits.
+    // @author Jim Buchan
     useEffect(() => {
         if (!model) return;
         console.log("Saving original materials...");
@@ -81,11 +85,34 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3
         };
     }, [model]); // Run when the model loads.
 
-    // Effect to change color based on treatment and condition data
+    // Update an array to contain only the treatments that we want to be visible on-screen.
+    // @author Skye Pooley
+    useEffect(() => {
+        if (!treatmentVisibility.all) {
+            setVisibleTreatments([]);
+            return;
+        }
+        let tempTreatments = patient.Treatments;
+
+        // if it's stupid and it works... (sorry)
+        // We need to use filters so that filtering out a newer treatment on a tooth will show the older one.
+        if (!treatmentVisibility.filling) { tempTreatments = tempTreatments.filter(treatment => treatment.procedure !== 'filling') }
+        if (!treatmentVisibility.crown) { tempTreatments = tempTreatments.filter(treatment => treatment.procedure !== 'crown') }
+        if (!treatmentVisibility.rootCanal) { tempTreatments = tempTreatments.filter(treatment => treatment.procedure !== 'root canal') }
+        if (!treatmentVisibility.extraction) { tempTreatments = tempTreatments.filter(treatment => treatment.procedure !== 'extraction') }
+        if (!treatmentVisibility.implant) { tempTreatments = tempTreatments.filter(treatment => treatment.procedure !== 'implant') }
+        if (!treatmentVisibility.veneer) { tempTreatments = tempTreatments.filter(treatment => treatment.procedure !== 'veneer') }
+        if (!treatmentVisibility.sealant) { tempTreatments = tempTreatments.filter(treatment => treatment.procedure !== 'sealant') }
+
+        setVisibleTreatments(tempTreatments);
+    }, [patient, treatmentVisibility])
+
+    // Effect to change color based on treatment and condition data whenever patient data or mouth changes.
+    // @author Skye Pooley
     useEffect(() => {
         if (!model) return;
-        console.log("Setting tooth colours");
 
+        // Check the teeth one-by-one
         model.traverse((tooth) => {
             if (!tooth.isMesh) return;
 
@@ -93,8 +120,10 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3
             const originalMat = originalMaterials.current[tooth.uuid];
             if (!originalMat) return; // Don't proceed if originalMat is missing
 
+            // Mesh name might have some extra characters after the tooth name (t_xx)
             const toothName = tooth.name.substring(0, 4);
 
+            // Prioritise showing selection over showing treatments.
             if (selectedTooth && selectedTooth == toothName) {
                 if (blueMaterial && tooth.material !== blueMaterial) {
                     tooth.material = blueMaterial;
@@ -106,16 +135,11 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3
                 }
             }
 
-            // Do we have any data on treatments and conditions?
-            if (!(toothName in mouthData)) {
-                return;
-            }
-
             // Colour based on treatments.
-            let toothData = mouthData[toothName];
-            if (toothData.treatments.length > 0) {
-                let latestTreatment = toothData.treatments[0];
-                switch (latestTreatment.type) {
+            let toothData = visibleTreatments.filter(treatment => treatment.tooth === toothName);
+            if (toothData.length > 0) {
+                let latestTreatment = toothData[toothData.length-1];
+                switch (latestTreatment.procedure) {
                     case TreatmentType.FILLING:
                         if (fillingMaterial) tooth.material = fillingMaterial;
                         break;
@@ -150,7 +174,7 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3
             }
         });
         // Run whenever these objects are updated.
-    }, [model, mouthData, selectedTooth]);
+    }, [model, visibleTreatments, selectedTooth, treatmentVisibility]);
 
     // Handle pointer down events on the model
     // Does tooth selection
@@ -174,7 +198,12 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3
     return (
         <>
             {model && 
-                <primitive object={model} scale={modelScale} onPointerDown={handleModelPointerDown} />
+                <primitive 
+                object={model} 
+                scale={modelScale} 
+                onPointerDown={handleModelPointerDown}
+                position={modelPosition}
+                />
             }
         </>
         
@@ -185,6 +214,16 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, mouthData, is3
 MouthCanvas.propTypes = {
     selectedTooth: PropTypes.string,
     onMeshClick: PropTypes.func.isRequired, 
-    mouthData: PropTypes.object.isRequired, 
+    patient: PropTypes.object.isRequired, 
+    treatmentVisibility: PropTypes.shape({
+        all: PropTypes.bool,
+        filling: PropTypes.bool,
+        crown:PropTypes.bool,
+        rootCanal: PropTypes.bool,
+        extraction: PropTypes.bool,
+        implant: PropTypes.bool,
+        veneer: PropTypes.bool,
+        sealant: PropTypes.bool
+    }),
     is3d: PropTypes.bool.isRequired
 };
