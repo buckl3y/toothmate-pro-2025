@@ -43,11 +43,11 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
         if (is3d) {
             setmodel(model3d);
             setModelScale(8);
-            setModelPosition([0,-1.75,-1])
+            setModelPosition([0,-1.75,-1]);
         }else {
             setmodel(model2d);
-            setModelScale(20);
-            setModelPosition([0,-0.2,0]);
+            setModelScale(75);
+            setModelPosition([0,-2,-15]);
         }
     }, [is3d, model3d, model2d])
 

@@ -73,8 +73,19 @@ export default function MouthManager({patient, onToothSelected}) {
     return (
         <div style={{ position: 'relative', height: '785px', width: '100%' }}>
             <div style={{height: '50%'}}>
-                {/* Canvas for 3D Model */}
-                <Canvas style={{ height: '100%', width: '100%' }}>
+                <Canvas 
+                    key={is3DView ? '3d' : 'ortho'} // Force remount on view change
+                    style={{ height: '100%', width: '100%' }}
+                    orthographic={!is3DView}
+                    camera={
+                        // Orthographic view switching requires changes to camera position.
+                        is3DView ? {
+                            fov: 75
+                        } : {
+                            zoom: 13
+                        }
+                    }
+                >
                     <ambientLight intensity={1.5} />
                     <directionalLight position={[0, 10, 10]} intensity={2.0} />
                     <Suspense fallback={loadingPlaceholder}>
@@ -104,7 +115,6 @@ export default function MouthManager({patient, onToothSelected}) {
 
             <div style={{height: '50%'}}>
                 {showOptions ? (
-                    
                     <ChartOptions 
                         treatmentVisibility={treatmentVisibility}
                         setTreatmentVisibility={setTreatmentVisibility}
@@ -119,7 +129,6 @@ export default function MouthManager({patient, onToothSelected}) {
                         <p className='text-center' onClick={toggleOptions}> ~  Display Options  ~ </p>
                     </div>
                 )}
-                
             </div>
         </div>
     );
