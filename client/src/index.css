@@ -150,12 +150,12 @@ div.subsubpanel {
     cursor: pointer;
     background-color: #4299e1;
     border-radius: 4px;
-    padding: 4px 10px;
+    padding: 3px 10px;
     margin: 4px;
     font-size: 14px;
     font-weight: 600;
     color: white;
-    line-height: 26px;
+    line-height: 24px;
 }
 
 .btn:disabled {
