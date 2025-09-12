@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'; // Import PropTypes
-import { useGLTF } from '@react-three/drei';
-import { useEffect, useRef } from 'react'; // Import hooks
+import { useGLTF, OrbitControls } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { useEffect, useRef, Suspense, useState } from 'react'; // Import hooks
 
 import { TreatmentType } from '../../../../../api/MouthApi';
 import { 
@@ -13,9 +14,12 @@ import {
     veneerMaterial,
     sealantMaterial
 } from './ToothMaterials';
-import { useState } from 'react';
 
-export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treatmentVisibility, is3d }) { 
+/**
+ * Private component used to render the mouth 3d models
+ *  
+ */
+function ModelManager({ selectedTooth, onMeshClick, patient, treatmentVisibility, is3d }) { 
     const { scene: model3d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/mouth.glb');
     const { scene: model2d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/flat-mouth.glb');
     const [modelScale, setModelScale] = useState(4);
@@ -27,6 +31,7 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
     // Effect to switch between 3D and grid chart views
     // @author Skye Pooley
     useEffect(() => {
+
         if (!model3d) { 
             console.log(
                 "model 3d missing."
@@ -43,7 +48,7 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
         if (is3d) {
             setmodel(model3d);
             setModelScale(8);
-            setModelPosition([0,-1.75,-1]);
+            setModelPosition([0,-1.5,-1]);
         }else {
             setmodel(model2d);
             setModelScale(75);
@@ -210,8 +215,90 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
     )
 }
 
+// Linter throws a fuss if we don't have this but it doesn't seem to be used.. mysteries never cease.
+function loadingPlaceholder() {
+    return (
+        <>
+            <h3>Loading Patient Chart...</h3>
+        </>
+    )
+}
 
-MouthCanvas.propTypes = {
+export default function MouthViewer({
+    patient, 
+    onToothSelected,
+    is3DView,
+    treatmentVisibility,
+    selectedTooth, setSelectedTooth
+}) {
+    
+    const controlsRef = useRef(); // Allows programatic control of camera.
+
+    // Select / Deselect teeth when clicked.
+    const handleMeshClick = (meshName) => {
+        if (selectedTooth == meshName) {
+            setSelectedTooth(null);
+            onToothSelected(null)
+        }
+        else {
+            setSelectedTooth(meshName);
+            onToothSelected(meshName)
+        }
+    }
+
+    useEffect(() => {
+        if (controlsRef.current) {
+            controlsRef.current.reset();
+        }
+        else {
+            console.log("Unable to reset view. OrbitControls reference lost!");
+        }
+    }, [is3DView])
+
+    return (
+        <Canvas 
+            key={is3DView ? '3d' : 'ortho'} // Force remount on view change
+            style={{ height: '90%', width: '100%', background: '#AFA' }}
+            orthographic={!is3DView}
+            camera={
+                // Orthographic view switching requires changes to camera position.
+                is3DView ? {
+                    fov: 75
+                } : {
+                    zoom: 13
+                }
+            }
+        >
+            <ambientLight intensity={1.5} />
+            <directionalLight position={[0, 10, 10]} intensity={2.0} />
+            <Suspense fallback={loadingPlaceholder}>
+                <ModelManager
+                    selectedTooth={selectedTooth}
+                    onMeshClick={handleMeshClick}
+                    patient={patient}
+                    treatmentVisibility={treatmentVisibility}
+                    is3d={is3DView}
+                />
+            </Suspense>
+            <OrbitControls
+                ref={controlsRef}
+                enableZoom={true}
+                maxDistance={5}
+                minDistance={2}
+                enablePan={!is3DView}
+                minAzimuthAngle={-Math.PI / 2}
+                maxAzimuthAngle={Math.PI / 2}
+                minPolarAngle={Math.PI / 2.75}
+                maxPolarAngle={Math.PI / 1.75}
+                dampingFactor={0.2}
+                enableRotate={is3DView}
+            />
+        </Canvas>
+    )
+}
+
+
+ModelManager.propTypes = {
     selectedTooth: PropTypes.string,
     onMeshClick: PropTypes.func.isRequired, 
     patient: PropTypes.object.isRequired, 
