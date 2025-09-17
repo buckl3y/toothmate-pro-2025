@@ -15,10 +15,10 @@ export default function ChartOptions(
             <p className="text-center" onClick={toggleVisibility}> Chart View Options </p>
 
             {/* Flex container creates column layout for options*/}
-            <div style={{display: 'flex'}}>
+            <div style={{display: 'flex', width: '100%'}}>
             
                 {/* Block layout creates vertical layout for each column */}
-                <div style={{display: 'block'}}>
+                <div style={{display: 'block', width: '15%'}}>
                     {is3DView ? (
                         <>
                         <button id="view-change-button" className='btn' onClick={() => handleViewChanged(!is3DView)}>
@@ -42,10 +42,10 @@ export default function ChartOptions(
                     <button id='camera-reset-button' className='btn-secondary' onClick={() => resetView()}>To Front</button>
                 </div>
 
-                <div style={{display: 'block'}}>
+                <div style={{display: 'block', width: '80%', paddingInline: '100px'}}>
                     <h4 className="text-center">Show:</h4>
                     <div style={{display: 'flex'}}>
-                        <div style={{display: 'block'}}>
+                        <div style={{display: 'block', width: '50%'}}>
                                 <label style={{ display: 'flex', alignItems: 'center' }}>
                                     <input 
                                         type="checkbox" 
@@ -129,6 +129,10 @@ export default function ChartOptions(
                                         </label>
                                     </>
                                 )}
+                        </div>
+
+                        <div style={{display: 'block', width: '50%', background: 'lightgrey'}}>
+                                <h5>Conditions...</h5>
                         </div>
                     </div>
                 </div>
