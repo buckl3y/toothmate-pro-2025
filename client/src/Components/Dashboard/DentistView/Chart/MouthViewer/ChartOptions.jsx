@@ -10,12 +10,9 @@ export default function ChartOptions(
     return (
         
         <div style={{
-            width: '100%', height: '100%', 
-            backgroundColor: '#FFF',
-            boxShadow: '0px -5px 5px #DDD',
-            padding: '8px'
+            width: '100%', height: '100%'
         }}>
-            <p className="text-center" onClick={toggleVisibility}> ~  Display Options  ~ </p>
+            <p className="text-center" onClick={toggleVisibility}> Chart View Options </p>
 
             {/* Flex container creates column layout for options*/}
             <div style={{display: 'flex'}}>
@@ -46,7 +43,7 @@ export default function ChartOptions(
                 </div>
 
                 <div style={{display: 'block'}}>
-                    <h4>Show:</h4>
+                    <h4 className="text-center">Show:</h4>
                     <div style={{display: 'flex'}}>
                         <div style={{display: 'block'}}>
                                 <label style={{ display: 'flex', alignItems: 'center' }}>

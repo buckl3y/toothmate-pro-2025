@@ -19,7 +19,7 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
     const { scene: model3d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/mouth.glb');
     const { scene: model2d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/flat-mouth.glb');
     const [modelScale, setModelScale] = useState(4);
-    const [modelPosition, setModelPosition] = useState([0,2,-1]);
+    const [modelPosition, setModelPosition] = useState([0,-1.75,-1]);
     const [model, setmodel] = useState(model3d);
     const originalMaterials = useRef({});
     const [visibleTreatments, setVisibleTreatments] = useState([]);
@@ -43,7 +43,7 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
         if (is3d) {
             setmodel(model3d);
             setModelScale(8);
-            setModelPosition([0,-1.75,-1]);
+            setModelPosition([0,-1.75,0]);
         }else {
             setmodel(model2d);
             setModelScale(75);

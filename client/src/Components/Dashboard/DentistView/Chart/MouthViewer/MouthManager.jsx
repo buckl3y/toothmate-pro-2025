@@ -72,7 +72,7 @@ export default function MouthManager({patient, onToothSelected}) {
 
     return (
         <div style={{ position: 'relative', height: '785px', width: '100%' }}>
-            <div style={{height: '50%'}}>
+            <div style={showOptions ? {height: '60%'} : {height: '95%'}}>
                 <Canvas 
                     key={is3DView ? '3d' : 'ortho'} // Force remount on view change
                     style={{ height: '100%', width: '100%' }}
@@ -80,14 +80,14 @@ export default function MouthManager({patient, onToothSelected}) {
                     camera={
                         // Orthographic view switching requires changes to camera position.
                         is3DView ? {
-                            fov: 75
+                            fov: 80
                         } : {
                             zoom: 13
                         }
                     }
                 >
                     <ambientLight intensity={1.5} />
-                    <directionalLight position={[0, 10, 10]} intensity={2.0} />
+                    <directionalLight position={[0, 10, 10]} intensity={3.0} />
                     <Suspense fallback={loadingPlaceholder}>
                         <MouthCanvas
                             selectedTooth={selectedTooth}
@@ -100,8 +100,8 @@ export default function MouthManager({patient, onToothSelected}) {
                     <OrbitControls
                         ref={controlsRef}
                         enableZoom={true}
-                        maxDistance={5}
-                        minDistance={2}
+                        maxDistance={6}
+                        minDistance={3}
                         enablePan={!is3DView}
                         minAzimuthAngle={-Math.PI / 2}
                         maxAzimuthAngle={Math.PI / 2}
@@ -113,7 +113,10 @@ export default function MouthManager({patient, onToothSelected}) {
                 </Canvas>
             </div>
 
-            <div style={{height: '50%'}}>
+            <div 
+            style={showOptions? {height: '40%'} : {height: '5%'}}
+            className='bottomcard'
+            >
                 {showOptions ? (
                     <ChartOptions 
                         treatmentVisibility={treatmentVisibility}
@@ -125,8 +128,7 @@ export default function MouthManager({patient, onToothSelected}) {
                     />
                 ) : (
                     <div style={{height: '100%'}}>
-                        <p className='text-center' >Show Grid View Here</p>
-                        <p className='text-center' onClick={toggleOptions}> ~  Display Options  ~ </p>
+                        <p className='text-center' onClick={toggleOptions}> Chart View Options </p>
                     </div>
                 )}
             </div>
