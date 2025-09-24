@@ -54,23 +54,21 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
     };
 
     return (
-        <table className="w-full p-4 ">
-            <th style={{height: '10%'}}>
+        <div className="w-full p-2 flex flex-col h-full" style={{ minHeight: "600px" }}>
+            <div style={{ flex: "0 0 auto" }}>
                 {selectedTooth ? (
                     <h4 className="text-center mt-3">{selectedPatient.name} Tooth {selectedTooth} Treatments</h4>
                 ) : (
                     <h4 className="text-center mt-3">Treatments for {selectedPatient.name}</h4>
                 )}
-            </th>
-            
+            </div>
 
-            <tr style={{height: '70%'}}>
-                <td colSpan="100%">
-                    {relevantTreatments.length > 0 ? (
-                    <div style={{ height: "530px", overflow: 'scroll' }}>
+            <div style={{ flex: "1 1 auto", minHeight: 0, overflow: "hidden" }}>
+                {relevantTreatments.length > 0 ? (
+                    <div style={{ height: "100%", maxHeight: "530px", overflow: 'auto' }}>
                         <div className="flex items-center justify-center w-full">
                             <hr className="aside"/>
-                            <h5 className="ml-5 mr-5 text-center">Upcoming</h5>
+                            <h5 className="ml-5 mr-5 text-center">Planned</h5>
                             <hr className="aside"/>
                         </div>
 
@@ -79,32 +77,27 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
 
                             <div className="flex items-center justify-center w-full">
                                 <hr className="aside"/>
-                                <h5 className="ml-5 mr-5 text-center">Completed</h5>
+                                <h5 className="ml-5 mr-5 text-center">Historical</h5>
                                 <hr className="aside"/>
                             </div>
                         </div>
                     </div>
-                    ) : (
-                        <p className="text-center">No Treatments On Record</p>
-                    )}
-                </td>
-            </tr>
+                ) : (
+                    <p className="text-center">No Treatments Recorded</p>
+                )}
+            </div>
 
-            
-            
-            
             {/* Treatment Editor */}
-            <tr style={{height:'20%', verticalAlign: 'bottom', width: '100%'}}>
-            {selectedTooth &&
-                <div className="subpanel h-full">
+            {selectedTooth && (
+                <div className="subpanel w-full" style={{ flex: "0 0 auto", marginTop: "auto" }}>
                     <h4 className="text-center">Add a New Treatment</h4>
                     <div className="flex justify-between m-3">
                         <div className="flex flex-col w-full mr-3">
                             <div className="flex justify-between">
                                 <select 
-                                value={treatmentType} 
-                                onChange={e => setTreatmentType(e.target.value)}
-                                className="border border-gray-300 rounded-md p-1"
+                                    value={treatmentType} 
+                                    onChange={e => setTreatmentType(e.target.value)}
+                                    className="border border-gray-300 rounded-md p-1"
                                 >
                                     <option value={'filling'}>Filling</option>
                                     <option value={'crown'}>Crown</option>
@@ -115,18 +108,26 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                                     <option value={'sealant'}>Sealant</option>
                                 </select>
 
-                                <div className="">
+                                <div>
                                     {selectedSurfaces.length > 0 ? selectedSurfaces.join(", ") : "Select a Surface"}
                                 </div>
 
                                 <div>
-                                    <label htmlFor="treatment-date">Date:</label>
+                                    <label hidden={true} htmlFor="treatment-date">Date:</label>
                                     <input
                                         type="date"
                                         id="treatment-date"
                                         value={treatmentDate.toISOString().split("T")[0]}
                                         onChange={e => setTreatmentDate(new Date(e.target.value))}
+                                        hidden={true}
                                     />
+                                </div>
+
+                                <div>
+                                    <label htmlFor={"radio-historic"} >Historic</label>
+                                    <input type="radio" id={"radio-historic"} value={"historic"}/>
+                                    <input type="radio" id={"radio-planned"} value={"planned"}/>
+                                    <label htmlFor={"radio-planned"} >Planned</label>
                                 </div>
                             </div>
 
@@ -144,9 +145,8 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                         <button className="btn" onClick={handleTreatmentAdd} disabled={selectedSurfaces.length < 1}>Add</button>
                     </div>
                 </div>
-            }
-            </tr>
-        </table>
+            )}
+        </div>
     );
 };
 ToothTreatmentEditor.propTypes = {

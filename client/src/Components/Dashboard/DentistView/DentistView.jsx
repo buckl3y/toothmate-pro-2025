@@ -25,7 +25,7 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
                 <div className={selectedTooth ? 
                         "grid grid-cols-5 grid-rows-6 gap-4 w-full " : 
                         "grid grid-cols-4 grid-rows-6 gap-4 w-full "}>
-                    <div className="row-span-4 col-span-2 bg-white rounded-md">
+                    <div className="row-span-5 col-span-2 bg-white rounded-md">
 
                         <MouthManager
                             patient={selectedPatient}
@@ -35,7 +35,7 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
                     </div>  
                     
                     {selectedTooth && (
-                        <div className="col-span-1 row-span-2 bg-white rounded-md">
+                        <div className="col-span-1 row-span-3 bg-white rounded-md">
                         
                             <h4 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
                                 Tooth {selectedTooth.substring(2,5)}
@@ -45,7 +45,7 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
                         </div>
                     )}
                     
-                    <div className="h-full col-span-2 row-span-4 bg-white rounded-md">
+                    <div className="h-full col-span-2 row-span-5 bg-white rounded-md">
 
                         <div className="col-span-2 row-span-4 bg-white rounded-md h-full">
                             <ToothTreatmentEditor

@@ -22,13 +22,13 @@ export default function ToothCanvas({selectedTooth}) {
 
 
     return (
-        <div style={{ height: '30vh', width: '100%' }}>
+        <div style={{ height: '40vh', width: '100%' }}>
             <Suspense fallback={<h3>Loading Tooth 3D model...</h3>}>
                 <Canvas style={{ height: '100%', width: '100%' }}>
-                    <ambientLight intensity={1.5} />
-                    <directionalLight position={[0, 10, 5]} intensity={2.0} />
+                    <ambientLight intensity={2.5} />
+                    <directionalLight position={[0, 10, 5]} intensity={1.0} />
                     
-                    <primitive object={scene} scale={80} />
+                    <primitive object={scene} scale={55} />
                     
                     <OrbitControls enableZoom={false} enablePan={false} enableDamping={false}/>
                 </Canvas>

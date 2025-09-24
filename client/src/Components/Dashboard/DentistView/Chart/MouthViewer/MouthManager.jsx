@@ -132,15 +132,6 @@ export default function MouthManager({patient, onToothSelected}) {
         setToothSelection(`t_${row}${col}`);
     }
 
-    // Linter throws a fuss if we don't have this but it doesn't seem to be used.. mysteries never cease.
-    function loadingPlaceholder() {
-        return (
-            <>
-                <h3>Loading Patient Chart...</h3>
-            </>
-        )
-    }
-
     return (
         <div 
         onKeyDown={handleKeyPress}
@@ -163,7 +154,7 @@ export default function MouthManager({patient, onToothSelected}) {
                 >
                     <ambientLight intensity={1.5} />
                     <directionalLight position={[0, 10, 10]} intensity={3.0} />
-                    <Suspense fallback={loadingPlaceholder}>
+                    <Suspense fallback={() => {}}>
                         <MouthCanvas
                             selectedTooth={selectedTooth}
                             onMeshClick={handleMeshClick}
