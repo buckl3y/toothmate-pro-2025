@@ -35,15 +35,18 @@ export default function MouthManager({patient, onToothSelected}) {
     const [showOptions, setShowOptions] = useState(true);
     const toggleOptions = () => setShowOptions(!showOptions);
 
+    const setToothSelection = (selection) => {
+        setselectedTooth(selection);
+        onToothSelected(selection);
+    }
+
     // Select / Deselect teeth when clicked.
     const handleMeshClick = (meshName) => {
         if (selectedTooth == meshName) {
-            setselectedTooth(null);
-            onToothSelected(null)
+            setToothSelection(null);
         }
         else {
-            setselectedTooth(meshName);
-            onToothSelected(meshName)
+            setToothSelection(meshName);
         }
     }
 
@@ -61,6 +64,71 @@ export default function MouthManager({patient, onToothSelected}) {
         }
     }
 
+    const getSelectedRowCol = (selectedTooth) => {
+        return {
+            row: selectedTooth[2], // t_[2]6
+            col: selectedTooth[3]  // t_2[6]
+        }
+    }
+
+    // Chart keyboard navigation
+    const handleKeyPress = (event) => {
+        const key = event.key;
+        if (key === "Escape") { setToothSelection(null); return; }
+        if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(key)) { return; }
+        if (selectedTooth == null) { setToothSelection("t_11"); return; }
+
+
+        let row = getSelectedRowCol(selectedTooth).row;
+        let col = getSelectedRowCol(selectedTooth).col;
+
+        const decRow = () => {
+            if (row > 1) { row-- }
+            else {
+                row = 4;
+            }
+        }
+
+        const incRow = () => {
+            if (row < 4) {
+                row ++;
+            } else {
+                row = 1;
+            }
+        }
+
+        const decCol = () => {
+            if (col > 1) { col--; }
+            else {
+                decRow();
+                col = 8;
+            }
+        }
+
+        const incCol = () => {
+            if (col < 8) { col++; }
+            else {
+                incRow();
+                col = 1;
+            }
+        }
+
+        if (key === "ArrowLeft") {
+            decCol();
+        }
+        if (key === "ArrowUp") {
+            decRow();
+        }
+        if (key === "ArrowDown") {
+            incRow();
+        }
+        if (key === "ArrowRight") {
+            incCol();
+        }
+
+        setToothSelection(`t_${row}${col}`);
+    }
+
     // Linter throws a fuss if we don't have this but it doesn't seem to be used.. mysteries never cease.
     function loadingPlaceholder() {
         return (
@@ -71,7 +139,10 @@ export default function MouthManager({patient, onToothSelected}) {
     }
 
     return (
-        <div style={{ position: 'relative', height: '785px', width: '100%' }}>
+        <div 
+        onKeyDown={handleKeyPress}
+        tabIndex={0} // Makes div focusable. Required to enable keypress capture.
+        style={{ position: 'relative', height: '785px', width: '100%' }}>
             <div style={showOptions ? {height: '60%'} : {height: '95%'}}>
                 <Canvas 
                     key={is3DView ? '3d' : 'ortho'} // Force remount on view change
