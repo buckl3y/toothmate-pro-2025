@@ -1,7 +1,12 @@
 import PropTypes from "prop-types";
+import { useState } from "react";
+import { useEffect } from "react";
 
-export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces }) {
+export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces, selectedTooth }) {
+    const [topFaceName, setTopFaceName] = useState("incisal");
+    const [topFaceLabel, setTopFaceLabel] = useState("I")
 
+    // Select / deselect clicked surfaces
     function handleSurfaceSelected(surface) {
         let updated;
 
@@ -13,6 +18,20 @@ export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces 
 
         setSelectedSurfaces(updated);
     }
+
+    // Change between incisal and occlusal when molars/incisors are selected
+    useEffect(() => {
+        if (selectedTooth[3] < 5) {
+            setTopFaceLabel("I")
+            setTopFaceName("incisal")
+            setSelectedSurfaces(selectedSurfaces.filter(s => s !== "occlusal"))
+        }
+        else {
+            setTopFaceLabel("O")
+            setTopFaceName("occlusal")
+            setSelectedSurfaces(selectedSurfaces.filter(s => s !== "incisal"))
+        }
+    }, [selectedTooth]);
 
     const isSelected = (surface) => selectedSurfaces.includes(surface);
 
@@ -27,7 +46,7 @@ export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces 
                         const realButtons = {
                             '1-2': { id: "mesial", label: "M" },
                             '2-1': { id: "buccal", label: "B" },
-                            '2-2': { id: "occlusal", label: "O" },
+                            '2-2': { id: topFaceName, label: topFaceLabel },
                             '2-3': { id: "lingual", label: "L" },
                             '3-2': { id: "distal", label: "D" }
                         };
@@ -65,5 +84,6 @@ export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces 
 
 SurfaceSelector.propTypes = {
     selectedSurfaces: PropTypes.arrayOf(PropTypes.string).isRequired,
-    setSelectedSurfaces: PropTypes.func.isRequired
+    setSelectedSurfaces: PropTypes.func.isRequired,
+    selectedTooth: PropTypes.string.isRequired
 }

@@ -60,7 +60,10 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
 
                     {selectedTooth && 
                         <div className='col-span-1 row-span-2 bg-white rounded-md h-full w-full'>
-                            <SurfaceSelector selectedSurfaces={selectedSurfaces} setSelectedSurfaces={setSelectedSurfaces} />
+                            <SurfaceSelector 
+                                selectedSurfaces={selectedSurfaces} 
+                                setSelectedSurfaces={setSelectedSurfaces}
+                                selectedTooth={selectedTooth} />
                         </div>
                     }
                     
