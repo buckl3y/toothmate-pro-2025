@@ -14,12 +14,14 @@ import PropTypes from 'prop-types'; // Import PropTypes
 import MouthCanvas from './MouthCanvas';
 import { useRef } from 'react';
 import ChartOptions from './ChartOptions';
+import XrayHistory from '../../XrayHistory/XrayHistory';
 
 
 // The mouth viewer. Supports both 3D and grid layout.
 export default function MouthManager({patient, onToothSelected}) {
     // Change state to hold an array of selected teeth
     const [selectedTooth, setselectedTooth] = useState();
+    const [view, setView] = useState("mouth");
     const [is3DView, setIs3DView] = useState(true);
     const controlsRef = useRef(); // Allows programatic control of camera.
     const [treatmentVisibility, setTreatmentVisibility] = useState({
@@ -50,8 +52,9 @@ export default function MouthManager({patient, onToothSelected}) {
         }
     }
 
-    function handleViewChanged(is3d) {
-        setIs3DView(is3d);
+    function handleViewChanged(newView) {
+        setView(newView);
+        setIs3DView(newView == "mouth");
         resetView();
     }
 
@@ -143,7 +146,8 @@ export default function MouthManager({patient, onToothSelected}) {
         onKeyDown={handleKeyPress}
         tabIndex={0} // Makes div focusable. Required to enable keypress capture.
         style={{ position: 'relative', height: '785px', width: '100%' }}>
-            <div style={showOptions ? {height: '60%'} : {height: '95%'}}>
+            <div style={showOptions ? {height: '60%'} : {height: '93%'}}>
+                {view!="xray" ?
                 <Canvas 
                     key={is3DView ? '3d' : 'ortho'} // Force remount on view change
                     style={{ height: '100%', width: '100%' }}
@@ -182,26 +186,27 @@ export default function MouthManager({patient, onToothSelected}) {
                         enableRotate={is3DView}
                     />
                 </Canvas>
+                :
+                <div>
+                    <XrayHistory patient={patient}/>
+                </div>}
             </div>
 
             <div 
-            style={showOptions? {height: '40%'} : {height: '5%'}}
+            style={showOptions? {height: '40%'} : {height: '7%'}}
             className='bottomcard'
             >
-                {showOptions ? (
-                    <ChartOptions 
-                        treatmentVisibility={treatmentVisibility}
-                        setTreatmentVisibility={setTreatmentVisibility}
-                        is3DView={is3DView}
-                        handleViewChanged={handleViewChanged}
-                        resetView={resetView}
-                        toggleVisibility={toggleOptions}
-                    />
-                ) : (
-                    <div style={{height: '100%'}}>
-                        <p className='text-center' onClick={toggleOptions}> Chart View Options </p>
-                    </div>
-                )}
+
+                <ChartOptions
+                    treatmentVisibility={treatmentVisibility}
+                    setTreatmentVisibility={setTreatmentVisibility}
+                    view={view}
+                    handleViewChanged={handleViewChanged}
+                    resetView={resetView}
+                    toggleVisibility={toggleOptions}
+                    visibility={showOptions}
+                />
+
             </div>
         </div>
     );

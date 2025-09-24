@@ -2,143 +2,112 @@ import PropTypes from "prop-types"
 
 export default function ChartOptions(
     {treatmentVisibility, setTreatmentVisibility,
-    is3DView, handleViewChanged, resetView,
-    toggleVisibility
+    view, handleViewChanged, resetView,
+    toggleVisibility, visibility, 
 }
 ) {
 
     return (
-        
-        <div style={{
-            width: '100%', height: '100%'
-        }}>
-            <p className="text-center" onClick={toggleVisibility}> Chart View Options </p>
-
-            {/* Flex container creates column layout for options*/}
-            <div style={{display: 'flex', width: '100%'}}>
-            
-                {/* Block layout creates vertical layout for each column */}
-                <div style={{display: 'block', width: '15%'}}>
-                    {is3DView ? (
-                        <>
-                        <button id="view-change-button" className='btn' onClick={() => handleViewChanged(!is3DView)}>
-                            3D
-                        </button>
-                        <button id="view-change-button" className='btn-secondary' onClick={() => handleViewChanged(!is3DView)}>
-                            Grid
-                        </button>
-                        </>
-                    ) : (
-                        <>
-                        <button id="view-change-button" className='btn-secondary' onClick={() => handleViewChanged(!is3DView)}>
-                            3D
-                        </button>
-                        <button id="view-change-button" className='btn' onClick={() => handleViewChanged(!is3DView)}>
-                            Grid
-                        </button>
-                        </>
-                    )}
-                    <br />
-                    <button id='camera-reset-button' className='btn-secondary' onClick={() => resetView()}>To Front</button>
+        <div style={{ width: '100%', height: '100%' }}>
+            {/* View Controls */}
+            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 16 }}>
+                {/* Left: Camera Reset */}
+                <div style={{ flex: 1 }}>
+                    <button id="camera-reset-button" className="btn-secondary" onClick={resetView}>↺</button>
                 </div>
 
-                <div style={{display: 'block', width: '80%', paddingInline: '100px'}}>
-                    <h4 className="text-center">Show:</h4>
-                    <div style={{display: 'flex'}}>
-                        <div style={{display: 'block', width: '50%'}}>
-                                <label style={{ display: 'flex', alignItems: 'center' }}>
-                                    <input 
-                                        type="checkbox" 
-                                        style={{ marginRight: 6 }} 
-                                        onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, all: e.target.checked}})} 
-                                        checked={treatmentVisibility.all} 
-                                    />
-                                    Treatments:
-                                </label>
-                                {treatmentVisibility.all && (
-                                    <>
-                                        <label style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ background: "#C00A0A" }} className='legend-colour' />
-                                            <input 
-                                                type="checkbox" 
-                                                style={{ marginRight: 6 }} 
-                                                onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, filling: e.target.checked}})} 
-                                                checked={treatmentVisibility.filling} 
-                                            />
-                                            Fillings
-                                        </label>
-                                        <label style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ background: "#FF5100" }} className='legend-colour' />
-                                            <input 
-                                                type="checkbox" 
-                                                style={{ marginRight: 6 }} 
-                                                onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, crown: e.target.checked}})} 
-                                                checked={treatmentVisibility.crown} 
-                                            />
-                                            Crowns
-                                        </label>
-                                        <label style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ background: "#0080FF" }} className='legend-colour' />
-                                            <input 
-                                                type="checkbox" 
-                                                style={{ marginRight: 6 }} 
-                                                onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, rootCanal: e.target.checked}})} 
-                                                checked={treatmentVisibility.rootCanal} 
-                                            />
-                                            Root Canals
-                                        </label>
-                                        <label style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ background: "#EEEEEE", borderColor: "black", borderWidth: "2px" }} className='legend-colour' />
-                                            <input 
-                                                type="checkbox" 
-                                                style={{ marginRight: 6 }} 
-                                                onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, extraction: e.target.checked}})} 
-                                                checked={treatmentVisibility.extraction} 
-                                            />
-                                            Extractions
-                                        </label>
-                                        <label style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ background: "#007610" }} className='legend-colour' />
-                                            <input 
-                                                type="checkbox" 
-                                                style={{ marginRight: 6 }} 
-                                                onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, implant: e.target.checked}})} 
-                                                checked={treatmentVisibility.implant} 
-                                            />
-                                            Implants
-                                        </label>
-                                        <label style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ background: "#7B00FF" }} className='legend-colour' />
-                                            <input 
-                                                type="checkbox" 
-                                                style={{ marginRight: 6 }} 
-                                                onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, veneer: e.target.checked}})} 
-                                                checked={treatmentVisibility.veneer} 
-                                            />
-                                            Veneers
-                                        </label>
-                                        <label style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ background: "#FF0099" }} className='legend-colour' />
-                                            <input 
-                                                type="checkbox" 
-                                                style={{ marginRight: 6 }} 
-                                                onChange={(e) => setTreatmentVisibility(previousState => { return {...previousState, sealant: e.target.checked}})} 
-                                                checked={treatmentVisibility.sealant} 
-                                            />
-                                            Sealant
-                                        </label>
-                                    </>
-                                )}
-                        </div>
+                {/* Center: View Buttons */}
+                <div style={{ flex: 2, display: 'flex', justifyContent: 'center', gap: 8 }}>
+                    <button
+                        id="view-change-mouth"
+                        className={view=="mouth" ? "btn" : "btn-secondary"}
+                        onClick={() => handleViewChanged("mouth")}
+                    >
+                        Mouth
+                    </button>
+                    <button
+                        id="view-change-grid"
+                        className={view=="grid" ? "btn" : "btn-secondary"}
+                        onClick={() => handleViewChanged("grid")}
+                    >
+                        Grid
+                    </button>
+                    <button
+                        id="view-change-xray"
+                        className={view=="xray" ? "btn" : "btn-secondary"}
+                        onClick={() => handleViewChanged("xray")}
+                    >
+                        X-Ray
+                    </button>
+                </div>
 
-                        <div style={{display: 'block', width: '50%', background: 'lightgrey'}}>
-                                <h5>Conditions...</h5>
-                        </div>
+                {/* Right: Visibility */}
+                <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                    <button className="btn-secondary" onClick={toggleVisibility}>
+                        {visibility ? "Less" : "More"}
+                    </button>
+                </div>
+            </div>
+            {/* Options Panel */}
+            {visibility && 
+            <div style={{ display: 'flex', width: '100%', padding: '7px 32px' }}>
+                {/* Treatments */}
+                <div style={{ flex: 1 }}>
+                    <div>
+                        <label style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                            <input
+                                type="checkbox"
+                                style={{ marginRight: 6 }}
+                                onChange={e => setTreatmentVisibility(prev => ({ ...prev, all: e.target.checked }))}
+                                checked={treatmentVisibility.all}
+                            />
+                            Treatments:
+                        </label>
+                        {treatmentVisibility.all && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                {[
+                                    { key: 'filling', label: 'Fillings', color: '#C00A0A' },
+                                    { key: 'crown', label: 'Crowns', color: '#FF5100' },
+                                    { key: 'rootCanal', label: 'Root Canals', color: '#0080FF' },
+                                    { key: 'extraction', label: 'Extractions', color: '#EEEEEE', border: '2px solid black' },
+                                    { key: 'implant', label: 'Implants', color: '#007610' },
+                                    { key: 'veneer', label: 'Veneers', color: '#7B00FF' },
+                                    { key: 'sealant', label: 'Sealant', color: '#FF0099' }
+                                ].map(({ key, label, color, border }) => (
+                                    <label key={key} style={{ display: 'flex', alignItems: 'center' }}>
+                                        <span
+                                            className="legend-colour"
+                                            style={{
+                                                background: color,
+                                                border: border || undefined,
+                                                marginRight: 6
+                                            }}
+                                        />
+                                        <input
+                                            type="checkbox"
+                                            style={{ marginRight: 6 }}
+                                            onChange={e => setTreatmentVisibility(prev => ({ ...prev, [key]: e.target.checked }))}
+                                            checked={treatmentVisibility[key]}
+                                        />
+                                        {label}
+                                    </label>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Conditions */}
+                <div style={{ flex: 1, padding: '0 32px', background: '#f5f5f5', borderRadius: 8 }}>
+                    {/* Add condition controls here */}
+                    <div style={{ padding: 8 }}>
+                        <h5>Conditions...</h5>
                     </div>
                 </div>
             </div>
+            }
         </div>
-    )
+    );
 }
 
 ChartOptions.propTypes = {
@@ -153,8 +122,9 @@ ChartOptions.propTypes = {
         sealant: PropTypes.bool.isRequired,
     }).isRequired,
     setTreatmentVisibility: PropTypes.func.isRequired,
-    is3DView: PropTypes.bool.isRequired,
+    view: PropTypes.string.isRequired,
     handleViewChanged: PropTypes.func.isRequired,
     resetView: PropTypes.func.isRequired,
-    toggleVisibility: PropTypes.func.isRequired
+    toggleVisibility: PropTypes.func.isRequired,
+    visibility: PropTypes.bool.isRequired
 };
