@@ -16,12 +16,14 @@ import Treatment from "./Treatment";
  * @author Skye Pooley
  */
 
-const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedTooth, selectedSurfaces }) => {
+const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedTooth, selectedSurfaces, setRequireSurface }) => {
     const [treatmentType, setTreatmentType] = useState('filling');
     const [treatmentDate, setTreatmentDate] = useState(new Date());
     const [relevantTreatments, setRelevantTreatments] = useState([]);
     const [treatmentNotes, setTreatmentNotes] = useState("");
+    const [isPlanned, setIsPlanned] = useState(false);
 
+    // Filter treatments to only show ones on the currently selected tooth.
     useEffect(() => {
         if (selectedTooth) {
             setRelevantTreatments(
@@ -34,6 +36,13 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
         
     }, [selectedPatient, selectedTooth]);
 
+    // Tell the dentist view whether it should show a surface selection tool
+    useEffect(() => {
+        const surfaceRequired = requireSurface()
+        setRequireSurface(surfaceRequired)
+    }, [treatmentType])
+
+    // Send request for new treatment to backend.
     const handleTreatmentAdd = async () => {
         console.log("Adding new treament for " + selectedPatient.name);
 
@@ -44,14 +53,29 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
         const treatment = {
             procedure: treatmentType,
             tooth: selectedTooth,
-            surfaces: selectedSurfaces,
+            surfaces: (requireSurface() ? selectedSurfaces : []),
             notes: [treatmentNotes],
-            plannedDate: treatmentDate
+            planned: isPlanned
         }
+
+        console.log("Adding treatment: \n" + JSON.stringify(treatment))
 
         await addTreatment(selectedPatient, treatment);
         refreshPatientData();
     };
+
+    // Does the selected treatment type require a surface to be selected?
+    const requireSurface = () => {
+        return ["filling", "sealant", "root canal"].includes(treatmentType)
+    }
+
+    // Is the treatment valid for sending to backend?
+    const validateTreatment = () => {
+        if (requireSurface()) {
+            return selectedSurfaces > 0;
+        }
+        return true;
+    }
 
     return (
         <div className="w-full p-2 flex flex-col h-full" style={{ minHeight: "600px" }}>
@@ -73,13 +97,19 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                         </div>
 
                         <div>
-                            {relevantTreatments.map(treatment => <Treatment key={treatment.id} treatment={treatment} />)}
+                            {relevantTreatments
+                                .filter(treatment => treatment.planned)
+                                .map(treatment => <Treatment key={treatment.id} treatment={treatment} />)}
 
                             <div className="flex items-center justify-center w-full">
                                 <hr className="aside"/>
                                 <h5 className="ml-5 mr-5 text-center">Historical</h5>
                                 <hr className="aside"/>
                             </div>
+
+                            {relevantTreatments
+                                .filter(treatment => !treatment.planned)
+                                .map(treatment => <Treatment key={treatment.id} treatment={treatment} />)}
                         </div>
                     </div>
                 ) : (
@@ -109,7 +139,9 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                                 </select>
 
                                 <div>
-                                    {selectedSurfaces.length > 0 ? selectedSurfaces.join(", ") : "Select a Surface"}
+                                    {requireSurface()
+                                        ? (selectedSurfaces.length > 0 ? selectedSurfaces.join(", ") : "Select a Surface")
+                                        : null}
                                 </div>
 
                                 <div>
@@ -125,8 +157,14 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
 
                                 <div>
                                     <label htmlFor={"radio-historic"} >Historic</label>
-                                    <input type="radio" id={"radio-historic"} value={"historic"}/>
-                                    <input type="radio" id={"radio-planned"} value={"planned"}/>
+                                    <label className="toggle">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={isPlanned}
+                                            onChange={(ce) => {setIsPlanned(ce.target.checked)}}
+                                            />
+                                        <span className="toggle-slider round" ></span>
+                                    </label>
                                     <label htmlFor={"radio-planned"} >Planned</label>
                                 </div>
                             </div>
@@ -142,7 +180,7 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                             </div>
                         </div>
 
-                        <button className="btn" onClick={handleTreatmentAdd} disabled={selectedSurfaces.length < 1}>Add</button>
+                        <button className="btn" onClick={handleTreatmentAdd} disabled={!validateTreatment()}>Add</button>
                     </div>
                 </div>
             )}
@@ -165,7 +203,8 @@ ToothTreatmentEditor.propTypes = {
     }).isRequired,
     refreshPatientData: PropTypes.func.isRequired,
     selectedTooth: PropTypes.string,
-    selectedSurfaces: PropTypes.arrayOf(PropTypes.string).isRequired
+    selectedSurfaces: PropTypes.arrayOf(PropTypes.string).isRequired,
+    setRequireSurface: PropTypes.func.isRequired
 };
 
 export default ToothTreatmentEditor;

@@ -155,7 +155,8 @@ router.post("/add-treatment", async (req, res) => {
         const db_treatment = await sql.models.Treatment.create({
             procedure: treatment.procedure, 
             tooth: treatment.tooth,
-            datePlanned: treatment.plannedDate
+            datePlanned: treatment.plannedDate,
+            planned: treatment.planned
         });
         
         treatment.surfaces.forEach(async (surface) => {

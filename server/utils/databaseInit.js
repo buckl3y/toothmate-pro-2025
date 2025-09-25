@@ -42,7 +42,7 @@ module.exports = async function createDatabaseObjects(sql) {
     const Treatment = await sql.define(
         "Treatment",
         {
-            datePlanned: {type: DataTypes.DATE, allowNull: true },
+            planned: {type: DataTypes.BOOLEAN, allowNull: false},
             dateCompleted: {type: DataTypes.DATE, allowNull: true },
             procedure: {type: DataTypes.STRING, allowNull: false},
             tooth: {type: DataTypes.STRING, allowNull: false} 

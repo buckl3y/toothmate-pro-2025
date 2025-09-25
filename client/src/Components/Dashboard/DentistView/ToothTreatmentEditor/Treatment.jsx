@@ -24,14 +24,21 @@ export default function Treatment({ treatment }) {
 
                 {showDetails && (
                     <div>
-                        {Notes.map(note => (
-                            <div key={note.id} className="mb-2 flex">
-                                <div className="mt-1 ml-2 mr-2">{new Date(note.createdAt).toLocaleDateString()}</div>
-                                <p className="border border-gray-300 rounded-md p-1 w-full">
-                                    {note.body}
-                                </p>
-                            </div>
-                        ))}
+                        {
+                            Notes.length > 0 ? (
+                                Notes.map(note => (
+                                    <div key={note.id} className="mb-2 flex">
+                                        <div className="mt-1 ml-2 mr-2">{new Date(note.createdAt).toLocaleDateString()}</div>
+                                        <p className="border border-gray-300 rounded-md p-1 w-full">
+                                            {note.body}
+                                        </p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No Notes</p>
+                            )
+                        }
+                        {}
                     </div>
                 )}
             </div>

@@ -10,6 +10,7 @@ import ToothTreatmentEditor from './ToothTreatmentEditor/ToothTreatmentEditor';
 export default function DentistView({selectedPatient, refreshPatientData }) {
     const [selectedTooth, setSelectedTooth] = useState(null);
     const [selectedSurfaces, setSelectedSurfaces] = useState([]);
+    const [showSurfaceSelector, setShowSurfaceSelector] = useState(true);
 
     const handleToothSelection = (Tooth) => {
         // Start transition prevents the app from crashing while it waits for the tooth viewer to load.
@@ -35,7 +36,10 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
                     </div>  
                     
                     {selectedTooth && (
-                        <div className="col-span-1 row-span-3 bg-white rounded-md">
+                        <div className={showSurfaceSelector ? 
+                            "col-span-1 row-span-3 bg-white rounded-md" :
+                            "col-span-1 row-span-5 bg-white rounded-md"
+                            }>
                         
                             <h4 style={{textAlign: 'center', margin: '8px', fontWeight: 'bold'}}>
                                 Tooth {selectedTooth.substring(2,5)}
@@ -53,12 +57,13 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
                                 selectedSurfaces={selectedSurfaces}
                                 selectedPatient={selectedPatient}
                                 refreshPatientData={refreshPatientData}
+                                setRequireSurface={setShowSurfaceSelector}
                             />
                         </div>
 
                     </div>
 
-                    {selectedTooth && 
+                    {(selectedTooth && showSurfaceSelector) && 
                         <div className='col-span-1 row-span-2 bg-white rounded-md h-full w-full'>
                             <SurfaceSelector 
                                 selectedSurfaces={selectedSurfaces} 
@@ -70,7 +75,7 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
                 </div>
             ) : (
                 <div className="flex flex-col items-center justify-center w-full h-full">
-                    <h2 className="text-4xl font-semibold mb-4">No Patient Selected</h2>
+                    <h2 className="text-4xl font-semibold mb-4 mt-5">Welcome</h2>
                     <p className="text-white text-2xl">
                         Please select a patient from the navigation bar to view their information.
                     </p>
