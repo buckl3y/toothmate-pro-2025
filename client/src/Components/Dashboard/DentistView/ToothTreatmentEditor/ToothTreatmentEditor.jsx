@@ -18,10 +18,25 @@ import Treatment from "./Treatment";
 
 const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedTooth, selectedSurfaces, setRequireSurface }) => {
     const [treatmentType, setTreatmentType] = useState('filling');
-    const [treatmentDate, setTreatmentDate] = useState(new Date());
+    // const [treatmentDate, setTreatmentDate] = useState(new Date());
     const [relevantTreatments, setRelevantTreatments] = useState([]);
     const [treatmentNotes, setTreatmentNotes] = useState("");
     const [isPlanned, setIsPlanned] = useState(false);
+    const [vitaShade, setVitaShade] = useState('A2');
+
+    const [showMaterial, setShowMaterial] = useState(true);
+    const [showVitaDropdown, setShowVitaDropdown] = useState(false);
+    const [material, setMaterial] = useState("ceramic");
+
+    // There is no hex code guide for the VITA shades, these are just my best guess.
+    // Dentists have the physical guide on-hand and would use it for colour matching.
+    // We cannot expect their computer monitor to be colour accurate.
+    const VitaShades = {
+        A1: '#f6efe5ff',
+        A2: '#eedfccff',
+        A3: '#e2ceabff', 
+        A4: '#d0bd8bff'
+    }
 
     // Filter treatments to only show ones on the currently selected tooth.
     useEffect(() => {
@@ -36,12 +51,6 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
         
     }, [selectedPatient, selectedTooth]);
 
-    // Tell the dentist view whether it should show a surface selection tool
-    useEffect(() => {
-        const surfaceRequired = requireSurface()
-        setRequireSurface(surfaceRequired)
-    }, [treatmentType])
-
     // Send request for new treatment to backend.
     const handleTreatmentAdd = async () => {
         console.log("Adding new treament for " + selectedPatient.name);
@@ -55,7 +64,9 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
             tooth: selectedTooth,
             surfaces: (requireSurface() ? selectedSurfaces : []),
             notes: [treatmentNotes],
-            planned: isPlanned
+            planned: isPlanned,
+            material: material,
+            materialTone: vitaShade,
         }
 
         console.log("Adding treatment: \n" + JSON.stringify(treatment))
@@ -72,10 +83,22 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
     // Is the treatment valid for sending to backend?
     const validateTreatment = () => {
         if (requireSurface()) {
-            return selectedSurfaces > 0;
+            return selectedSurfaces.length > 0;
         }
         return true;
     }
+
+    // Tell the dentist view whether it should show a surface selection tool
+    useEffect(() => {
+        setRequireSurface(requireSurface())
+
+        const materialRequired = ["filling", "root canal", "crown", "veneer", "implant"].includes(treatmentType);
+        setShowMaterial(materialRequired)
+        if (!materialRequired) {
+            setMaterial(null)
+            setVitaShade(null)
+        }
+    }, [treatmentType])
 
     return (
         <div className="w-full p-2 flex flex-col h-full" style={{ minHeight: "600px" }}>
@@ -138,13 +161,62 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                                     <option value={'sealant'}>Sealant</option>
                                 </select>
 
-                                <div>
-                                    {requireSurface()
-                                        ? (selectedSurfaces.length > 0 ? selectedSurfaces.join(", ") : "Select a Surface")
-                                        : null}
-                                </div>
+                                {
+                                showMaterial &&
+                                <div className="flex">
+                                    <select
+                                        value={material}
+                                        onChange={e => setMaterial(e.target.value)}
+                                        className="border border-gray-300 rounded-md p-1"
+                                    >
+                                        <option value={'ceramic'}>Ceramic</option>
+                                        <option value={'composite'}>Composite</option>
+                                        <option value={'gold'}>Gold</option>
+                                        <option value={'silver amalgam'}>Silver Amalgam</option>
+                                        <option value={'glass ionomer'}>Glass Ionomer</option>
+                                    </select>
 
-                                <div>
+                                    {/* 
+                                    Ideally this would just be a regular select like the one above but most browsers don't support
+                                    colours for individual options so we do this instead :(
+                                    Material Shade Selector. */
+                                    }
+                                    <div className="relative">
+                                        <button
+                                            type="button"
+                                            className="border border-gray-300 rounded-md p-1 w-full text-left"
+                                            style={{ backgroundColor: VitaShades[vitaShade] }}
+                                            onClick={() => setShowVitaDropdown(prev => !prev)}
+                                        >
+                                            {vitaShade}
+                                        </button>
+                                        {showVitaDropdown &&
+                                            <ul
+                                                className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg"
+                                                style={{
+                                                    maxHeight: "75px",
+                                                    overflowY: "auto"
+                                                }}
+                                            >
+                                                {Object.entries(VitaShades).map(([shade, color]) => (
+                                                    <li
+                                                        key={shade}
+                                                        className="cursor-pointer"
+                                                        style={{ backgroundColor: color }}
+                                                        onClick={() => {
+                                                            setVitaShade(shade);
+                                                            setShowVitaDropdown(false);
+                                                        }}
+                                                    >
+                                                        {shade}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        }
+                                    </div>
+                                </div>}
+                                
+                                {/* <div>
                                     <label hidden={true} htmlFor="treatment-date">Date:</label>
                                     <input
                                         type="date"
@@ -153,7 +225,7 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                                         onChange={e => setTreatmentDate(new Date(e.target.value))}
                                         hidden={true}
                                     />
-                                </div>
+                                </div> */}
 
                                 <div>
                                     <label htmlFor={"radio-historic"} >Historic</label>
@@ -180,7 +252,13 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                             </div>
                         </div>
 
-                        <button className="btn" onClick={handleTreatmentAdd} disabled={!validateTreatment()}>Add</button>
+                        <button 
+                            className="btn tooltip" 
+                            onClick={handleTreatmentAdd} 
+                            disabled={!validateTreatment()}>
+                                Add
+                                <span className="tooltiptext">Please select a surface before adding treatment.</span>
+                        </button>
                     </div>
                 </div>
             )}

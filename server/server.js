@@ -29,7 +29,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Allow connections from the client or localhost. All others blocked.
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://oversky.net.nz:5005', 'http://oversky.net.nz:3000'],
   credentials: true
 }));
 

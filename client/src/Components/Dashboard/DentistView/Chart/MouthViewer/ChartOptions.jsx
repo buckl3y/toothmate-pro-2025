@@ -1,4 +1,5 @@
 import PropTypes from "prop-types"
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 export default function ChartOptions(
     {treatmentVisibility, setTreatmentVisibility,
@@ -44,7 +45,7 @@ export default function ChartOptions(
                 {/* Right: Visibility */}
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
                     <button className="btn-secondary" onClick={toggleVisibility}>
-                        {visibility ? "Less" : "More"}
+                        {visibility ? <ChevronDown/> : <ChevronUp/>}
                     </button>
                 </div>
             </div>

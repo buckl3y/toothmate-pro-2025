@@ -144,6 +144,7 @@ router.put("/updateinfo/:nhiNumber", async (req, res) => {
  */
 router.post("/add-treatment", async (req, res) => {
     const {patient, treatment} = req.body;
+    console.log("Adding treatment: " + JSON.stringify(treatment))
 
     const db_patient = await DbPatient.findOne({
         where: {nhiNumber: patient.nhiNumber}, 
@@ -156,7 +157,9 @@ router.post("/add-treatment", async (req, res) => {
             procedure: treatment.procedure, 
             tooth: treatment.tooth,
             datePlanned: treatment.plannedDate,
-            planned: treatment.planned
+            planned: treatment.planned,
+            material: treatment.material,
+            materialTone: treatment.materialTone,
         });
         
         treatment.surfaces.forEach(async (surface) => {

@@ -280,6 +280,29 @@ input:checked + .toggle-slider:before {
 }
 
 
+/* Modified from W3 Schools https://www.w3schools.com/css/css_tooltip.asp */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltiptext {
+  visibility: hidden; 
+  width: 160px;
+  background-color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 3px;
+  position: absolute;
+  right: 50px;
+  top: 10px;
+  z-index: 1; 
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
 
 @layer base {
   :root {

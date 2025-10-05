@@ -45,7 +45,7 @@ export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces,
                         const col = index % 5;
                         const realButtons = {
                             '1-2': { id: "mesial", label: "M" },
-                            '2-1': { id: "buccal", label: "B" },
+                            '2-1': { id: "facial", label: "F" },
                             '2-2': { id: topFaceName, label: topFaceLabel },
                             '2-3': { id: "lingual", label: "L" },
                             '3-2': { id: "distal", label: "D" }

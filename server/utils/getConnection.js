@@ -16,7 +16,7 @@ const sql = new Sequelize({
         database: "toothmate",
         username: process.env.DBUSR,
         password: process.env.DBPWD,
-        logging: msg => console.log("[DB] - " + msg)
+        logging: msg => ()=>{}
     });
 
 // Returns the saved instance of Sequelize.
