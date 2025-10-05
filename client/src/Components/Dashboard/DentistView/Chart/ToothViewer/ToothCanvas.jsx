@@ -17,7 +17,8 @@ export default function ToothCanvas({selectedTooth}) {
             }
         })
 
-        scene.getObjectByName(selectedTooth).visible = true;
+        const visibleTooth = scene.getObjectByName(selectedTooth)
+        if (visibleTooth) { visibleTooth.visible = true; }
     }, [selectedTooth, scene])
 
 

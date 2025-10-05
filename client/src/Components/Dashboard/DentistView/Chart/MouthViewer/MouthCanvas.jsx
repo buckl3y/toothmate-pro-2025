@@ -18,6 +18,7 @@ import { useState } from 'react';
 export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treatmentVisibility, is3d }) { 
     const { scene: model3d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/mouth.glb');
     const { scene: model2d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/flat-mouth.glb');
+    const { scene: modelChild } = useGLTF('/assets/3DModels/DeciduousTeeth/mouth_deciduous.glb')
     const [modelScale, setModelScale] = useState(4);
     const [modelPosition, setModelPosition] = useState([0,-1.75,-1]);
     const [model, setmodel] = useState(model3d);
@@ -27,6 +28,10 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
     // Effect to switch between 3D and grid chart views
     // @author Skye Pooley
     useEffect(() => {
+        const dob = new Date(patient.dateOfBirth);
+        const fourteenYearsAgo = new Date().setFullYear(new Date().getFullYear() - 14);
+        const isChild = dob > fourteenYearsAgo;
+
         if (!model3d) { 
             console.log(
                 "model 3d missing."
@@ -39,17 +44,31 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
             )
             return; 
         }
+        if (!modelChild) { 
+            console.log(
+                "model for child teeth missing."
+            )
+            return; 
+        }
+
         console.log("Switching mouth views");
         if (is3d) {
-            setmodel(model3d);
-            setModelScale(8);
-            setModelPosition([0,-1.75,0]);
+            if (isChild) {
+                setmodel(modelChild);
+                setModelScale(5);
+                setModelPosition([0,-1.5,0]);
+            }
+            else {
+                setmodel(model3d);
+                setModelScale(8);
+                setModelPosition([0,-1.75,0]);
+            }
         }else {
             setmodel(model2d);
             setModelScale(75);
             setModelPosition([0,-2,-15]);
         }
-    }, [is3d, model3d, model2d])
+    }, [is3d, model3d, model2d, modelChild, patient])
 
     // Effect to store original materials on mount and restore on unmount
     // Allows tooth colour to be returned to original after edits.
