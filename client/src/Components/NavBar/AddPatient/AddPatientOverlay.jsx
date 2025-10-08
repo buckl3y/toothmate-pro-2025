@@ -153,12 +153,6 @@ const AddPatientOverlay = ({ isVisible, onClose, onSaveSuccess,onSelectPatient }
                             className="w-full p-2 border border-gray-300 rounded mt-1"
                             placeholder="Enter NHI or Search NHI"
                         />
-                        <button
-                            onClick={handleAutofillByNhi}
-                            className="bg-blue-500 text-white py-2 px-4 rounded ml-2"
-                        >
-                            Autofill
-                        </button>
                     </div>
                 </div>
                 <div className="mb-4">
@@ -197,27 +191,6 @@ const AddPatientOverlay = ({ isVisible, onClose, onSaveSuccess,onSelectPatient }
                             Autofill
                         </button>
                         </div>
-                </div>
-                <div className="radio-group flex flex-row gap-3 mb-4">
-                    <input
-                        type="radio"
-                        id="adult-view"
-                        name="view"
-                        value="adult"
-                        checked={view === 'adult'}
-                        onChange={handleViewChange}
-                    />
-                    <label htmlFor="adult-view">Adult View</label>
-
-                    <input
-                        type="radio"
-                        id="deciduous-view"
-                        name="view"
-                        value="deciduous"
-                        checked={view === 'deciduous'}
-                        onChange={handleViewChange}
-                    />
-                    <label htmlFor="deciduous-view">Deciduous View</label>
                 </div>
                 
                 <div className="flex justify-end space-x-4">

@@ -78,17 +78,6 @@ router.post("/save-patient", async (req, res) => {
     return res.status(201).json({ message: "DbPatient created successfully", patient: patient });
 });
 
-// server.js
-router.post("/update-patient", (req, res) => {
-    console.log("updating patient");
-    const { patient } = req.body;
-    const normalizedNhi = normalizeNhiNumber(patient.nhiNumber);
-
-    return res.status(500).json({success: false, message: "/update-patient route has not been updated to support database."})
-
-    
-});
-
 
 
 // Update an existing patient's personal details.

@@ -39,8 +39,7 @@ export default function Treatment({ treatment }) {
                     <div>
                         {<>
                             <div className="flex justify-between=">
-                                <div>Material: {treatment.material}{' '}</div> 
-                                <div>Tone: {treatment.materialTone} <span className="legend-colour" style={{background: '#111'}}>hello</span></div> 
+                                Material: {treatment.material} Tone: {treatment.materialTone} <span className="legend-colour" style={{background: VitaShades[treatment.materialTone], color: VitaShades[treatment.materialTone]}}>A#</span>
                             </div>
                             {Notes.length > 0 ? (
                                 Notes.map(note => (

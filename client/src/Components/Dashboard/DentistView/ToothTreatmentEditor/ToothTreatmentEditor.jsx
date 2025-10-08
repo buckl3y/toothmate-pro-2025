@@ -24,6 +24,7 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
     const [isPlanned, setIsPlanned] = useState(false);
     const [vitaShade, setVitaShade] = useState('A2');
 
+    const [treatmentDate, setTreatmentDate] = useState(new Date());
     const [showMaterial, setShowMaterial] = useState(true);
     const [showVitaDropdown, setShowVitaDropdown] = useState(false);
     const [material, setMaterial] = useState("ceramic");
@@ -67,6 +68,7 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
             planned: isPlanned,
             material: material,
             materialTone: vitaShade,
+            plannedDate: treatmentDate
         }
 
         console.log("Adding treatment: \n" + JSON.stringify(treatment))
@@ -215,17 +217,6 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                                         }
                                     </div>
                                 </div>}
-                                
-                                {/* <div>
-                                    <label hidden={true} htmlFor="treatment-date">Date:</label>
-                                    <input
-                                        type="date"
-                                        id="treatment-date"
-                                        value={treatmentDate.toISOString().split("T")[0]}
-                                        onChange={e => setTreatmentDate(new Date(e.target.value))}
-                                        hidden={true}
-                                    />
-                                </div> */}
 
                                 <div>
                                     <label htmlFor={"radio-historic"} >Historic</label>
@@ -250,6 +241,33 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                                     onChange={e => setTreatmentNotes(e.target.value)}
                                 />
                             </div>
+
+                            {isPlanned &&
+                                <div>
+                                    <label hidden={false} htmlFor="treatment-date">Date:</label>
+                                    <input
+                                        type="date"
+                                        id="treatment-date"
+                                        value={treatmentDate ? treatmentDate.toISOString().slice(0, 10) : ""}
+                                        onChange={e => {
+                                            const newDate = new Date(treatmentDate);
+                                            const [year, month, day] = e.target.value.split('-');
+                                            newDate.setFullYear(Number(year), Number(month) - 1, Number(day));
+                                            setTreatmentDate(newDate);
+                                        }}
+                                        hidden={false}
+                                    />
+                                    <input 
+                                        type="time"
+                                        value={treatmentDate ? treatmentDate.toTimeString().slice(0,5) : ""}
+                                        onChange={e => {
+                                            const [hours, minutes] = e.target.value.split(':');
+                                            const newDate = new Date(treatmentDate);
+                                            newDate.setHours(Number(hours), Number(minutes));
+                                            setTreatmentDate(newDate);
+                                        }}
+                                    />
+                                </div>}
                         </div>
 
                         <button 
