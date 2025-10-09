@@ -58,3 +58,48 @@ export const sealantMaterial = new MeshPhysicalMaterial({
     metalness: 0.0,
     roughness: 0.2,
 });
+
+export const erosionMaterial = new MeshPhysicalMaterial({
+    color: '#C00A0A',
+    side: DoubleSide,
+    metalness: 0.0,
+    roughness: 0.2,
+});
+export const partialEruptionMaterial = new MeshPhysicalMaterial({
+    color: '#EECCFF',
+    transparent: true,
+    opacity: 0.5,
+    side: DoubleSide,
+    metalness: 0.0,
+    roughness: 0.2,
+});
+export const acidWearMaterial = new MeshPhysicalMaterial({
+    color: '#EFFF5F',
+    side: DoubleSide,
+    metalness: 0.0,
+    roughness: 0.2,
+});
+export const bruxismMaterial = new MeshPhysicalMaterial({
+    color: '#5B609E',
+    side: DoubleSide,
+    metalness: 0.0,
+    roughness: 0.2,
+});
+export const groovingMaterial = new MeshPhysicalMaterial({
+    color: '#007610',
+    side: DoubleSide,
+    metalness: 0.0,
+    roughness: 0.2,
+});
+export const discolourationMaterial = new MeshPhysicalMaterial({
+    color: '#614C2B',
+    side: DoubleSide,
+    metalness: 0.0,
+    roughness: 0.2,
+});
+export const fractureMaterial = new MeshPhysicalMaterial({
+    color: '#ffa735',
+    side: DoubleSide,
+    metalness: 0.0,
+    roughness: 0.2,
+});

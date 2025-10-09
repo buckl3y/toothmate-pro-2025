@@ -59,10 +59,9 @@ module.exports = async function createDatabaseObjects(sql) {
         "Condition",
         {
             name: {type: DataTypes.STRING, allowNull: false},
-            tooth: {type: DataTypes.STRING, allowNull: false}
+            tooth: {type: DataTypes.STRING, allowNull: false},
         }
     );
-
     Patient.hasMany(Condition);
 
     const ToothSurface = await sql.define(

@@ -14,6 +14,10 @@ router.get("/patients", async (req, res) => {
                 include: [sql.models.ToothSurface, sql.models.Note]
             },
             {
+                model: sql.models.Condition,
+                include: [sql.models.Note]
+            },
+            {
                 model: sql.models.Note,
             }
         ]
@@ -40,6 +44,10 @@ router.get("/patient/:nhi", async (req, res) => {
             {
                 model: sql.models.Treatment,
                 include: [sql.models.ToothSurface, sql.models.Note]
+            },
+            {
+                model: sql.models.Condition,
+                include: [sql.models.Note]
             },
             {
                 model: sql.models.Note
@@ -179,5 +187,44 @@ router.post("/add-treatment", async (req, res) => {
     }
     
 });
+
+router.post('/add-condition', async (req, res) => {
+    const {patient, condition} = req.body;
+    console.log("Adding condition: " + JSON.stringify(condition));
+
+    const db_patient = await DbPatient.findOne({
+        where: {nhiNumber: patient.nhiNumber}, 
+        include: [sql.models.Condition, sql.models.Note]
+    });
+    if (!patient) { return res.status(400).json({success: false, message: "Could not find associated patient."}) }
+
+    try {
+        const db_condition = await sql.models.Condition.create({
+            name: condition.name,
+            tooth: condition.tooth
+        });
+
+        condition.notes.forEach(async (note) => {
+            if (note == '') {return;}
+            const db_note = await sql.models.Note.create({
+                body: note,
+                author: "dentist",
+            });
+            await db_condition.addNote(db_note);
+            await db_patient.addNote(db_note);
+        });
+        await db_patient.addCondition(db_condition)
+
+        return res.status(201).json({success: true, message: "saved condition to database", patient: db_patient, condition: db_condition})
+    }
+    catch(ex) {
+        console.error("Error in /add-condition:", ex);
+        return res.status(500).json({
+            message: "Unable to save condition",
+            error: ex.message || ex.toString(),
+            stack: ex.stack || null
+        });
+    }
+})
 
 module.exports = router;

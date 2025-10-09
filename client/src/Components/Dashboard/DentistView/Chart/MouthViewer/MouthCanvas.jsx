@@ -11,11 +11,18 @@ import {
     extractionMaterial,
     implantMaterial,
     veneerMaterial,
-    sealantMaterial
+    sealantMaterial,
+    erosionMaterial,
+    partialEruptionMaterial,
+    acidWearMaterial,
+    bruxismMaterial,
+    groovingMaterial,
+    discolourationMaterial,
+    fractureMaterial
 } from './ToothMaterials';
 import { useState } from 'react';
 
-export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treatmentVisibility, is3d }) { 
+export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treatmentVisibility, conditionVisibility, is3d }) { 
     const { scene: model3d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/mouth.glb');
     const { scene: model2d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/flat-mouth.glb');
     const { scene: modelChild } = useGLTF('/assets/3DModels/DeciduousTeeth/mouth_deciduous.glb')
@@ -24,8 +31,9 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
     const [model, setmodel] = useState(model3d);
     const originalMaterials = useRef({});
     const [visibleTreatments, setVisibleTreatments] = useState([]);
+    const [visibleConditions, setVisibleConditions] = useState([]);
 
-    // Effect to switch between 3D and grid chart views
+    // Effect to switch between the different 3d models
     // @author Skye Pooley
     useEffect(() => {
         const dob = new Date(patient.dateOfBirth);
@@ -126,6 +134,25 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
         setVisibleTreatments(tempTreatments);
     }, [patient, treatmentVisibility])
 
+    useEffect(() => {
+        console.log("Changing condition visibility")
+        if (!conditionVisibility.all) {
+            setVisibleConditions([]);
+            return;
+        }
+        let tempConditions = patient.Conditions;
+
+        if (!conditionVisibility.erosion) { tempConditions = tempConditions.filter(condition => condition.name !== 'erosion') }
+        if (!conditionVisibility.partialEruption) { tempConditions = tempConditions.filter(condition => condition.name !== 'partial eruption') }
+        if (!conditionVisibility.acidWear) { tempConditions = tempConditions.filter(condition => condition.name !== 'acid wear') }
+        if (!conditionVisibility.bruxism) { tempConditions = tempConditions.filter(condition => condition.name !==  'bruxism') }
+        if (!conditionVisibility.grooving) { tempConditions = tempConditions.filter(condition => condition.name !== 'grooving') }
+        if (!conditionVisibility.discolouration) { tempConditions = tempConditions.filter(condition => condition.name !== 'discolouration') }
+        if (!conditionVisibility.fracture) { tempConditions = tempConditions.filter(condition => condition.name !== 'fracture') }
+
+        setVisibleConditions(tempConditions);
+    }, [patient, conditionVisibility])
+
     // Effect to change color based on treatment and condition data whenever patient data or mouth changes.
     // @author Skye Pooley
     useEffect(() => {
@@ -191,9 +218,37 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
                     tooth.material = originalMat;
                 }
             }
+
+            toothData = visibleConditions.filter(condition => condition.tooth === toothName);
+            if (toothData.length > 0) {
+                let latestCondition = toothData[toothData.length-1];
+                switch (latestCondition.name) {
+                    case "erosion":
+                        tooth.material = erosionMaterial;
+                        break;
+                    case "partial eruption":
+                        tooth.material = partialEruptionMaterial;
+                        break;
+                    case "acid wear":
+                        tooth.material = acidWearMaterial;
+                        break;
+                    case "bruxism":
+                        tooth.material = bruxismMaterial;
+                        break;
+                    case "grooving":
+                        tooth.material = groovingMaterial;
+                        break;
+                    case "discolouration":
+                        tooth.material = discolourationMaterial;
+                        break;
+                    case "fracture":
+                        tooth.material = fractureMaterial;
+                        break;
+                }
+            }   
         });
         // Run whenever these objects are updated.
-    }, [model, visibleTreatments, selectedTooth, treatmentVisibility]);
+    }, [model, visibleTreatments, selectedTooth, treatmentVisibility, conditionVisibility, visibleConditions]);
 
     // Handle pointer down events on the model
     // Does tooth selection

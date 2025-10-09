@@ -62,3 +62,12 @@ export const addTreatment = async (patient, treatment) => {
     }
   );
 }
+
+export const addCondition = async (patient, condition) => {
+  return axios.post(`${serverUrl}/api/add-condition`,
+    {
+      patient: patient,
+      condition: condition
+    }
+  )
+}

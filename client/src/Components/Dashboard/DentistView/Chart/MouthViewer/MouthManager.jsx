@@ -34,6 +34,16 @@ export default function MouthManager({patient, onToothSelected}) {
         veneer: true,
         sealant: true
     });
+    const [conditionVisibility, setConditionVisibility] = useState({
+        all: true,
+        erosion: true,
+        partialEruption: true,
+        acidWear: true,
+        bruxism: true,
+        grooving: true,
+        discolouration: true,
+        fracture: true
+    });
     const [showOptions, setShowOptions] = useState(true);
     const toggleOptions = () => setShowOptions(!showOptions);
 
@@ -160,6 +170,7 @@ export default function MouthManager({patient, onToothSelected}) {
                             onMeshClick={handleMeshClick}
                             patient={patient}
                             treatmentVisibility={treatmentVisibility}
+                            conditionVisibility={conditionVisibility}
                             is3d={is3DView}
                         />
                     </Suspense>
@@ -191,6 +202,8 @@ export default function MouthManager({patient, onToothSelected}) {
                 <ChartOptions
                     treatmentVisibility={treatmentVisibility}
                     setTreatmentVisibility={setTreatmentVisibility}
+                    conditionVisibility={conditionVisibility}
+                    setConditionVisibility={setConditionVisibility}
                     view={view}
                     handleViewChanged={handleViewChanged}
                     resetView={resetView}

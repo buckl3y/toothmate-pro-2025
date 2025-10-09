@@ -3,6 +3,7 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 
 export default function ChartOptions(
     {treatmentVisibility, setTreatmentVisibility,
+    conditionVisibility, setConditionVisibility,
     view, handleViewChanged, resetView,
     toggleVisibility, visibility, 
 }
@@ -11,7 +12,7 @@ export default function ChartOptions(
     return (
         <div style={{ width: '100%', height: '100%' }}>
             {/* View Controls */}
-            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 8 }}>
                 {/* Left: Camera Reset */}
                 <div style={{ flex: 1 }}>
                     <button id="camera-reset-button" className="btn-secondary" onClick={resetView}>↺</button>
@@ -99,10 +100,48 @@ export default function ChartOptions(
                 </div>
 
                 {/* Conditions */}
-                <div style={{ flex: 1, padding: '0 32px', background: '#f5f5f5', borderRadius: 8 }}>
-                    {/* Add condition controls here */}
-                    <div style={{ padding: 8 }}>
-                        <h5>Conditions...</h5>
+                <div style={{ flex: 1, borderRadius: 8 }}>
+                    <div>
+                        <label style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                            <input
+                                type="checkbox"
+                                style={{ marginRight: 6 }}
+                                onChange={e => setConditionVisibility(prev => ({ ...prev, all: e.target.checked }))}
+                                checked={conditionVisibility.all}
+                            />
+                            Conditions:
+                        </label>
+                        {conditionVisibility.all && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                {[
+                                    { key: 'erosion', label: 'Erosion', color: '#C00A0A' },
+                                    { key: 'partialEruption', label: 'Partial Eruption', color: '#EEEEEE', border: '2px solid black' },
+                                    { key: 'acidWear', label: 'Acid Wear', color: '#efff5fff' },
+                                    { key: 'bruxism', label: 'Bruxism',  color: '#5b609eff'},
+                                    { key: 'grooving', label: 'Grooving', color: '#007610' },
+                                    { key: 'discolouration', label: 'Discolouration', color: '#614c2bff' },
+                                    { key: 'fracture', label: 'Fractures', color: '#ffa735ff' }
+                                ].map(({ key, label, color, border }) => (
+                                    <label key={key} style={{ display: 'flex', alignItems: 'center' }}>
+                                        <span
+                                            className="legend-colour"
+                                            style={{
+                                                background: color,
+                                                border: border || undefined,
+                                                marginRight: 6
+                                            }}
+                                        />
+                                        <input
+                                            type="checkbox"
+                                            style={{ marginRight: 6 }}
+                                            onChange={e => setConditionVisibility(prev => ({ ...prev, [key]: e.target.checked }))}
+                                            checked={conditionVisibility[key]}
+                                        />
+                                        {label}
+                                    </label>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -122,6 +161,17 @@ ChartOptions.propTypes = {
         veneer: PropTypes.bool.isRequired,
         sealant: PropTypes.bool.isRequired,
     }).isRequired,
+    conditionVisibility: PropTypes.shape({
+        all: PropTypes.bool.isRequired,
+        erosion: PropTypes.bool.isRequired,
+        partialEruption: PropTypes.bool.isRequired,
+        acidWear: PropTypes.bool.isRequired,
+        bruxism: PropTypes.bool.isRequired,
+        grooving: PropTypes.bool.isRequired,
+        discolouration: PropTypes.bool.isRequired,
+        fracture: PropTypes.bool.isRequired,
+    }).isRequired,
+    setConditionVisibility: PropTypes.func.isRequired,
     setTreatmentVisibility: PropTypes.func.isRequired,
     view: PropTypes.string.isRequired,
     handleViewChanged: PropTypes.func.isRequired,
