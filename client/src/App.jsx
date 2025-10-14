@@ -2,6 +2,7 @@
 import './App.css'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dashboard from './Components/Dashboard/Dashboard';
+import Welcome from './Components/Welcome';
 
 function App() {
 
@@ -9,7 +10,8 @@ function App() {
     <Router>
 
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path='/' element={<Welcome />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
 
     </Router>

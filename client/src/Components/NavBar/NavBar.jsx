@@ -146,8 +146,9 @@ const NavBar = ({ selectedPatient, onSelectPatient, onPatientUpdate, onToggleVie
 
   return (
     <>
-      <nav className="bg-black rounded-lg max-w-full bg-white text-white p-4 flex justify-between items-center z-50">
+      <nav className="bg-black rounded-lg max-w-full bg-white text-white p-4 pl-1 flex justify-between items-center z-50">
         <Link to="/" className="flex items-center space-x-2 pl-4">
+          <img src='logo.svg' style={{height: '40px', marginRight: "5px"}} />
           <div className="text-logo-purple font-extrabold text-4xl">ToothMate</div>
           <div className="text-logo-dark-purple font-extrabold text-4xl">Pro</div>
         </Link>
