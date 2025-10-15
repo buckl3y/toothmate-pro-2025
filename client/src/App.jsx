@@ -1,8 +1,8 @@
 
 import './App.css'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Dashboard from './Components/Dashboard/Dashboard';
 import Welcome from './Components/Welcome';
+import Login from './Components/Login/Login';
 
 function App() {
 
@@ -11,7 +11,7 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Welcome />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Login />} />
       </Routes>
 
     </Router>

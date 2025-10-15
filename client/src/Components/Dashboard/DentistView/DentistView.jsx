@@ -5,12 +5,15 @@ import MouthManager from './Chart/MouthViewer/MouthManager';
 import ToothCanvas from './Chart/ToothViewer/ToothCanvas';
 import SurfaceSelector from './Chart/SurfaceSelector/SurfaceSelector';
 import ToothTreatmentEditor from './ToothTreatmentEditor/ToothTreatmentEditor';
+import useFetchPatients from '../../NavBar/FetchPatients';
 
 
 export default function DentistView({selectedPatient, refreshPatientData }) {
     const [selectedTooth, setSelectedTooth] = useState(null);
     const [selectedSurfaces, setSelectedSurfaces] = useState([]);
     const [showSurfaceSelector, setShowSurfaceSelector] = useState(true);
+    const serverUrl = import.meta.env.VITE_SERVER_URL;
+    const patients = useFetchPatients(serverUrl, () => {});
 
     const handleToothSelection = (Tooth) => {
         // Start transition prevents the app from crashing while it waits for the tooth viewer to load.
@@ -76,9 +79,9 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
             ) : (
                 <div className="flex flex-col items-center justify-center w-full h-full">
                     <h2 className="text-4xl font-semibold mb-4 mt-5">Welcome</h2>
-                    <p className="text-white text-2xl">
-                        Please select a patient from the navigation bar to view their information.
-                    </p>
+                    {patients.map(patient => (
+                        <p key={patient.nhiNumber} id={patient.nhiNumber}>Hello {patient.name}</p>
+                    ))}
                 </div>
             )}
         </div>

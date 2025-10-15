@@ -42,7 +42,7 @@ const Dashboard = () => {
                     handlePatientSelect(patient);
                 }}
                 onPatientUpdate={(updatedPatient) => setSelectedPatient(updatedPatient)}
-                onToggleView={setIsAdminView}
+                onToggleView={() => {}} // Admin view is not implemented so don't switch to it.
             />
             {selectedPatient && (
                 <PatientInformation patient={selectedPatient} onUpdate={handlePatientUpdate} />
