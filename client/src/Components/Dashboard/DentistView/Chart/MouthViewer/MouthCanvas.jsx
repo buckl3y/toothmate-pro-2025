@@ -25,7 +25,8 @@ import { useState } from 'react';
 export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treatmentVisibility, conditionVisibility, is3d }) { 
     const { scene: model3d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/mouth.glb');
     const { scene: model2d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/flat-mouth.glb');
-    const { scene: modelChild } = useGLTF('/assets/3DModels/DeciduousTeeth/mouth_deciduous.glb')
+    const { scene: modelChild } = useGLTF('/assets/3DModels/DeciduousTeeth/mouth_deciduous.glb');
+    const { scene: modelChild2d } = useGLTF('/assets/3DModels/DeciduousTeeth/flat_deciduous.glb')
     const [modelScale, setModelScale] = useState(4);
     const [modelPosition, setModelPosition] = useState([0,-1.75,-1]);
     const [model, setmodel] = useState(model3d);
@@ -72,9 +73,17 @@ export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treat
                 setModelPosition([0,-1.75,0]);
             }
         }else {
-            setmodel(model2d);
-            setModelScale(75);
-            setModelPosition([0,-2,-15]);
+            if (isChild) {
+                setmodel(modelChild2d)
+                setModelScale(80);
+                setModelPosition([0,-2,-15]);
+            }
+            else {
+                setmodel(model2d);
+                setModelScale(75);
+                setModelPosition([0,-2,-15]);
+            }
+            
         }
     }, [is3d, model3d, model2d, modelChild, patient])
 
