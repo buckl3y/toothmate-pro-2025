@@ -21,8 +21,8 @@ import XrayHistory from '../../XrayHistory/XrayHistory';
 export default function MouthManager({patient, onToothSelected}) {
     // Change state to hold an array of selected teeth
     const [selectedTooth, setselectedTooth] = useState();
-    const [view, setView] = useState("mouth");
-    const [is3DView, setIs3DView] = useState(true);
+    const [view, setView] = useState("grid");
+    const [is3DView, setIs3DView] = useState(false);
     const controlsRef = useRef(); // Allows programatic control of camera.
     const [treatmentVisibility, setTreatmentVisibility] = useState({
         all: true,

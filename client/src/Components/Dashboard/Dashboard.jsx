@@ -1,24 +1,30 @@
-// Effectively the entry point to the application.
-// Everything happens here.
+/** Effectively the entry point to the application.
+ *  Everything happens here.
+ * 
+ *  @author Skye Pooley
+ */
 
 import { useState } from 'react';
 
 import NavBar from '../NavBar/NavBar';
-import AdminView from './AdminView/AdminView';
 import DentistView from './DentistView/DentistView';
 import PatientInformation from './DentistView/PatientInformation/PatientInformation';
-
+import useFetchPatients from '../NavBar/FetchPatients';
 import usePatientData from '../../hooks/usePatientData';
+import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Dashboard = () => {
-    const [selectedPatientKey, setSelectedPatientKey] = useState(null);    
-    const [isAdminView, setIsAdminView] = useState(false);
+    const passedNhi = useParams().nhi;
+    console.log("passed nhi number: " + passedNhi);
+    const [selectedPatientKey, setSelectedPatientKey] = useState(null);
 
     const {
         patient: selectedPatient,
         setPatient: setSelectedPatient,
         refreshPatientData,
     } = usePatientData(selectedPatientKey);
+    
 
     const handlePatientSelect = (patient) => {
         console.log("NavBar returned patient to dashboard: \n" + JSON.stringify(patient));
@@ -29,6 +35,19 @@ const Dashboard = () => {
         console.log("Patient information component has updated patient details. Updating patient in dashboard.");
         refreshPatientData();
     }
+
+    const serverUrl = import.meta.env.VITE_SERVER_URL;
+    const patientsList = useFetchPatients(serverUrl, refreshPatientData);
+    useEffect(() => {
+        if (passedNhi && patientsList) {
+            const matchedPatient = patientsList.find(patient => patient.nhiNumber === passedNhi);
+            if (matchedPatient) {
+                setSelectedPatientKey(matchedPatient.nhiNumber);
+                handlePatientSelect(matchedPatient);
+            }
+        }
+    }, [passedNhi, patientsList])
+    
 
     return (
         <div
@@ -48,14 +67,10 @@ const Dashboard = () => {
                 <PatientInformation patient={selectedPatient} onUpdate={handlePatientUpdate} />
             )}
             <div>
-                {isAdminView ? (
-                    <AdminView />
-                ) : (
-                    <DentistView 
-                        selectedPatient={selectedPatient} 
-                        refreshPatientData={refreshPatientData} 
-                    />
-                )}
+                <DentistView 
+                    selectedPatient={selectedPatient} 
+                    refreshPatientData={refreshPatientData} 
+                />
             </div>
         </div>
     );
