@@ -156,13 +156,13 @@ const NavBar = ({ selectedPatient, onSelectPatient, onPatientUpdate, onToggleVie
         {selectedPatient && (
           <button
             onClick={handleCautionToggle}
-            className="bg-red-500 text-white py-2 px-4 rounded mr-2"
+            className="btn-warning py-2 px-4 rounded mr-2"
           >
             Caution
           </button>
         )}
           <button
-            className="bg-black text-white py-2 px-4 rounded"
+            className="btn py-2 px-4 rounded"
             onClick={handleNewPatientClick}
           >
             Add New Patient
@@ -177,7 +177,6 @@ const NavBar = ({ selectedPatient, onSelectPatient, onPatientUpdate, onToggleVie
                   handleSelectPatient={handleSelectPatient}
                 />
               </div>
-              <button className="bg-black text-white py-2 px-4 rounded">Search</button>
             </>
           )}
           {/* Toggle Avatar */}

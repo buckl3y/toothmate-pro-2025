@@ -16,10 +16,7 @@ export default function Login() {
         <Dashboard /> :
 
         <div
-            className="flex items-center justify-center min-h-screen"
-            style={{
-                background: "linear-gradient(to bottom, #fff 0%, #eae5ffff 100%)"
-            }}
+            className="flex items-center justify-center min-h-screen background-gradient"
         >
             <div className="flex items-center space-x-2 pr-8 justify-center">
                 <img src='logo.svg' style={{height: '70px', marginRight: "15px"}} />

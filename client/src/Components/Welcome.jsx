@@ -6,10 +6,7 @@ export default function Welcome() {
 
     return (
         <div
-            className="flex items-center justify-center min-h-screen"
-            style={{
-                background: "linear-gradient(to bottom, #fff 0%, #eae5ffff 100%)"
-            }}
+            className="flex items-center justify-center min-h-screen background-gradient"
         >
             <div className="flex flex-col items-center">
                 <div className="flex items-center space-x-2 pl-4 justify-center">
