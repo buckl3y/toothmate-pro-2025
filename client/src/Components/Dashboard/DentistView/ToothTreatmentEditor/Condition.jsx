@@ -9,9 +9,12 @@ import { useState } from "react";
 import capitalize from "./capitalize";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
-export default function Condition({ condition }) {
+import { deleteCondition } from "../../../../api";
+
+export default function Condition({ condition, refreshPatientData }) {
     const { name, tooth, Notes } = condition;
     const [showDetails, setShowDetails] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     return (
         <div className="subsubpanel flex justify-between mr-5 ml-5">
@@ -37,6 +40,23 @@ export default function Condition({ condition }) {
                             ) : (
                                 <p>No Notes</p>
                             )}
+                                <button
+                                    className="btn-warning mt-2"
+                                    onClick={async () => {
+                                        if (!condition.id) return;
+                                        setIsDeleting(true);
+                                        try {
+                                            await deleteCondition(condition.id);
+                                            refreshPatientData()
+                                        } catch (err) {
+                                            alert("Failed to delete condition.");
+                                        }
+                                        setIsDeleting(false);
+                                    }}
+                                    disabled={isDeleting}
+                                >
+                                    {isDeleting ? "Deleting..." : "Delete Condition"}
+                                </button>
                         </>}
                         
                     </div>
@@ -63,5 +83,6 @@ Condition.propTypes = {
                     author: PropTypes.string
                 })
             )
-        })
+        }),
+    refreshPatientData: PropTypes.func
     }

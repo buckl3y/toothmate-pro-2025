@@ -50,6 +50,16 @@ export const deleteXray = async (patientId, fileName) => {
   });
 };
 
+// Treatment APIs
+export const deleteTreatment = async (treatmentId) => {
+  return axios.delete(`${serverUrl}/api/delete-treatment/${treatmentId}`);
+};
+
+// Condition APIs
+export const deleteCondition = async (conditionId) => {
+  return axios.delete(`${serverUrl}/api/delete-condition/${conditionId}`);
+};
+
 export const checkXrayFilename = async (patientId, fileName) => {
   return axios.get(`${serverUrl}/api/check-xray-filename/${patientId}/${fileName}`);
 };

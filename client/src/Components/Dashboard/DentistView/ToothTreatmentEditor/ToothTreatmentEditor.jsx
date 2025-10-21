@@ -140,7 +140,7 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                         </div>
                         {relevantTreatments
                             .filter(treatment => treatment.planned)
-                            .map(treatment => <Treatment key={treatment.id} treatment={treatment} />)}
+                            .map(treatment => <Treatment key={treatment.id} treatment={treatment} refreshPatientData={refreshPatientData} />)}
 
                         <div className="flex items-center justify-center w-full">
                             <hr className="aside"/>
@@ -149,7 +149,7 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                         </div>
                         {relevantTreatments
                             .filter(treatment => !treatment.planned)
-                            .map(treatment => <Treatment key={treatment.id} treatment={treatment} />)}
+                            .map(treatment => <Treatment key={treatment.id} treatment={treatment} refreshPatientData={refreshPatientData}/>)}
                         
                         <div className="flex items-center justify-center w-full">
                             <hr className="aside"/>
@@ -157,7 +157,7 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                             <hr className="aside"/>
                         </div>
                         {relevantConditions.map(condition => 
-                            <Condition key={condition.id} condition={condition} />
+                            <Condition key={condition.id} condition={condition} refreshPatientData={refreshPatientData} />
                         )}
                     </div>
                 ) : (

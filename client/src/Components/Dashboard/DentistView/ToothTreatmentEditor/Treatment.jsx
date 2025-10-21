@@ -10,14 +10,29 @@ import { useState } from "react";
 import capitalize from "./capitalize";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
-export default function Treatment({ treatment }) {
+import { deleteTreatment } from "../../../../api";
+
+export default function Treatment({ treatment, refreshPatientData }) {
     const { tooth, procedure, ToothSurfaces, Notes } = treatment;
     const [showDetails, setShowDetails] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
      const VitaShades = {
         A1: '#f6efe5ff',
         A2: '#eedfccff',
         A3: '#e2ceabff', 
         A4: '#d0bd8bff'
+    }
+
+    const handleDelete = async () => {
+        if (!treatment.id) return;
+        setIsDeleting(true);
+        try {
+            await deleteTreatment(treatment.id);
+            refreshPatientData();
+        } catch (err) {
+            alert("Failed to delete treatment.");
+        }
+        setIsDeleting(false);
     }
 
     return (
@@ -53,6 +68,13 @@ export default function Treatment({ treatment }) {
                             ) : (
                                 <p>No Notes</p>
                             )}
+                                <button
+                                    className="btn-warning mt-2"
+                                    onClick={handleDelete}
+                                    disabled={isDeleting}
+                                >
+                                    {isDeleting ? "Deleting..." : "Delete Treatment"}
+                                </button>
                         </>}
                         
                     </div>
@@ -86,5 +108,6 @@ Treatment.propTypes = {
                     author: PropTypes.string
                 })
             )
-        })
+        }),
+    refreshPatientData: PropTypes.func
     }

@@ -227,4 +227,65 @@ router.post('/add-condition', async (req, res) => {
     }
 })
 
+router.delete('/delete-treatment/:treatmentId', async (req, res) => {
+    const { treatmentId } = req.params;
+
+    try {
+        const treatment = await sql.models.Treatment.findOne({
+            where: { id: treatmentId },
+            include: [sql.models.Note, sql.models.ToothSurface]
+        });
+
+        if (!treatment) {
+            return res.status(404).json({ error: 'Treatment not found.' });
+        }
+
+        // Delete associated notes
+        if (treatment.Notes && treatment.Notes.length > 0) {
+            for (const note of treatment.Notes) {
+                await note.destroy();
+            }
+        }
+
+        // Remove associations with tooth surfaces
+        if (treatment.ToothSurfaces && treatment.ToothSurfaces.length > 0) {
+            await treatment.setToothSurfaces([]);
+        }
+
+        // Delete the treatment itself
+        await treatment.destroy();
+
+        return res.status(200).json({ success: true, message: 'Treatment and associated data deleted.' });
+    } catch (ex) {
+        console.error('Error deleting treatment:', ex);
+        return res.status(500).json({ error: 'Unable to delete treatment.' });
+    }
+});
+
+// Delete a condition by ID
+router.delete('/delete-condition/:conditionId', async (req, res) => {
+    const { conditionId } = req.params;
+    try {
+        const condition = await sql.models.Condition.findOne({
+            where: { id: conditionId },
+            include: [sql.models.Note]
+        });
+        if (!condition) {
+            return res.status(404).json({ error: 'Condition not found.' });
+        }
+        // Delete associated notes
+        if (condition.Notes && condition.Notes.length > 0) {
+            for (const note of condition.Notes) {
+                await note.destroy();
+            }
+        }
+        // Delete the condition itself
+        await condition.destroy();
+        return res.status(200).json({ success: true, message: 'Condition and associated data deleted.' });
+    } catch (ex) {
+        console.error('Error deleting condition:', ex);
+        return res.status(500).json({ error: 'Unable to delete condition.' });
+    }
+});
+
 module.exports = router;
