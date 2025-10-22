@@ -8,8 +8,8 @@ export default {
   theme: {
   	extend: {
   		colors: {
-  			'logo-purple': '#5E548E',
-  			'logo-dark-purple': '#231942',
+  			'logo-purple': '#222',
+  			'logo-dark-purple': '#516287',
   			'textbox-purple': '#EBD8E3',
 			'button-purple': '#EBD8E3',
 			'button-purple-border': '#E0B1CB',

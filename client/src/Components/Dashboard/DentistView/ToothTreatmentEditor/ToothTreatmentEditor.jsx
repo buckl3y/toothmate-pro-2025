@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { addTreatment } from "../../../../api";
+import { addTreatment, addCondition } from "../../../../api";
 import Treatment from "./Treatment";
+import Condition from "./Condition";
 
 /**
  * ToothTreatmentEditor 
@@ -16,24 +17,49 @@ import Treatment from "./Treatment";
  * @author Skye Pooley
  */
 
-const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedTooth, selectedSurfaces }) => {
+const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedTooth, selectedSurfaces, setRequireSurface }) => {
+    const [showConditionEditor, setShowConditionEditor] = useState(false);
+    const [conditionType, setConditionType] = useState('erosion');
+    const [conditionNotes, setConditionNotes] = useState('');
+    const [relevantConditions, setRelevantConditions] = useState([]);
+    
     const [treatmentType, setTreatmentType] = useState('filling');
-    const [treatmentDate, setTreatmentDate] = useState(new Date());
     const [relevantTreatments, setRelevantTreatments] = useState([]);
     const [treatmentNotes, setTreatmentNotes] = useState("");
+    const [isPlanned, setIsPlanned] = useState(false);
+    const [vitaShade, setVitaShade] = useState('A2');
+    const [treatmentDate, setTreatmentDate] = useState(new Date());
+    const [showMaterial, setShowMaterial] = useState(true);
+    const [showVitaDropdown, setShowVitaDropdown] = useState(false);
+    const [material, setMaterial] = useState("ceramic");
 
+    // There is no hex code guide for the VITA shades, these are just my best guess.
+    // Dentists have the physical guide on-hand and would use it for colour matching.
+    // We cannot expect their computer monitor to be colour accurate.
+    const VitaShades = {
+        A1: '#f6efe5ff',
+        A2: '#eedfccff',
+        A3: '#e2ceabff', 
+        A4: '#d0bd8bff'
+    }
+
+    // Filter treatments to only show ones on the currently selected tooth.
     useEffect(() => {
         if (selectedTooth) {
             setRelevantTreatments(
                 selectedPatient.Treatments.filter(treatment => treatment.tooth === selectedTooth)
             );
+            setRelevantConditions(
+                selectedPatient.Conditions.filter(condition => condition.tooth === selectedTooth)
+            );
         }
         else {
             setRelevantTreatments(selectedPatient.Treatments);
+            setRelevantConditions(selectedPatient.Conditions);
         }
-        
     }, [selectedPatient, selectedTooth]);
 
+    // Send request for new treatment to backend.
     const handleTreatmentAdd = async () => {
         console.log("Adding new treament for " + selectedPatient.name);
 
@@ -44,67 +70,165 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
         const treatment = {
             procedure: treatmentType,
             tooth: selectedTooth,
-            surfaces: selectedSurfaces,
+            surfaces: (requireSurface() ? selectedSurfaces : []),
             notes: [treatmentNotes],
+            planned: isPlanned,
+            material: material,
+            materialTone: vitaShade,
             plannedDate: treatmentDate
         }
+
+        console.log("Adding treatment: \n" + JSON.stringify(treatment))
 
         await addTreatment(selectedPatient, treatment);
         refreshPatientData();
     };
 
-    return (
-        <table className="w-full p-4 ">
-            <th style={{height: '10%'}}>
-                {selectedTooth ? (
-                    <h3 className="text-center mt-3">{selectedPatient.name} Tooth {selectedTooth} Treatments</h3>
-                ) : (
-                    <h3 className="text-center mt-3">Treatments for {selectedPatient.name}</h3>
-                )}
-            </th>
-            
+    const handleConditionAdd = async () => {
+        const condition = {
+            name: conditionType,
+            tooth: selectedTooth,
+            notes: [conditionNotes]
+        }
 
-            <tr style={{height: '70%'}}>
-                <td colSpan="100%">
-                    {relevantTreatments.length > 0 ? (
-                    <div style={{ height: "530px", overflow: 'scroll' }}>
+        await addCondition(selectedPatient, condition);
+        refreshPatientData();
+    }
+
+    // Does the selected treatment type require a surface to be selected?
+    const requireSurface = () => {
+        return ["filling", "sealant", "root canal"].includes(treatmentType)
+    }
+
+    // Is the treatment valid for sending to backend?
+    const validateTreatment = () => {
+        if (requireSurface()) {
+            return selectedSurfaces.length > 0;
+        }
+        return true;
+    }
+
+    // Tell the dentist view whether it should show a surface selection tool
+    useEffect(() => {
+        setRequireSurface(requireSurface())
+
+        const materialRequired = ["filling", "root canal", "crown", "veneer", "implant"].includes(treatmentType);
+        setShowMaterial(materialRequired)
+        if (!materialRequired) {
+            setMaterial(null)
+            setVitaShade(null)
+        }
+    }, [treatmentType])
+
+    return (
+        <div className="w-full p-2 flex flex-col h-full" style={{ minHeight: "600px" }}>
+            <div style={{ flex: "0 0 auto" }}>
+                {selectedTooth ? (
+                    <h4 className="text-center mt-3">{selectedPatient.name} Tooth {selectedTooth} Chart</h4>
+                ) : (
+                    <h4 className="text-center mt-3">Chart for {selectedPatient.name}</h4>
+                )}
+            </div>
+
+            <div style={{ flex: "1 1 auto", minHeight: 0, overflow: "hidden" }}>
+                {relevantTreatments.length > 0 || relevantConditions.length > 0 ? (
+                    <div style={{ height: "100%", maxHeight: "530px", overflow: 'auto' }}>
                         <div className="flex items-center justify-center w-full">
                             <hr className="aside"/>
-                            <h5 className="ml-5 mr-5 text-center">Upcoming</h5>
+                            <h5 className="ml-5 mr-5 text-center">Planned</h5>
                             <hr className="aside"/>
                         </div>
+                        {relevantTreatments
+                            .filter(treatment => treatment.planned)
+                            .map(treatment => <Treatment key={treatment.id} treatment={treatment} refreshPatientData={refreshPatientData} />)}
 
-                        <div>
-                            {relevantTreatments.map(treatment => <Treatment key={treatment.id} treatment={treatment} />)}
-
-                            <div className="flex items-center justify-center w-full">
-                                <hr className="aside"/>
-                                <h5 className="ml-5 mr-5 text-center">Completed</h5>
-                                <hr className="aside"/>
-                            </div>
+                        <div className="flex items-center justify-center w-full">
+                            <hr className="aside"/>
+                            <h5 className="ml-5 mr-5 text-center">Historical</h5>
+                            <hr className="aside"/>
                         </div>
+                        {relevantTreatments
+                            .filter(treatment => !treatment.planned)
+                            .map(treatment => <Treatment key={treatment.id} treatment={treatment} refreshPatientData={refreshPatientData}/>)}
+                        
+                        <div className="flex items-center justify-center w-full">
+                            <hr className="aside"/>
+                            <h5 className="ml-5 mr-5 text-center">Conditions</h5>
+                            <hr className="aside"/>
+                        </div>
+                        {relevantConditions.map(condition => 
+                            <Condition key={condition.id} condition={condition} refreshPatientData={refreshPatientData} />
+                        )}
                     </div>
-                    ) : (
-                        <p className="text-center">No Treatments On Record</p>
-                    )}
-                </td>
-            </tr>
+                ) : (
+                    <p className="text-center">No Treatments or Conditions Recorded</p>
+                )}
+            </div>
 
-            
-            
-            
             {/* Treatment Editor */}
-            <tr style={{height:'20%', verticalAlign: 'bottom', width: '100%'}}>
-            {selectedTooth &&
-                <div className="subpanel h-full">
-                    <h4 className="text-center">Add a New Treatment</h4>
+            {selectedTooth && (
+                <div className="subpanel w-full" style={{ flex: "0 0 auto", marginTop: "auto" }}>
+                    <div className="flex justify-between">
+                        <button 
+                            className={showConditionEditor ? "btn-secondary" :"btn"}
+                            style={{width: '50%'}}
+                            onClick={() => setShowConditionEditor(false)}>
+                            New Treatment
+                        </button>
+                        <button 
+                            className={showConditionEditor ? "btn" :"btn-secondary"}
+                            style={{width: '50%'}}
+                            onClick={() => setShowConditionEditor(true)}>
+                            Log Condition
+                        </button>
+                    </div>
+                    
+                    {showConditionEditor ? 
                     <div className="flex justify-between m-3">
                         <div className="flex flex-col w-full mr-3">
                             <div className="flex justify-between">
                                 <select 
-                                value={treatmentType} 
-                                onChange={e => setTreatmentType(e.target.value)}
-                                className="border border-gray-300 rounded-md p-1"
+                                    value={conditionType} 
+                                    onChange={e => setConditionType(e.target.value)}
+                                    className="border border-gray-300 rounded-md p-1"
+                                >
+                                    <option value={'erosion'}>Erosion</option>
+                                    <option value={'partial eruption'}>Partial Eruption</option>
+                                    <option value={'acid wear'}>Acid Wear</option>
+                                    <option value={'bruxism'}>Bruxism</option>
+                                    <option value={'grooving'}>Grooving</option>
+                                    <option value={'discolouration'}>Discolouration</option>
+                                    <option value={'fracture'}>Fracture</option>
+                                </select>
+
+                            </div>
+
+                            <div className="w-full">
+                                <textarea
+                                    className="border border-gray-300 rounded-md p-1 mt-2 w-full"
+                                    id="treatment-notes"
+                                    placeholder="Notes (optional)"
+                                    value={conditionNotes}
+                                    onChange={e => setConditionNotes(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <button 
+                            className="btn tooltip" 
+                            onClick={handleConditionAdd}>
+                                Add
+                        </button>
+
+                    </div>
+                    :
+                    <div className="flex justify-between m-3">
+                        <div className="flex flex-col w-full mr-3">
+                            <div className="flex justify-between">
+                                <select 
+                                    value={treatmentType} 
+                                    onChange={e => setTreatmentType(e.target.value)}
+                                    className="border border-gray-300 rounded-md p-1"
                                 >
                                     <option value={'filling'}>Filling</option>
                                     <option value={'crown'}>Crown</option>
@@ -115,18 +239,72 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                                     <option value={'sealant'}>Sealant</option>
                                 </select>
 
-                                <div className="">
-                                    {selectedSurfaces.length > 0 ? selectedSurfaces.join(", ") : "Select a Surface"}
-                                </div>
+                                {
+                                showMaterial &&
+                                <div className="flex">
+                                    <select
+                                        value={material}
+                                        onChange={e => setMaterial(e.target.value)}
+                                        className="border border-gray-300 rounded-md p-1"
+                                    >
+                                        <option value={'ceramic'}>Ceramic</option>
+                                        <option value={'composite'}>Composite</option>
+                                        <option value={'gold'}>Gold</option>
+                                        <option value={'silver amalgam'}>Silver Amalgam</option>
+                                        <option value={'glass ionomer'}>Glass Ionomer</option>
+                                    </select>
+
+                                    {/* 
+                                    Ideally this would just be a regular select like the one above but most browsers don't support
+                                    colours for individual options so we do this instead :(
+                                    Material Shade Selector. */
+                                    }
+                                    <div className="relative">
+                                        <button
+                                            type="button"
+                                            className="border border-gray-300 rounded-md p-1 w-full text-left"
+                                            style={{ backgroundColor: VitaShades[vitaShade] }}
+                                            onClick={() => setShowVitaDropdown(prev => !prev)}
+                                        >
+                                            {vitaShade}
+                                        </button>
+                                        {showVitaDropdown &&
+                                            <ul
+                                                className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg"
+                                                style={{
+                                                    maxHeight: "75px",
+                                                    overflowY: "auto"
+                                                }}
+                                            >
+                                                {Object.entries(VitaShades).map(([shade, color]) => (
+                                                    <li
+                                                        key={shade}
+                                                        className="cursor-pointer"
+                                                        style={{ backgroundColor: color }}
+                                                        onClick={() => {
+                                                            setVitaShade(shade);
+                                                            setShowVitaDropdown(false);
+                                                        }}
+                                                    >
+                                                        {shade}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        }
+                                    </div>
+                                </div>}
 
                                 <div>
-                                    <label htmlFor="treatment-date">Date:</label>
-                                    <input
-                                        type="date"
-                                        id="treatment-date"
-                                        value={treatmentDate.toISOString().split("T")[0]}
-                                        onChange={e => setTreatmentDate(new Date(e.target.value))}
-                                    />
+                                    <label htmlFor={"radio-historic"} >Historic</label>
+                                    <label className="toggle">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={isPlanned}
+                                            onChange={(ce) => {setIsPlanned(ce.target.checked)}}
+                                            />
+                                        <span className="toggle-slider round" ></span>
+                                    </label>
+                                    <label htmlFor={"radio-planned"} >Planned</label>
                                 </div>
                             </div>
 
@@ -139,14 +317,47 @@ const ToothTreatmentEditor = ({ selectedPatient, refreshPatientData, selectedToo
                                     onChange={e => setTreatmentNotes(e.target.value)}
                                 />
                             </div>
+
+                            {isPlanned &&
+                                <div>
+                                    <label hidden={false} htmlFor="treatment-date">Date:</label>
+                                    <input
+                                        type="date"
+                                        id="treatment-date"
+                                        value={treatmentDate ? treatmentDate.toISOString().slice(0, 10) : ""}
+                                        onChange={e => {
+                                            const newDate = new Date(treatmentDate);
+                                            const [year, month, day] = e.target.value.split('-');
+                                            newDate.setFullYear(Number(year), Number(month) - 1, Number(day));
+                                            setTreatmentDate(newDate);
+                                        }}
+                                        hidden={false}
+                                    />
+                                    <input 
+                                        type="time"
+                                        value={treatmentDate ? treatmentDate.toTimeString().slice(0,5) : ""}
+                                        onChange={e => {
+                                            const [hours, minutes] = e.target.value.split(':');
+                                            const newDate = new Date(treatmentDate);
+                                            newDate.setHours(Number(hours), Number(minutes));
+                                            setTreatmentDate(newDate);
+                                        }}
+                                    />
+                                </div>}
                         </div>
 
-                        <button className="btn" onClick={handleTreatmentAdd} disabled={selectedSurfaces.length < 1}>Add</button>
+                        <button 
+                            className="btn tooltip" 
+                            onClick={handleTreatmentAdd} 
+                            disabled={!validateTreatment()}>
+                                Add
+                                <span className="tooltiptext">Please select a surface before adding treatment.</span>
+                        </button>
                     </div>
+                    }
                 </div>
-            }
-            </tr>
-        </table>
+            )}
+        </div>
     );
 };
 ToothTreatmentEditor.propTypes = {
@@ -161,11 +372,18 @@ ToothTreatmentEditor.propTypes = {
                     name: PropTypes.string
                 })
             )
-        })).isRequired
+        })).isRequired,
+        Conditions: PropTypes.arrayOf(PropTypes.shape({
+            id: PropTypes.number,
+            tooth: PropTypes.string,
+            name: PropTypes.string,
+            Notes: PropTypes.array
+        }))
     }).isRequired,
     refreshPatientData: PropTypes.func.isRequired,
     selectedTooth: PropTypes.string,
-    selectedSurfaces: PropTypes.arrayOf(PropTypes.string).isRequired
+    selectedSurfaces: PropTypes.arrayOf(PropTypes.string).isRequired,
+    setRequireSurface: PropTypes.func.isRequired
 };
 
 export default ToothTreatmentEditor;

@@ -266,28 +266,29 @@ const XrayHistory = ({ patient, refreshPatientData }) => {
 
   if (!patient || !xrayHistory || Object.keys(xrayHistory).length === 0) {
     return (
-      <div className="bg-white p-6 rounded-2xl shadow-md h-full">
-        <h2 className="text-lg font-semibold mb-4">X-Ray History</h2>
-        <p className="text-gray-500">No X-ray history available.</p>
+      <div className="bg-white p-6 h-full">
+        <h2 className="text-lg font-semibold mb-4 text-center">X-Ray History</h2>
+        <p className="text-gray-500 text-center">Patient has no X-Ray records.</p>
         {/* Upload Button */}
-        <button
-          onClick={handleUploadXrayClick}
-          className="mt-4 bg-green-500 text-white py-2 px-4 rounded"
-        >
-          Upload X-ray
-        </button>
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={handleUploadXrayClick}
+            className="btn text-white py-4 px-4"
+          >
+            Upload X-ray
+          </button>
+        </div>
 
-        {/* Upload X-ray Modal */}
         {isUploadModalOpen && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60"
+            className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60"
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
             onClick={handleUploadModalClose}
           >
             <div
-              className="bg-white w-1/3 p-6 rounded-lg relative"
+              className="bg-white w-4/5 p-6 rounded-lg relative"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Close Button */}
               <button
                 className="absolute top-4 right-6 text-white hover:bg-red-400 bg-red-500 p-2 rounded-xl"
                 onClick={handleUploadModalClose}
@@ -338,9 +339,9 @@ const XrayHistory = ({ patient, refreshPatientData }) => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-md h-full relative">
+    <div className="bg-white p-6 h-full relative">
       <h2 className="text-lg font-semibold mb-4">X-Ray History</h2>
-      <div className="space-y-4 overflow-y-auto h-5/6">
+      <div className="space-y-4 overflow-y-auto">
         {xrayHistory &&
           Object.entries(xrayHistory).map(([filename, xrayData]) => (
             <div key={filename} className="flex items-center">

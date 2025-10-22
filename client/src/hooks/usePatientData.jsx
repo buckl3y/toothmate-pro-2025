@@ -1,3 +1,8 @@
+/**
+ * Mystery box used to load and reload patient data from API
+ * Written by previous team who shamefully did not comment their code.
+ */
+
 
 import { useState, useEffect } from 'react';
 import { getPatientById } from '../api';

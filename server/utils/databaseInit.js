@@ -42,10 +42,13 @@ module.exports = async function createDatabaseObjects(sql) {
     const Treatment = await sql.define(
         "Treatment",
         {
-            datePlanned: {type: DataTypes.DATE, allowNull: true },
+            planned: {type: DataTypes.BOOLEAN, allowNull: false},
+            datePlanned: {type: DataTypes.DATE, allowNull: true},
             dateCompleted: {type: DataTypes.DATE, allowNull: true },
             procedure: {type: DataTypes.STRING, allowNull: false},
-            tooth: {type: DataTypes.STRING, allowNull: false} 
+            tooth: {type: DataTypes.STRING, allowNull: false},
+            material:  DataTypes.STRING,
+            materialTone: DataTypes.STRING
         }
     );
 
@@ -56,10 +59,9 @@ module.exports = async function createDatabaseObjects(sql) {
         "Condition",
         {
             name: {type: DataTypes.STRING, allowNull: false},
-            tooth: {type: DataTypes.STRING, allowNull: false}
+            tooth: {type: DataTypes.STRING, allowNull: false},
         }
     );
-
     Patient.hasMany(Condition);
 
     const ToothSurface = await sql.define(

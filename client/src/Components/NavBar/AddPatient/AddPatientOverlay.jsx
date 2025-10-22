@@ -12,9 +12,6 @@ const AddPatientOverlay = ({ isVisible, onClose, onSaveSuccess,onSelectPatient }
     const [statusColor, setStatusColor] = useState('');
     const [view, setView] = useState('adult'); // Default to 'mixed'
 
-    const handleViewChange = (event) => {
-        setView(event.target.value);
-    };
 
     if (!isVisible) {
         return null;
@@ -68,60 +65,6 @@ const AddPatientOverlay = ({ isVisible, onClose, onSaveSuccess,onSelectPatient }
           }
         }
       };
-    // Separate handler functions
-    const handleAutofillByNhi = async () => {
-        try {
-            const inputValue = nhiNumber.trim().toLowerCase();
-
-            const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/autofill/nhi/${inputValue}`);
-            const patientData = response.data;
-            console.log('Patient Data:', patientData);
-
-            setPatientName(patientData.name);
-            const [month, day, year] = patientData.dateOfBirth.split('/');
-            const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-            setDateOfBirth(formattedDate);
-            setAddress(patientData.address);
-            setPhone(patientData.phone);
-
-            setStatusMessage('Patient found and autofilled!');
-            setStatusColor('text-green-500');
-        } catch (error) {
-            console.error('Failed to retrieve patient by NHI:', error);
-            setStatusMessage('Patient not found by NHI.');
-            setStatusColor('text-red-500');
-        }
-    };
-
-    const handleAutofillByPhone = async () => {
-        try {
-            const inputValue = phone.trim();
-            if (!inputValue) {
-                setStatusMessage('Please enter a phone number.');
-                setStatusColor('text-red-500');
-                return;
-            }
-
-            console.log("Submitting Phone:", inputValue);
-            const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/autofill/phone/${encodeURIComponent(inputValue)}`);
-            const patientData = response.data;
-            console.log('Patient Data:', patientData);
-
-            setPatientName(patientData.name);
-            const [month, day, year] = patientData.dateOfBirth.split('/');
-            const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-            setDateOfBirth(formattedDate);
-            setAddress(patientData.address);
-            setPhone(patientData.phone);
-
-            setStatusMessage('Patient found and autofilled!');
-            setStatusColor('text-green-500');
-        } catch (error) {
-            console.error('Failed to retrieve patient by Phone:', error);
-            setStatusMessage('Patient not found by phone number.');
-            setStatusColor('text-red-500');
-        }
-    };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -153,12 +96,6 @@ const AddPatientOverlay = ({ isVisible, onClose, onSaveSuccess,onSelectPatient }
                             className="w-full p-2 border border-gray-300 rounded mt-1"
                             placeholder="Enter NHI or Search NHI"
                         />
-                        <button
-                            onClick={handleAutofillByNhi}
-                            className="bg-blue-500 text-white py-2 px-4 rounded ml-2"
-                        >
-                            Autofill
-                        </button>
                     </div>
                 </div>
                 <div className="mb-4">
@@ -190,39 +127,12 @@ const AddPatientOverlay = ({ isVisible, onClose, onSaveSuccess,onSelectPatient }
                         className="w-full p-2 border border-gray-300 rounded mt-1"
                         placeholder="Enter Phone Number or search Phone Number"
                     />
-                                            <button
-                            onClick={handleAutofillByPhone}
-                            className="bg-blue-500 text-white py-2 px-4 rounded ml-2"
-                        >
-                            Autofill
-                        </button>
-                        </div>
-                </div>
-                <div className="radio-group flex flex-row gap-3 mb-4">
-                    <input
-                        type="radio"
-                        id="adult-view"
-                        name="view"
-                        value="adult"
-                        checked={view === 'adult'}
-                        onChange={handleViewChange}
-                    />
-                    <label htmlFor="adult-view">Adult View</label>
-
-                    <input
-                        type="radio"
-                        id="deciduous-view"
-                        name="view"
-                        value="deciduous"
-                        checked={view === 'deciduous'}
-                        onChange={handleViewChange}
-                    />
-                    <label htmlFor="deciduous-view">Deciduous View</label>
+                    </div>
                 </div>
                 
                 <div className="flex justify-end space-x-4">
-                    <button onClick={onClose} className="bg-gray-500 text-white py-2 px-4 rounded">Cancel</button>
-                    <button onClick={handleSavePatient} className="bg-blue-500 text-white py-2 px-4 rounded">Save</button>
+                    <button onClick={onClose} className="btn-secondary py-2 px-4 rounded">Cancel</button>
+                    <button onClick={handleSavePatient} className="btn py-2 px-4 rounded">Save</button>
                 </div>
             </div>
         </div>

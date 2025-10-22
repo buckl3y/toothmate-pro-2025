@@ -8,35 +8,82 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import capitalize from "./capitalize";
+import { ChevronDown, ChevronRight } from "lucide-react";
 
-export default function Treatment({ treatment }) {
+import { deleteTreatment } from "../../../../api";
+
+export default function Treatment({ treatment, refreshPatientData }) {
     const { tooth, procedure, ToothSurfaces, Notes } = treatment;
     const [showDetails, setShowDetails] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+     const VitaShades = {
+        A1: '#f6efe5ff',
+        A2: '#eedfccff',
+        A3: '#e2ceabff', 
+        A4: '#d0bd8bff'
+    }
+
+    const handleDelete = async () => {
+        if (!treatment.id) return;
+        setIsDeleting(true);
+        try {
+            await deleteTreatment(treatment.id);
+            refreshPatientData();
+        } catch (err) {
+            alert("Failed to delete treatment.");
+        }
+        setIsDeleting(false);
+    }
 
     return (
         <div className="subsubpanel flex justify-between mr-5 ml-5">
-            <div className="flex flex-col w-4/5">
+            <div className="flex flex-col w-4/5 pl-2 pr-2">
                 <div className=" flex items-center justify-between">
-                    <p className="mt-2 ml-2">
-                        <b>{capitalize(procedure)}</b> on {ToothSurfaces.map(surface => surface.name).join(", ")} surface of tooth {tooth}
+                    <p >
+                        <b>
+                            {procedure === "filling" && (
+                                ToothSurfaces.length > 1 
+                                ? (ToothSurfaces.length > 2 ? "Large" : "Medium") 
+                                : "Small"
+                            )}{" "}
+                            {capitalize(procedure)}</b> on {ToothSurfaces.map(surface => surface.name).join(", ")} surface{ToothSurfaces.length > 1 && "s"} of tooth {tooth}
                     </p>
                 </div>
 
                 {showDetails && (
                     <div>
-                        {Notes.map(note => (
-                            <div key={note.id} className="mb-2 flex">
-                                <div className="mt-1 ml-2 mr-2">{new Date(note.createdAt).toLocaleDateString()}</div>
-                                <p className="border border-gray-300 rounded-md p-1 w-full">
-                                    {note.body}
-                                </p>
+                        {<>
+                            <div className="flex justify-between=">
+                                Material: {treatment.material} Tone: {treatment.materialTone} <span className="legend-colour" style={{background: VitaShades[treatment.materialTone], color: VitaShades[treatment.materialTone]}}>A#</span>
                             </div>
-                        ))}
+                            {Notes.length > 0 ? (
+                                Notes.map(note => (
+                                    <div key={note.id} className="mb-2 flex">
+                                        <div className="mt-1 ml-2 mr-2">{new Date(note.createdAt).toLocaleDateString()}</div>
+                                        <p className="border border-gray-300 rounded-md p-1 w-full">
+                                            {note.body}
+                                        </p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No Notes</p>
+                            )}
+                                <button
+                                    className="btn-warning mt-2"
+                                    onClick={handleDelete}
+                                    disabled={isDeleting}
+                                >
+                                    {isDeleting ? "Deleting..." : "Delete Treatment"}
+                                </button>
+                        </>}
+                        
                     </div>
                 )}
             </div>
 
-            <button className={showDetails ? "btn" : "btn-secondary"} style={{ maxHeight: "40px" }} onClick={() => setShowDetails(!showDetails)}>. . .</button>
+            <button className={showDetails ? "btn" : "btn-secondary"} style={{ maxHeight: "40px" }} onClick={() => setShowDetails(!showDetails)}>
+                {showDetails ? <ChevronDown/> : <ChevronRight/>}
+            </button>
         </div>
     );
 }
@@ -52,6 +99,8 @@ Treatment.propTypes = {
                     name: PropTypes.string
                 })
             ),
+            material: PropTypes.string,
+            materialTone: PropTypes.string,
             Notes: PropTypes.arrayOf(
                 PropTypes.shape({
                     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -59,5 +108,6 @@ Treatment.propTypes = {
                     author: PropTypes.string
                 })
             )
-        })
+        }),
+    refreshPatientData: PropTypes.func
     }

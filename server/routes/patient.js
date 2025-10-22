@@ -14,6 +14,10 @@ router.get("/patients", async (req, res) => {
                 include: [sql.models.ToothSurface, sql.models.Note]
             },
             {
+                model: sql.models.Condition,
+                include: [sql.models.Note]
+            },
+            {
                 model: sql.models.Note,
             }
         ]
@@ -40,6 +44,10 @@ router.get("/patient/:nhi", async (req, res) => {
             {
                 model: sql.models.Treatment,
                 include: [sql.models.ToothSurface, sql.models.Note]
+            },
+            {
+                model: sql.models.Condition,
+                include: [sql.models.Note]
             },
             {
                 model: sql.models.Note
@@ -76,17 +84,6 @@ router.post("/save-patient", async (req, res) => {
     });
     console.log("Just added patient " + patient.nhiNumber);
     return res.status(201).json({ message: "DbPatient created successfully", patient: patient });
-});
-
-// server.js
-router.post("/update-patient", (req, res) => {
-    console.log("updating patient");
-    const { patient } = req.body;
-    const normalizedNhi = normalizeNhiNumber(patient.nhiNumber);
-
-    return res.status(500).json({success: false, message: "/update-patient route has not been updated to support database."})
-
-    
 });
 
 
@@ -144,6 +141,7 @@ router.put("/updateinfo/:nhiNumber", async (req, res) => {
  */
 router.post("/add-treatment", async (req, res) => {
     const {patient, treatment} = req.body;
+    console.log("Adding treatment: " + JSON.stringify(treatment))
 
     const db_patient = await DbPatient.findOne({
         where: {nhiNumber: patient.nhiNumber}, 
@@ -155,7 +153,10 @@ router.post("/add-treatment", async (req, res) => {
         const db_treatment = await sql.models.Treatment.create({
             procedure: treatment.procedure, 
             tooth: treatment.tooth,
-            datePlanned: treatment.plannedDate
+            datePlanned: treatment.plannedDate,
+            planned: treatment.planned,
+            material: treatment.material,
+            materialTone: treatment.materialTone,
         });
         
         treatment.surfaces.forEach(async (surface) => {
@@ -185,6 +186,106 @@ router.post("/add-treatment", async (req, res) => {
         return res.status(500).json({message: "unable to save new treatment", error: ex});
     }
     
+});
+
+router.post('/add-condition', async (req, res) => {
+    const {patient, condition} = req.body;
+    console.log("Adding condition: " + JSON.stringify(condition));
+
+    const db_patient = await DbPatient.findOne({
+        where: {nhiNumber: patient.nhiNumber}, 
+        include: [sql.models.Condition, sql.models.Note]
+    });
+    if (!patient) { return res.status(400).json({success: false, message: "Could not find associated patient."}) }
+
+    try {
+        const db_condition = await sql.models.Condition.create({
+            name: condition.name,
+            tooth: condition.tooth
+        });
+
+        condition.notes.forEach(async (note) => {
+            if (note == '') {return;}
+            const db_note = await sql.models.Note.create({
+                body: note,
+                author: "dentist",
+            });
+            await db_condition.addNote(db_note);
+            await db_patient.addNote(db_note);
+        });
+        await db_patient.addCondition(db_condition)
+
+        return res.status(201).json({success: true, message: "saved condition to database", patient: db_patient, condition: db_condition})
+    }
+    catch(ex) {
+        console.error("Error in /add-condition:", ex);
+        return res.status(500).json({
+            message: "Unable to save condition",
+            error: ex.message || ex.toString(),
+            stack: ex.stack || null
+        });
+    }
+})
+
+router.delete('/delete-treatment/:treatmentId', async (req, res) => {
+    const { treatmentId } = req.params;
+
+    try {
+        const treatment = await sql.models.Treatment.findOne({
+            where: { id: treatmentId },
+            include: [sql.models.Note, sql.models.ToothSurface]
+        });
+
+        if (!treatment) {
+            return res.status(404).json({ error: 'Treatment not found.' });
+        }
+
+        // Delete associated notes
+        if (treatment.Notes && treatment.Notes.length > 0) {
+            for (const note of treatment.Notes) {
+                await note.destroy();
+            }
+        }
+
+        // Remove associations with tooth surfaces
+        if (treatment.ToothSurfaces && treatment.ToothSurfaces.length > 0) {
+            await treatment.setToothSurfaces([]);
+        }
+
+        // Delete the treatment itself
+        await treatment.destroy();
+
+        return res.status(200).json({ success: true, message: 'Treatment and associated data deleted.' });
+    } catch (ex) {
+        console.error('Error deleting treatment:', ex);
+        return res.status(500).json({ error: 'Unable to delete treatment.' });
+    }
+});
+
+// Delete a condition by ID
+router.delete('/delete-condition/:conditionId', async (req, res) => {
+    const { conditionId } = req.params;
+    try {
+        const condition = await sql.models.Condition.findOne({
+            where: { id: conditionId },
+            include: [sql.models.Note]
+        });
+        if (!condition) {
+            return res.status(404).json({ error: 'Condition not found.' });
+        }
+        // Delete associated notes
+        if (condition.Notes && condition.Notes.length > 0) {
+            for (const note of condition.Notes) {
+                await note.destroy();
+            }
+        }
+        // Delete the condition itself
+        await condition.destroy();
+        return res.status(200).json({ success: true, message: 'Condition and associated data deleted.' });
+    } catch (ex) {
+        console.error('Error deleting condition:', ex);
+        return res.status(500).json({ error: 'Unable to delete condition.' });
+    }
 });
 
 module.exports = router;
