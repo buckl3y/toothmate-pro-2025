@@ -1,6 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
-
+/**
+ * Welcome page with toothmate branding.
+ * 
+ * This is the first thing shown when the page loads.
+ * Client requested this as it allows a more smooth introduction during presentations.
+ * 
+ * @author Skye Pooley
+ */
 export default function Welcome() {
     const navigate = useNavigate();
 

@@ -1,7 +1,7 @@
 /*
     Defines Three.js materials to apply to teeth in the chart viewer.
     For now this is using the same colours as the app team to demonstrate the code.
-    We can update these later to be more 'realistic'
+    We can update these later to be more 'realistic' if needed.
 
     @author Skye Pooley
 */

@@ -1,15 +1,7 @@
-/*
-    3D view of the mouth. Does not include any interface.
-    Allows panning and scrolling of the model.
-    Highlights teeth with treatments.
-
-*/
-
 import { Suspense, useState } from 'react'; // Import hooks
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import PropTypes from 'prop-types'; // Import PropTypes
-
 
 import MouthCanvas from './MouthCanvas';
 import { useRef } from 'react';
@@ -17,7 +9,14 @@ import ChartOptions from './ChartOptions';
 import XrayHistory from '../../XrayHistory/XrayHistory';
 
 
-// The mouth viewer. Supports both 3D and grid layout.
+/**
+ * Container for MouthCanvas
+ * 
+ * Provides controls for chart viewer.
+ * Specifies lighting and camera details for 3D model rendering.
+ * 
+ * @author Team
+ */
 export default function MouthManager({patient, onToothSelected}) {
     // Change state to hold an array of selected teeth
     const [selectedTooth, setselectedTooth] = useState();

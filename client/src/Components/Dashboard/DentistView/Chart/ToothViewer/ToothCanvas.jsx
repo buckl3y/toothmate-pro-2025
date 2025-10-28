@@ -5,7 +5,13 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Suspense } from 'react';
 
-
+/**
+ * Component to render a single tooth.
+ * 
+ * Used to show the 3D model of the currently selected tooth.
+ * 
+ * @author Skye Pooley
+ */
 export default function ToothCanvas({selectedTooth}) {
     
     const { scene } = useGLTF("/assets/3DModels/CompressedAdultTeeth/all-teeth.glb");

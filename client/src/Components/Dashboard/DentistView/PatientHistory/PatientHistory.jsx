@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import { updatePatient } from '../../../../api';
 import AddEntryModal from './_components/AddEntryModal';
 
+/**
+ * Previous team legacy code. Not in-use.
+ */
 const PatientHistory = ({ patient, onSelectNote, onPatientUpdate, currentTeethLayout }) => {
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(null);
   const [isAddEntryModalOpen, setIsAddEntryModalOpen] = useState(false);

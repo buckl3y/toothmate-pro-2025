@@ -3,6 +3,11 @@ import { useGLTF } from '@react-three/drei';
 import { MeshStandardMaterial } from 'three';
 import * as THREE from 'three';
 
+/**
+ * Legacy code from previous teams.
+ * 
+ * No longer in-use but removing it is more trouble than its worth. This app is a spaghetti mess.
+ */
 const ToothModel = ({ position, rotation, url, reset, onResetComplete, onHoverChange, onToothSelect, interactive = true,  latestTreatment, selectedTreatmentOption, }) => {
   const validUrl = url || '/assets/3DModels/CompressedAdultTeeth/t_11.glb';
   const { scene } = useGLTF(validUrl);

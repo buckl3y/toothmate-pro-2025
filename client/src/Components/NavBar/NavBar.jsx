@@ -10,7 +10,17 @@ import { Link } from 'react-router-dom';
 import AdminAddPatientOverlay from './AddPatient/AdminAddPatientOverlay';
 import CautionModal from './CautionModal';
 import { updateCaution } from '../../api';
+import { useNavigate } from 'react-router-dom';
 
+
+/**
+ * Terrifying legacy code.
+ * Abandon hope all yee who enter.
+ * 
+ * 
+ * Seriously though, dont touch this or everything will explode.
+ * It seems like the previous team didn't believe in commenting or documentation.
+ */
 const NavBar = ({ selectedPatient, onSelectPatient, onPatientUpdate, onToggleView }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredPatients, setFilteredPatients] = useState([]);
@@ -22,6 +32,7 @@ const NavBar = ({ selectedPatient, onSelectPatient, onPatientUpdate, onToggleVie
   const serverUrl = import.meta.env.VITE_SERVER_URL;
   const patients = useFetchPatients(serverUrl, refreshPatients);
   const [isAdminAddPatientOverlayVisible, setIsAdminAddPatientOverlayVisible] = useState(false);
+  const navigate = useNavigate()
 
   useClickOutside(dropdownRef, () => setIsDropdownOpen(false));
 
@@ -153,6 +164,9 @@ const NavBar = ({ selectedPatient, onSelectPatient, onPatientUpdate, onToggleVie
           <div className="text-logo-dark-purple font-extrabold text-4xl">Pro</div>
         </Link>
         <div className="pr-4 relative flex items-center space-x-4">
+          <button className='btn' onClick={() => navigate("/prototype")}>
+            Figma
+          </button>
         {selectedPatient && (
           <button
             onClick={handleCautionToggle}
@@ -181,7 +195,7 @@ const NavBar = ({ selectedPatient, onSelectPatient, onPatientUpdate, onToggleVie
           )}
           {/* Toggle Avatar */}
           <img
-            src={isAdminView ? '/assets/avatar/admin.png' : '/assets/avatar/dentist.png'}
+            src={isAdminView ? '/assets/avatar/admin.png' : '/assets/avatar/alana.jpeg'}
             alt={isAdminView ? 'Admin View' : 'Dentist View'}
             className="w-10 h-10 rounded-full cursor-pointer"
             onClick={handleToggleView}
