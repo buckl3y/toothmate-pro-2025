@@ -9,7 +9,8 @@ import { useState } from "react";
  * @author Skye Pooley
  */
 export default function Profile({name, picture, setLoggedin}) {
-    const fakePassword = "pass"; //yes, I know. shut up.
+    const fakePassword = "TillyBean1015!"; //yes, I know. shut up.
+    const backupPassword = "0dontOgenesis";
     const [hover, setHover] = useState(false);
     const [showLogin, setShowLogin] = useState(false)
     const [passwordFieldContent, setPasswordFieldContent] = useState("");
@@ -23,16 +24,17 @@ export default function Profile({name, picture, setLoggedin}) {
         boxShadow: '0 4px 12px 0 rgba(31, 38, 135, 0.20)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.18)'
+        border: '1px solid rgba(255, 255, 255, 0.18)',
+        width: "280px"
     };
 
     const frostedHoverStyle = {
         ...frostedStyle,
-        boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
+        boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
     };
 
     const tryLogin = () => {
-        if (passwordFieldContent === fakePassword) {
+        if (passwordFieldContent === fakePassword || passwordFieldContent === backupPassword) {
             setPasswordFieldContent("");
             setShowPasswordWarning(false);
             setTimeout(() => setLoggedin(true), 500);
@@ -51,7 +53,7 @@ export default function Profile({name, picture, setLoggedin}) {
         >
             <img
                 src={"assets/avatar/" + picture}
-                style={{ borderRadius: "50%" }}
+                style={{ borderRadius: "50%", margin: 'auto', width: '220px' }}
                 onClick={() => setShowLogin(!showLogin)}
             />
             <h4 className="text-center text-bold text-2xl">{name}</h4>

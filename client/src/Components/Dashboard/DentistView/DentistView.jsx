@@ -6,6 +6,8 @@ import ToothCanvas from './Chart/ToothViewer/ToothCanvas';
 import SurfaceSelector from './Chart/SurfaceSelector/SurfaceSelector';
 import ToothTreatmentEditor from './ToothTreatmentEditor/ToothTreatmentEditor';
 import useFetchPatients from '../../NavBar/FetchPatients';
+import { ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function DentistView({selectedPatient, refreshPatientData }) {
@@ -14,6 +16,7 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
     const [showSurfaceSelector, setShowSurfaceSelector] = useState(true);
     const serverUrl = import.meta.env.VITE_SERVER_URL;
     const patients = useFetchPatients(serverUrl, () => {});
+    const navigate = useNavigate();
 
     const handleToothSelection = (Tooth) => {
         // Start transition prevents the app from crashing while it waits for the tooth viewer to load.
@@ -78,10 +81,20 @@ export default function DentistView({selectedPatient, refreshPatientData }) {
                 </div>
             ) : (
                 <div className="flex flex-col items-center justify-center w-full h-full">
-                    <h2 className="text-4xl font-semibold mb-4 mt-5">Welcome</h2>
+                    <h2 className="text-4xl font-semibold mb-4 mt-4">Welcome</h2>
+                    <p>Available Patients:</p>
+                    <div style={{display: 'block'}}>
                     {patients.map(patient => (
-                        <p key={patient.nhiNumber} id={patient.nhiNumber}>Hello {patient.name}</p>
+                        <div 
+                        key={patient.nhiNumber} 
+                        id={patient.nhiNumber} 
+                        className='btn btn-secondary'
+                        onClick={() => navigate(`/direct/${patient.nhiNumber}`)}>
+                            <span>{patient.name}</span>
+                        </div>
                     ))}
+                    </div>
+                    
                 </div>
             )}
         </div>

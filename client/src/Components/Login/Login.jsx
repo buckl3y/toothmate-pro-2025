@@ -32,8 +32,7 @@ export default function Login() {
             </div>
 
             <div className="flex items-center">
-                <Profile name={"Sarah Michael"} picture={"admin.png"} setLoggedin={setLoggedin}/>
-                <Profile name={"Aaron Whittaker"} picture={"dentist.png"} setLoggedin={setLoggedin}z/>
+                <Profile name={"Alana Payne"} picture={"alana.jpeg"} setLoggedin={setLoggedin}z/>
             </div>
             
         </div>
