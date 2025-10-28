@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-// Commented out dotenv for development purposes
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -44,7 +43,6 @@ const patientRouter = require('./routes/patient');
 const historyRouter = require('./routes/history');
 const cautionRouter = require('./routes/caution');
 const autofillRouter = require('./routes/autofill');
-const teethRouter = require('./routes/teeth.ts');
 
 // Use routers
 app.use('/api', xrayRouter);

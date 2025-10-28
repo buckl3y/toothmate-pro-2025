@@ -2,6 +2,11 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { useEffect } from "react";
 
+/**
+ * Component to allow the user to select tooth surfaces.
+ * 
+ * @author Team
+ */
 export default function SurfaceSelector({ selectedSurfaces, setSelectedSurfaces, selectedTooth }) {
     const [topFaceName, setTopFaceName] = useState("incisal");
     const [topFaceLabel, setTopFaceLabel] = useState("I")

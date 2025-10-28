@@ -12,6 +12,15 @@ import CautionModal from './CautionModal';
 import { updateCaution } from '../../api';
 import { useNavigate } from 'react-router-dom';
 
+
+/**
+ * Terrifying legacy code.
+ * Abandon hope all yee who enter.
+ * 
+ * 
+ * Seriously though, dont touch this or everything will explode.
+ * It seems like the previous team didn't believe in commenting or documentation.
+ */
 const NavBar = ({ selectedPatient, onSelectPatient, onPatientUpdate, onToggleView }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredPatients, setFilteredPatients] = useState([]);

@@ -7,6 +7,9 @@ import {
   checkXrayFilename,
 } from '../../../../api';
 
+/**
+ * Broken legacy code.
+ */
 const XrayHistory = ({ patient, refreshPatientData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState('single'); // 'single', 'comparison', 'quad'

@@ -1,3 +1,13 @@
+
+/**
+ * Page to display Figma Prototype.
+ * Uses an Iframe to embed the design.
+ * 
+ * Should be rendered as a React-Router-Dom endpoint and take up the entire page space.
+ * 
+ * @returns React Component
+ * @author Skye Pooley
+ */
 export default function ProtoEmbed() {
     return (
         <div>

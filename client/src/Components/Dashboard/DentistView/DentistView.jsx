@@ -6,10 +6,13 @@ import ToothCanvas from './Chart/ToothViewer/ToothCanvas';
 import SurfaceSelector from './Chart/SurfaceSelector/SurfaceSelector';
 import ToothTreatmentEditor from './ToothTreatmentEditor/ToothTreatmentEditor';
 import useFetchPatients from '../../NavBar/FetchPatients';
-import { ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-
+/**
+ * Component to lay out all the components of the chart viewer/editor.
+ * 
+ * @author Skye Pooley
+ */
 export default function DentistView({selectedPatient, refreshPatientData }) {
     const [selectedTooth, setSelectedTooth] = useState(null);
     const [selectedSurfaces, setSelectedSurfaces] = useState([]);

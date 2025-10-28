@@ -22,6 +22,17 @@ import {
 } from './ToothMaterials';
 import { useState } from 'react';
 
+/**
+ * Component to handle loading, switching, and modifying the chart 3D models.
+ * Must be rendered inside a Three.js canvas like the one found in MouthManager.jsx
+ * 
+ * As having more than one OpenGL renderer per browser window can cause complications, all 3D model rendering happens here.
+ * We swap out which model is shown in the scene to enable showing adult, child, and grid views.
+ * 
+ * This function must be given patient data so that it can recolour the chart to match patient history.
+ * 
+ * @author Team
+ */
 export default function MouthCanvas({ selectedTooth, onMeshClick, patient, treatmentVisibility, conditionVisibility, is3d }) { 
     const { scene: model3d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/mouth.glb');
     const { scene: model2d } = useGLTF('/assets/3DModels/CompressedAdultTeeth/flat-mouth.glb');
@@ -298,6 +309,7 @@ MouthCanvas.propTypes = {
     selectedTooth: PropTypes.string,
     onMeshClick: PropTypes.func.isRequired, 
     patient: PropTypes.object.isRequired, 
+    conditionVisibility: PropTypes.shape,
     treatmentVisibility: PropTypes.shape({
         all: PropTypes.bool,
         filling: PropTypes.bool,

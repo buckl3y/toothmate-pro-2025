@@ -1,6 +1,14 @@
 import PropTypes from "prop-types"
 import { ChevronUp, ChevronDown } from "lucide-react";
 
+/**
+ * Options panel to be displayed below the chart viewer.
+ * Provides options to switch view types, hide certain procedures and conditions, and reset cameras.
+ * Can be hidden to enable full height chart view.
+ * 
+ * @author Skye Pooley
+ * 
+ */
 export default function ChartOptions(
     {treatmentVisibility, setTreatmentVisibility,
     conditionVisibility, setConditionVisibility,

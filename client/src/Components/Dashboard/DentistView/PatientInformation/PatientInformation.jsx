@@ -3,6 +3,11 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import axios from 'axios';
 
+/**
+ * Component to display a patient's basic information like name, age, contact details.
+ * 
+ * Adapted from legacy code.
+ */
 const PatientInformation = ({ patient, onUpdate }) => {
     const { name, dateOfBirth, address, phone } = patient || {};
 
